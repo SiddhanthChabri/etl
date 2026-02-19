@@ -179,3 +179,15 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# Credentials — NEVER push
+db_config.py
+config.py
+.env
+secrets.py
+
+# Large binary/output files
+*.xlsx
+*.pkl
+models/
+*.log
