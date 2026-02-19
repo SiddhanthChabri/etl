@@ -1,0 +1,60 @@
+2026-02-10 00:23:51 - FactSales - INFO - ============================================================
+2026-02-10 00:23:51 - FactSales - INFO - Starting Fact Sales Load Process
+2026-02-10 00:23:51 - FactSales - INFO - Start Time: 2026-02-10 00:23:51
+2026-02-10 00:23:51 - FactSales - INFO - ============================================================
+2026-02-10 00:23:51 - FactSales - INFO - Step 1: Connecting to database...
+2026-02-10 00:23:51 - FactSales - INFO - Step 2: Executing query to fetch sales data...
+2026-02-10 00:23:52 - FactSales - INFO - Step 3: Creating DataFrame from query results...
+2026-02-10 00:23:53 - FactSales - INFO - Step 4: Data summary:
+2026-02-10 00:23:53 - FactSales - INFO -    - Total Quantity Sold: 4,412,440
+2026-02-10 00:23:53 - FactSales - INFO -    - Date Range: 20100112 to 20111210
+2026-02-10 00:23:53 - FactSales - INFO - Step 5: Loading Excel workbook...
+2026-02-10 00:23:53 - FactSales - INFO - Step 6: Creating new fact_sales sheet...
+2026-02-10 00:23:53 - FactSales - INFO - Step 7: Writing data to Excel sheet...
+2026-02-10 00:24:08 - FactSales - INFO - Step 8: Saving Excel workbook...
+2026-02-10 00:24:58 - FactSales - INFO - Step 9: Closing database connections...
+2026-02-10 00:24:58 - FactSales - INFO - ============================================================
+2026-02-10 00:24:58 - FactSales - INFO - ============================================================
+2026-02-10 00:24:58 - FactSales - INFO - Summary:
+2026-02-10 00:24:58 - FactSales - INFO -    - Records Loaded: 337,298
+2026-02-10 00:24:58 - FactSales - INFO -    - Duration: 66.65 seconds
+2026-02-10 00:24:58 - FactSales - INFO -    - End Time: 2026-02-10 00:24:58
+2026-02-10 00:24:58 - FactSales - INFO - ============================================================
+2026-02-10 00:26:44 - FactSales - INFO - ============================================================
+2026-02-10 00:26:44 - FactSales - INFO - Starting Fact Sales Load Process
+2026-02-10 00:26:44 - FactSales - INFO - Start Time: 2026-02-10 00:26:44
+2026-02-10 00:26:44 - FactSales - INFO - ============================================================
+2026-02-10 00:26:44 - FactSales - INFO - Step 1: Connecting to database...
+2026-02-10 00:26:44 - FactSales - INFO - ✓ Database connection established successfully
+2026-02-10 00:26:44 - FactSales - INFO - Step 2: Executing query to fetch sales data...
+2026-02-10 00:26:45 - FactSales - INFO - ✓ Query executed successfully
+2026-02-10 00:26:45 - FactSales - INFO - ✓ Total records fetched: 337298
+2026-02-10 00:26:45 - FactSales - INFO - Step 3: Creating DataFrame from query results...
+2026-02-10 00:26:45 - FactSales - INFO - ✓ DataFrame created successfully
+2026-02-10 00:26:45 - FactSales - INFO - ✓ DataFrame shape: 337298 rows x 9 columns
+2026-02-10 00:26:45 - FactSales - INFO - Step 4: Data summary:
+2026-02-10 00:26:45 - FactSales - INFO -    - Total Sales Amount: ₹7,750,975.98
+2026-02-10 00:26:45 - FactSales - INFO -    - Total Quantity Sold: 4,412,440
+2026-02-10 00:26:45 - FactSales - INFO -    - Total Discount: ₹0.00
+2026-02-10 00:26:45 - FactSales - INFO -    - Date Range: 20100112 to 20111210
+2026-02-10 00:26:45 - FactSales - INFO - Step 5: Loading Excel workbook...
+2026-02-10 00:27:17 - FactSales - INFO - ✓ Excel workbook 'Retail_DW_Data.xlsx' loaded successfully
+2026-02-10 00:27:17 - FactSales - INFO - Sheet 'fact_sales' already exists - removing old data
+2026-02-10 00:27:17 - FactSales - INFO - ✓ Old 'fact_sales' sheet removed
+2026-02-10 00:27:17 - FactSales - INFO - Step 6: Creating new fact_sales sheet...
+2026-02-10 00:27:17 - FactSales - INFO - ✓ New 'fact_sales' sheet created
+2026-02-10 00:27:17 - FactSales - INFO - Step 7: Writing data to Excel sheet...
+2026-02-10 00:27:33 - FactSales - INFO - ✓ Data written successfully - 337299 rows (including header)
+2026-02-10 00:27:33 - FactSales - INFO - Step 8: Saving Excel workbook...
+2026-02-10 00:29:01 - FactSales - INFO - ✓ Workbook 'Retail_DW_Data.xlsx' saved successfully
+2026-02-10 00:29:01 - FactSales - INFO - Step 9: Closing database connections...
+2026-02-10 00:29:01 - FactSales - INFO - ✓ Database connections closed successfully
+2026-02-10 00:29:01 - FactSales - INFO - ============================================================
+2026-02-10 00:29:01 - FactSales - INFO - ✓✓✓ FACT SALES LOAD COMPLETED SUCCESSFULLY! ✓✓✓
+2026-02-10 00:29:01 - FactSales - INFO - ============================================================
+2026-02-10 00:29:01 - FactSales - INFO - Summary:
+2026-02-10 00:29:01 - FactSales - INFO -    - Records Loaded: 337,298
+2026-02-10 00:29:01 - FactSales - INFO -    - Total Sales: ₹7,750,975.98
+2026-02-10 00:29:01 - FactSales - INFO -    - Duration: 137.23 seconds
+2026-02-10 00:29:01 - FactSales - INFO -    - End Time: 2026-02-10 00:29:01
+2026-02-10 00:29:01 - FactSales - INFO - ============================================================

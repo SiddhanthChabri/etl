@@ -1,0 +1,874 @@
+2026-02-18 22:36:09 - test_analytics - INFO - ======================================================================
+2026-02-18 22:36:09 - test_analytics - INFO - 🚀 TESTING ADVANCED ANALYTICS MODULE
+2026-02-18 22:36:09 - test_analytics - INFO - ======================================================================
+2026-02-18 22:36:09 - test_analytics - INFO - 
+======================================================================
+2026-02-18 22:36:09 - test_analytics - INFO - TEST 1: RFM Analysis
+2026-02-18 22:36:09 - test_analytics - INFO - ======================================================================
+2026-02-18 22:36:09 - advanced_analytics - INFO - ======================================================================
+2026-02-18 22:36:09 - advanced_analytics - INFO - 🎯 RFM ANALYSIS - Customer Segmentation
+2026-02-18 22:36:09 - advanced_analytics - INFO - ======================================================================
+2026-02-18 22:36:09 - advanced_analytics - INFO - Reference Date: 2026-02-18
+2026-02-18 22:36:09 - test_analytics - ERROR - ❌ Test failed: (psycopg2.errors.UndefinedColumn) column c.country does not exist
+LINE 5:                 c.country,
+                        ^
+
+[SQL: 
+            SELECT 
+                c.customer_id,
+                c.customer_name,
+                c.country,
+                MAX(t.date) as last_purchase_date,
+                COUNT(DISTINCT fs.sales_key) as frequency,
+                SUM(fs.sales_amount) as monetary
+            FROM fact_sales fs
+            JOIN dim_customer c ON fs.customer_key = c.customer_key
+            JOIN dim_time t ON fs.time_key = t.time_key
+            WHERE c.is_current = TRUE
+            GROUP BY c.customer_id, c.customer_name, c.country
+            HAVING COUNT(DISTINCT fs.sales_key) > 0
+        ]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-02-18 22:36:09 - test_analytics - ERROR - Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column c.country does not exist
+LINE 5:                 c.country,
+                        ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Study Material\8th Sem\Major Project\etl\test_advanced_analytics.py", line 135, in run_all_analytics_tests
+    rfm_df = test_rfm_analysis()
+  File "D:\Study Material\8th Sem\Major Project\etl\test_advanced_analytics.py", line 21, in test_rfm_analysis
+    rfm_df = analytics.rfm_analysis()
+  File "D:\Study Material\8th Sem\Major Project\etl\advanced_analytics.py", line 84, in rfm_analysis
+    df = pd.read_sql(query, conn)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\io\sql.py", line 734, in read_sql
+    return pandas_sql.read_query(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\io\sql.py", line 1836, in read_query
+    result = self.execute(sql, params)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\io\sql.py", line 1660, in execute
+    return self.con.execute(sql, *args)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column c.country does not exist
+LINE 5:                 c.country,
+                        ^
+
+[SQL: 
+            SELECT 
+                c.customer_id,
+                c.customer_name,
+                c.country,
+                MAX(t.date) as last_purchase_date,
+                COUNT(DISTINCT fs.sales_key) as frequency,
+                SUM(fs.sales_amount) as monetary
+            FROM fact_sales fs
+            JOIN dim_customer c ON fs.customer_key = c.customer_key
+            JOIN dim_time t ON fs.time_key = t.time_key
+            WHERE c.is_current = TRUE
+            GROUP BY c.customer_id, c.customer_name, c.country
+            HAVING COUNT(DISTINCT fs.sales_key) > 0
+        ]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-02-18 22:39:04 - test_analytics - INFO - ======================================================================
+2026-02-18 22:39:04 - test_analytics - INFO - 🚀 TESTING ADVANCED ANALYTICS MODULE
+2026-02-18 22:39:04 - test_analytics - INFO - ======================================================================
+2026-02-18 22:39:04 - test_analytics - INFO - 
+======================================================================
+2026-02-18 22:39:04 - test_analytics - INFO - TEST 1: RFM Analysis
+2026-02-18 22:39:04 - test_analytics - INFO - ======================================================================
+2026-02-18 22:39:04 - advanced_analytics - INFO - ======================================================================
+2026-02-18 22:39:04 - advanced_analytics - INFO - 🎯 RFM ANALYSIS - Customer Segmentation
+2026-02-18 22:39:04 - advanced_analytics - INFO - ======================================================================
+2026-02-18 22:39:04 - advanced_analytics - INFO - Reference Date: 2026-02-18
+2026-02-18 22:39:05 - advanced_analytics - INFO - Analyzing 2,989 customers
+2026-02-18 22:39:05 - advanced_analytics - INFO - 
+📊 RFM Distribution:
+2026-02-18 22:39:05 - advanced_analytics - INFO -   • Recency: 5338 days (avg)
+2026-02-18 22:39:05 - advanced_analytics - INFO -   • Frequency: 54.4 purchases (avg)
+2026-02-18 22:39:05 - advanced_analytics - INFO -   • Monetary: $1,240.85 (avg)
+2026-02-18 22:39:05 - advanced_analytics - INFO - 
+🎯 Customer Segments:
+2026-02-18 22:39:05 - advanced_analytics - INFO -   • About to Sleep: 245 (8.2%)
+2026-02-18 22:39:05 - advanced_analytics - INFO -   • At Risk: 306 (10.2%)
+2026-02-18 22:39:05 - advanced_analytics - INFO -   • Champions: 369 (12.3%)
+2026-02-18 22:39:05 - advanced_analytics - INFO -   • Loyal Customers: 436 (14.6%)
+2026-02-18 22:39:05 - advanced_analytics - INFO -   • Need Attention: 561 (18.8%)
+2026-02-18 22:39:05 - advanced_analytics - INFO -   • Potential Loyalists: 264 (8.8%)
+2026-02-18 22:39:05 - advanced_analytics - INFO -   • Promising: 286 (9.6%)
+2026-02-18 22:39:05 - advanced_analytics - INFO -   • Recent Customers: 522 (17.5%)
+2026-02-18 22:39:05 - test_analytics - INFO - 
+🏆 Top 10 Champions:
+2026-02-18 22:39:05 - test_analytics - ERROR - ❌ Test failed: 'country'
+2026-02-18 22:39:05 - test_analytics - ERROR - Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'country'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Study Material\8th Sem\Major Project\etl\test_advanced_analytics.py", line 135, in run_all_analytics_tests
+    rfm_df = test_rfm_analysis()
+  File "D:\Study Material\8th Sem\Major Project\etl\test_advanced_analytics.py", line 27, in test_rfm_analysis
+    logger.info(f"  • {customer['customer_name']} ({customer['country']})")
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\series.py", line 1121, in __getitem__
+    return self._get_value(key)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\series.py", line 1237, in _get_value
+    loc = self.index.get_loc(label)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'country'
+2026-02-18 22:40:09 - test_analytics - INFO - ======================================================================
+2026-02-18 22:40:09 - test_analytics - INFO - 🚀 TESTING ADVANCED ANALYTICS MODULE
+2026-02-18 22:40:09 - test_analytics - INFO - ======================================================================
+2026-02-18 22:40:09 - test_analytics - INFO - 
+======================================================================
+2026-02-18 22:40:09 - test_analytics - INFO - TEST 1: RFM Analysis
+2026-02-18 22:40:09 - test_analytics - INFO - ======================================================================
+2026-02-18 22:40:09 - advanced_analytics - INFO - ======================================================================
+2026-02-18 22:40:09 - advanced_analytics - INFO - 🎯 RFM ANALYSIS - Customer Segmentation
+2026-02-18 22:40:09 - advanced_analytics - INFO - ======================================================================
+2026-02-18 22:40:09 - advanced_analytics - INFO - Reference Date: 2026-02-18
+2026-02-18 22:40:09 - advanced_analytics - INFO - Analyzing 2,989 customers
+2026-02-18 22:40:09 - advanced_analytics - INFO - 
+📊 RFM Distribution:
+2026-02-18 22:40:09 - advanced_analytics - INFO -   • Recency: 5338 days (avg)
+2026-02-18 22:40:09 - advanced_analytics - INFO -   • Frequency: 54.4 purchases (avg)
+2026-02-18 22:40:09 - advanced_analytics - INFO -   • Monetary: $1,240.85 (avg)
+2026-02-18 22:40:09 - advanced_analytics - INFO - 
+🎯 Customer Segments:
+2026-02-18 22:40:09 - advanced_analytics - INFO -   • About to Sleep: 245 (8.2%)
+2026-02-18 22:40:09 - advanced_analytics - INFO -   • At Risk: 306 (10.2%)
+2026-02-18 22:40:09 - advanced_analytics - INFO -   • Champions: 369 (12.3%)
+2026-02-18 22:40:09 - advanced_analytics - INFO -   • Loyal Customers: 436 (14.6%)
+2026-02-18 22:40:09 - advanced_analytics - INFO -   • Need Attention: 561 (18.8%)
+2026-02-18 22:40:09 - advanced_analytics - INFO -   • Potential Loyalists: 264 (8.8%)
+2026-02-18 22:40:09 - advanced_analytics - INFO -   • Promising: 286 (9.6%)
+2026-02-18 22:40:09 - advanced_analytics - INFO -   • Recent Customers: 522 (17.5%)
+2026-02-18 22:40:09 - test_analytics - INFO - 
+🏆 Top 10 Champions:
+2026-02-18 22:40:09 - test_analytics - INFO -   • Unknown (Cyprus, None)
+2026-02-18 22:40:09 - test_analytics - INFO -     Recency: 5193 days, Frequency: 143, Monetary: $3,495.73
+2026-02-18 22:40:09 - test_analytics - INFO -   • Unknown (Belgium, None)
+2026-02-18 22:40:09 - test_analytics - INFO -     Recency: 5214 days, Frequency: 110, Monetary: $2,135.79
+2026-02-18 22:40:09 - test_analytics - INFO -   • Unknown (Switzerland, None)
+2026-02-18 22:40:09 - test_analytics - INFO -     Recency: 5214 days, Frequency: 62, Monetary: $1,527.96
+2026-02-18 22:40:09 - test_analytics - INFO -   • Unknown (Norway, None)
+2026-02-18 22:40:09 - test_analytics - INFO -     Recency: 5184 days, Frequency: 87, Monetary: $1,845.31
+2026-02-18 22:40:09 - test_analytics - INFO -   • Unknown (Belgium, None)
+2026-02-18 22:40:09 - test_analytics - INFO -     Recency: 5189 days, Frequency: 94, Monetary: $1,726.63
+2026-02-18 22:40:09 - test_analytics - INFO -   • Unknown (Australia, None)
+2026-02-18 22:40:09 - test_analytics - INFO -     Recency: 5254 days, Frequency: 226, Monetary: $44,168.79
+2026-02-18 22:40:09 - test_analytics - INFO -   • Unknown (Finland, None)
+2026-02-18 22:40:09 - test_analytics - INFO -     Recency: 5216 days, Frequency: 259, Monetary: $6,580.52
+2026-02-18 22:40:09 - test_analytics - INFO -   • Unknown (Norway, None)
+2026-02-18 22:40:09 - test_analytics - INFO -     Recency: 5273 days, Frequency: 294, Monetary: $9,033.92
+2026-02-18 22:40:09 - test_analytics - INFO -   • Unknown (France, None)
+2026-02-18 22:40:09 - test_analytics - INFO -     Recency: 5193 days, Frequency: 84, Monetary: $2,040.81
+2026-02-18 22:40:09 - test_analytics - INFO -   • Unknown (Belgium, None)
+2026-02-18 22:40:09 - test_analytics - INFO -     Recency: 5276 days, Frequency: 132, Monetary: $2,724.58
+2026-02-18 22:40:09 - test_analytics - INFO - 
+✅ Exported: rfm_analysis_results.csv
+2026-02-18 22:40:09 - test_analytics - INFO - 
+======================================================================
+2026-02-18 22:40:09 - test_analytics - INFO - TEST 2: ABC Analysis
+2026-02-18 22:40:09 - test_analytics - INFO - ======================================================================
+2026-02-18 22:40:09 - advanced_analytics - INFO - 
+======================================================================
+2026-02-18 22:40:09 - advanced_analytics - INFO - 📦 ABC ANALYSIS - Product Classification
+2026-02-18 22:40:09 - advanced_analytics - INFO - ======================================================================
+2026-02-18 22:40:10 - advanced_analytics - INFO - Analyzing 3,507 products
+2026-02-18 22:40:10 - advanced_analytics - INFO - 
+📊 ABC Distribution:
+2026-02-18 22:40:10 - advanced_analytics - INFO -   • Class A: 487 products (70.0% revenue) - $2,606,424.89
+2026-02-18 22:40:10 - advanced_analytics - INFO -   • Class B: 717 products (20.0% revenue) - $746,640.13
+2026-02-18 22:40:10 - advanced_analytics - INFO -   • Class C: 2,303 products (10.0% revenue) - $373,135.28
+2026-02-18 22:40:10 - test_analytics - INFO - 
+⭐ Top 10 Class A Products:
+2026-02-18 22:40:10 - test_analytics - INFO -   • PAPER CRAFT , LITTLE BIRDIE
+2026-02-18 22:40:10 - test_analytics - INFO -     Revenue: $168,469.60 (4.52%)
+2026-02-18 22:40:10 - test_analytics - INFO -   • damages
+2026-02-18 22:40:10 - test_analytics - INFO -     Revenue: $61,819.56 (1.66%)
+2026-02-18 22:40:10 - test_analytics - INFO -   • CREAM HANGING HEART T-LIGHT HOLDER
+2026-02-18 22:40:10 - test_analytics - INFO -     Revenue: $43,951.88 (1.18%)
+2026-02-18 22:40:10 - test_analytics - INFO -   • JUMBO BAG RED RETROSPOT
+2026-02-18 22:40:10 - test_analytics - INFO -     Revenue: $37,203.22 (1.00%)
+2026-02-18 22:40:10 - test_analytics - ERROR - ❌ Test failed: 'NoneType' object is not subscriptable
+2026-02-18 22:40:10 - test_analytics - ERROR - Full traceback:
+Traceback (most recent call last):
+  File "D:\Study Material\8th Sem\Major Project\etl\test_advanced_analytics.py", line 139, in run_all_analytics_tests
+    abc_df = test_abc_analysis()
+  File "D:\Study Material\8th Sem\Major Project\etl\test_advanced_analytics.py", line 50, in test_abc_analysis
+    logger.info(f"  • {product['product_name'][:50]}")
+TypeError: 'NoneType' object is not subscriptable
+2026-02-18 22:41:14 - test_analytics - INFO - ======================================================================
+2026-02-18 22:41:14 - test_analytics - INFO - 🚀 TESTING ADVANCED ANALYTICS MODULE
+2026-02-18 22:41:14 - test_analytics - INFO - ======================================================================
+2026-02-18 22:41:14 - test_analytics - INFO - 
+======================================================================
+2026-02-18 22:41:14 - test_analytics - INFO - TEST 1: RFM Analysis
+2026-02-18 22:41:14 - test_analytics - INFO - ======================================================================
+2026-02-18 22:41:14 - advanced_analytics - INFO - ======================================================================
+2026-02-18 22:41:14 - advanced_analytics - INFO - 🎯 RFM ANALYSIS - Customer Segmentation
+2026-02-18 22:41:14 - advanced_analytics - INFO - ======================================================================
+2026-02-18 22:41:14 - advanced_analytics - INFO - Reference Date: 2026-02-18
+2026-02-18 22:41:15 - advanced_analytics - INFO - Analyzing 2,989 customers
+2026-02-18 22:41:15 - advanced_analytics - INFO - 
+📊 RFM Distribution:
+2026-02-18 22:41:15 - advanced_analytics - INFO -   • Recency: 5338 days (avg)
+2026-02-18 22:41:15 - advanced_analytics - INFO -   • Frequency: 54.4 purchases (avg)
+2026-02-18 22:41:15 - advanced_analytics - INFO -   • Monetary: $1,240.85 (avg)
+2026-02-18 22:41:15 - advanced_analytics - INFO - 
+🎯 Customer Segments:
+2026-02-18 22:41:15 - advanced_analytics - INFO -   • About to Sleep: 245 (8.2%)
+2026-02-18 22:41:15 - advanced_analytics - INFO -   • At Risk: 306 (10.2%)
+2026-02-18 22:41:15 - advanced_analytics - INFO -   • Champions: 369 (12.3%)
+2026-02-18 22:41:15 - advanced_analytics - INFO -   • Loyal Customers: 436 (14.6%)
+2026-02-18 22:41:15 - advanced_analytics - INFO -   • Need Attention: 561 (18.8%)
+2026-02-18 22:41:15 - advanced_analytics - INFO -   • Potential Loyalists: 264 (8.8%)
+2026-02-18 22:41:15 - advanced_analytics - INFO -   • Promising: 286 (9.6%)
+2026-02-18 22:41:15 - advanced_analytics - INFO -   • Recent Customers: 522 (17.5%)
+2026-02-18 22:41:15 - test_analytics - INFO - 
+🏆 Top 10 Champions:
+2026-02-18 22:41:15 - test_analytics - INFO -   • Unknown (Cyprus, Unknown)
+2026-02-18 22:41:15 - test_analytics - INFO -     Recency: 5193 days, Frequency: 143, Monetary: $3,495.73
+2026-02-18 22:41:15 - test_analytics - INFO -   • Unknown (Belgium, Unknown)
+2026-02-18 22:41:15 - test_analytics - INFO -     Recency: 5214 days, Frequency: 110, Monetary: $2,135.79
+2026-02-18 22:41:15 - test_analytics - INFO -   • Unknown (Switzerland, Unknown)
+2026-02-18 22:41:15 - test_analytics - INFO -     Recency: 5214 days, Frequency: 62, Monetary: $1,527.96
+2026-02-18 22:41:15 - test_analytics - INFO -   • Unknown (Norway, Unknown)
+2026-02-18 22:41:15 - test_analytics - INFO -     Recency: 5184 days, Frequency: 87, Monetary: $1,845.31
+2026-02-18 22:41:15 - test_analytics - INFO -   • Unknown (Belgium, Unknown)
+2026-02-18 22:41:15 - test_analytics - INFO -     Recency: 5189 days, Frequency: 94, Monetary: $1,726.63
+2026-02-18 22:41:15 - test_analytics - INFO -   • Unknown (Australia, Unknown)
+2026-02-18 22:41:15 - test_analytics - INFO -     Recency: 5254 days, Frequency: 226, Monetary: $44,168.79
+2026-02-18 22:41:15 - test_analytics - INFO -   • Unknown (Finland, Unknown)
+2026-02-18 22:41:15 - test_analytics - INFO -     Recency: 5216 days, Frequency: 259, Monetary: $6,580.52
+2026-02-18 22:41:15 - test_analytics - INFO -   • Unknown (Norway, Unknown)
+2026-02-18 22:41:15 - test_analytics - INFO -     Recency: 5273 days, Frequency: 294, Monetary: $9,033.92
+2026-02-18 22:41:15 - test_analytics - INFO -   • Unknown (France, Unknown)
+2026-02-18 22:41:15 - test_analytics - INFO -     Recency: 5193 days, Frequency: 84, Monetary: $2,040.81
+2026-02-18 22:41:15 - test_analytics - INFO -   • Unknown (Belgium, Unknown)
+2026-02-18 22:41:15 - test_analytics - INFO -     Recency: 5276 days, Frequency: 132, Monetary: $2,724.58
+2026-02-18 22:41:15 - test_analytics - INFO - 
+✅ Exported: rfm_analysis_results.csv
+2026-02-18 22:41:15 - test_analytics - INFO - 
+======================================================================
+2026-02-18 22:41:15 - test_analytics - INFO - TEST 2: ABC Analysis
+2026-02-18 22:41:15 - test_analytics - INFO - ======================================================================
+2026-02-18 22:41:15 - advanced_analytics - INFO - 
+======================================================================
+2026-02-18 22:41:15 - advanced_analytics - INFO - 📦 ABC ANALYSIS - Product Classification
+2026-02-18 22:41:15 - advanced_analytics - INFO - ======================================================================
+2026-02-18 22:41:15 - advanced_analytics - INFO - Analyzing 3,507 products
+2026-02-18 22:41:15 - advanced_analytics - INFO - 
+📊 ABC Distribution:
+2026-02-18 22:41:15 - advanced_analytics - INFO -   • Class A: 487 products (70.0% revenue) - $2,606,424.89
+2026-02-18 22:41:15 - advanced_analytics - INFO -   • Class B: 717 products (20.0% revenue) - $746,640.13
+2026-02-18 22:41:15 - advanced_analytics - INFO -   • Class C: 2,303 products (10.0% revenue) - $373,135.28
+2026-02-18 22:41:15 - test_analytics - INFO - 
+⭐ Top 10 Class A Products:
+2026-02-18 22:41:15 - test_analytics - INFO -   • PAPER CRAFT , LITTLE BIRDIE
+2026-02-18 22:41:15 - test_analytics - INFO -     Revenue: $168,469.60 (4.52%)
+2026-02-18 22:41:15 - test_analytics - INFO -   • damages
+2026-02-18 22:41:15 - test_analytics - INFO -     Revenue: $61,819.56 (1.66%)
+2026-02-18 22:41:15 - test_analytics - INFO -   • CREAM HANGING HEART T-LIGHT HOLDER
+2026-02-18 22:41:15 - test_analytics - INFO -     Revenue: $43,951.88 (1.18%)
+2026-02-18 22:41:15 - test_analytics - INFO -   • JUMBO BAG RED RETROSPOT
+2026-02-18 22:41:15 - test_analytics - INFO -     Revenue: $37,203.22 (1.00%)
+2026-02-18 22:41:15 - test_analytics - INFO -   • Unknown Product
+2026-02-18 22:41:15 - test_analytics - INFO -     Revenue: $35,379.15 (0.95%)
+2026-02-18 22:41:15 - test_analytics - INFO -   • damaged
+2026-02-18 22:41:15 - test_analytics - INFO -     Revenue: $28,295.61 (0.76%)
+2026-02-18 22:41:15 - test_analytics - INFO -   • PARTY BUNTING
+2026-02-18 22:41:15 - test_analytics - INFO -     Revenue: $28,111.17 (0.75%)
+2026-02-18 22:41:15 - test_analytics - INFO -   • Unknown Product
+2026-02-18 22:41:15 - test_analytics - INFO -     Revenue: $22,350.65 (0.60%)
+2026-02-18 22:41:15 - test_analytics - INFO -   • Unknown Product
+2026-02-18 22:41:15 - test_analytics - INFO -     Revenue: $20,362.78 (0.55%)
+2026-02-18 22:41:15 - test_analytics - INFO -   • PAPER CHAIN KIT 50'S CHRISTMAS 
+2026-02-18 22:41:15 - test_analytics - INFO -     Revenue: $19,694.20 (0.53%)
+2026-02-18 22:41:15 - test_analytics - INFO - 
+✅ Exported: abc_analysis_results.csv
+2026-02-18 22:41:15 - test_analytics - INFO - 
+======================================================================
+2026-02-18 22:41:15 - test_analytics - INFO - TEST 3: Cohort Analysis
+2026-02-18 22:41:15 - test_analytics - INFO - ======================================================================
+2026-02-18 22:41:15 - advanced_analytics - INFO - 
+======================================================================
+2026-02-18 22:41:15 - advanced_analytics - INFO - 📈 COHORT ANALYSIS - Customer Retention
+2026-02-18 22:41:15 - advanced_analytics - INFO - ======================================================================
+2026-02-18 22:41:16 - advanced_analytics - INFO - Analyzing 2,989 customers
+2026-02-18 22:41:17 - advanced_analytics - INFO - 
+📊 Cohort Summary:
+2026-02-18 22:41:17 - advanced_analytics - INFO -   • Total Cohorts: 22
+2026-02-18 22:41:17 - advanced_analytics - INFO -   • Avg Cohort Size: 136 customers
+2026-02-18 22:41:17 - advanced_analytics - INFO -   • Avg Month-1 Retention: 8.7%
+2026-02-18 22:41:17 - test_analytics - INFO - 
+📊 Retention Matrix (First 5 cohorts, First 6 months):
+2026-02-18 22:41:17 - test_analytics - INFO - 
+✅ Exported: cohort_retention_matrix.csv, cohort_counts_matrix.csv
+2026-02-18 22:41:17 - test_analytics - INFO - 
+======================================================================
+2026-02-18 22:41:17 - test_analytics - INFO - TEST 4: Customer Lifetime Value (CLV)
+2026-02-18 22:41:17 - test_analytics - INFO - ======================================================================
+2026-02-18 22:41:17 - advanced_analytics - INFO - 
+======================================================================
+2026-02-18 22:41:17 - advanced_analytics - INFO - 💰 CUSTOMER LIFETIME VALUE (CLV)
+2026-02-18 22:41:17 - advanced_analytics - INFO - ======================================================================
+2026-02-18 22:41:17 - advanced_analytics - INFO - 
+📊 CLV Summary:
+2026-02-18 22:41:17 - advanced_analytics - INFO -   • Total Customers: 2,989
+2026-02-18 22:41:17 - advanced_analytics - INFO -   • Avg CLV: $1,150.12
+2026-02-18 22:41:17 - advanced_analytics - INFO -   • Median CLV: $446.64
+2026-02-18 22:41:17 - advanced_analytics - INFO -   • Total CLV: $3,437,719.27
+2026-02-18 22:41:17 - advanced_analytics - INFO - 
+🎯 CLV Segments:
+2026-02-18 22:41:17 - advanced_analytics - INFO -   • Low Value: 748 customers (Avg: $140.44, Total: $105,048.67)
+2026-02-18 22:41:17 - advanced_analytics - INFO -   • Medium Value: 747 customers (Avg: $333.23, Total: $248,919.81)
+2026-02-18 22:41:17 - advanced_analytics - INFO -   • High Value: 747 customers (Avg: $675.68, Total: $504,734.63)
+2026-02-18 22:41:17 - advanced_analytics - INFO -   • Very High Value: 747 customers (Avg: $3,452.50, Total: $2,579,016.16)
+2026-02-18 22:41:17 - test_analytics - INFO - 
+💎 Top 10 High-Value Customers:
+2026-02-18 22:41:17 - test_analytics - INFO -   • Unknown (United Kingdom, Unknown)
+2026-02-18 22:41:17 - test_analytics - INFO -     CLV: $166,871.54, Purchases: 1, Avg Value: $168,469.60
+2026-02-18 22:41:17 - test_analytics - INFO -   • Unknown (United Kingdom, Unknown)
+2026-02-18 22:41:17 - test_analytics - INFO -     CLV: $91,718.10, Purchases: 156, Avg Value: $657.24
+2026-02-18 22:41:17 - test_analytics - INFO -   • Unknown (Netherlands, Unknown)
+2026-02-18 22:41:17 - test_analytics - INFO -     CLV: $78,223.53, Purchases: 690, Avg Value: $123.76
+2026-02-18 22:41:17 - test_analytics - INFO -   • Unknown (EIRE, Unknown)
+2026-02-18 22:41:17 - test_analytics - INFO -     CLV: $46,745.75, Purchases: 2155, Avg Value: $26.02
+2026-02-18 22:41:17 - test_analytics - INFO -   • Unknown (Australia, Unknown)
+2026-02-18 22:41:17 - test_analytics - INFO -     CLV: $41,163.97, Purchases: 226, Avg Value: $195.44
+2026-02-18 22:41:17 - test_analytics - INFO -   • Unknown (United Kingdom, Unknown)
+2026-02-18 22:41:17 - test_analytics - INFO -     CLV: $39,361.61, Purchases: 491, Avg Value: $96.01
+2026-02-18 22:41:17 - test_analytics - INFO -   • Unknown (United Kingdom, Unknown)
+2026-02-18 22:41:17 - test_analytics - INFO -     CLV: $37,307.13, Purchases: 107, Avg Value: $414.95
+2026-02-18 22:41:17 - test_analytics - INFO -   • Unknown (United Kingdom, Unknown)
+2026-02-18 22:41:17 - test_analytics - INFO -     CLV: $36,313.84, Purchases: 133, Avg Value: $278.14
+2026-02-18 22:41:17 - test_analytics - INFO -   • Unknown (United Kingdom, Unknown)
+2026-02-18 22:41:17 - test_analytics - INFO -     CLV: $32,352.65, Purchases: 59, Avg Value: $584.25
+2026-02-18 22:41:17 - test_analytics - INFO -   • Unknown (EIRE, Unknown)
+2026-02-18 22:41:17 - test_analytics - INFO -     CLV: $31,475.35, Purchases: 547, Avg Value: $67.97
+2026-02-18 22:41:17 - test_analytics - INFO - 
+✅ Exported: clv_analysis_results.csv
+2026-02-18 22:41:17 - test_analytics - INFO - 
+======================================================================
+2026-02-18 22:41:17 - test_analytics - INFO - TEST 5: Market Basket Analysis
+2026-02-18 22:41:17 - test_analytics - INFO - ======================================================================
+2026-02-18 22:41:17 - advanced_analytics - INFO - 
+======================================================================
+2026-02-18 22:41:17 - advanced_analytics - INFO - 🛒 MARKET BASKET ANALYSIS - Product Associations
+2026-02-18 22:41:17 - advanced_analytics - INFO - ======================================================================
+2026-02-18 22:41:18 - advanced_analytics - INFO - Analyzing 7,088 transactions
+2026-02-18 22:41:28 - advanced_analytics - INFO - Found 597 frequent items (support >= 0.01)
+2026-02-18 22:42:47 - advanced_analytics - INFO - 
+📊 Top Product Associations:
+2026-02-18 22:42:47 - advanced_analytics - INFO -   • check + damaged
+2026-02-18 22:42:47 - advanced_analytics - INFO -     Support: 0.096, Confidence: 0.264
+2026-02-18 22:42:47 - advanced_analytics - INFO -   • check + damages
+2026-02-18 22:42:47 - advanced_analytics - INFO -     Support: 0.091, Confidence: 0.251
+2026-02-18 22:42:47 - advanced_analytics - INFO -   • ? + check
+2026-02-18 22:42:47 - advanced_analytics - INFO -     Support: 0.074, Confidence: 0.606
+2026-02-18 22:42:47 - advanced_analytics - INFO -   • CREAM HANGING HEART T-LIGHT HO + check
+2026-02-18 22:42:47 - advanced_analytics - INFO -     Support: 0.060, Confidence: 0.491
+2026-02-18 22:42:47 - advanced_analytics - INFO -   • damaged + damages
+2026-02-18 22:42:47 - advanced_analytics - INFO -     Support: 0.053, Confidence: 0.302
+2026-02-18 22:42:47 - advanced_analytics - INFO -   • check + found
+2026-02-18 22:42:47 - advanced_analytics - INFO -     Support: 0.049, Confidence: 0.135
+2026-02-18 22:42:47 - advanced_analytics - INFO -   • amazon + check
+2026-02-18 22:42:47 - advanced_analytics - INFO -     Support: 0.044, Confidence: 0.581
+2026-02-18 22:42:47 - advanced_analytics - INFO -   • check + sold as set on dotcom
+2026-02-18 22:42:47 - advanced_analytics - INFO -     Support: 0.042, Confidence: 0.115
+2026-02-18 22:42:47 - advanced_analytics - INFO -   • CREAM HANGING HEART T-LIGHT HO + damaged
+2026-02-18 22:42:47 - advanced_analytics - INFO -     Support: 0.037, Confidence: 0.302
+2026-02-18 22:42:47 - advanced_analytics - INFO -   • PARTY BUNTING + check
+2026-02-18 22:42:47 - advanced_analytics - INFO -     Support: 0.036, Confidence: 0.449
+2026-02-18 22:42:47 - test_analytics - INFO - 
+🛒 Top 10 Product Associations:
+2026-02-18 22:42:47 - test_analytics - INFO -   • check + damaged
+2026-02-18 22:42:47 - test_analytics - INFO -     Support: 0.096, Confidence: 0.264, Count: 682
+2026-02-18 22:42:47 - test_analytics - INFO -   • check + damages
+2026-02-18 22:42:47 - test_analytics - INFO -     Support: 0.091, Confidence: 0.251, Count: 648
+2026-02-18 22:42:47 - test_analytics - INFO -   • ? + check
+2026-02-18 22:42:47 - test_analytics - INFO -     Support: 0.074, Confidence: 0.606, Count: 527
+2026-02-18 22:42:47 - test_analytics - INFO -   • CREAM HANGING HEART T-LIGHT HOLDER + check
+2026-02-18 22:42:47 - test_analytics - INFO -     Support: 0.060, Confidence: 0.491, Count: 425
+2026-02-18 22:42:47 - test_analytics - INFO -   • damaged + damages
+2026-02-18 22:42:47 - test_analytics - INFO -     Support: 0.053, Confidence: 0.302, Count: 375
+2026-02-18 22:42:47 - test_analytics - INFO -   • check + found
+2026-02-18 22:42:47 - test_analytics - INFO -     Support: 0.049, Confidence: 0.135, Count: 349
+2026-02-18 22:42:47 - test_analytics - INFO -   • amazon + check
+2026-02-18 22:42:47 - test_analytics - INFO -     Support: 0.044, Confidence: 0.581, Count: 314
+2026-02-18 22:42:47 - test_analytics - INFO -   • check + sold as set on dotcom
+2026-02-18 22:42:47 - test_analytics - INFO -     Support: 0.042, Confidence: 0.115, Count: 297
+2026-02-18 22:42:47 - test_analytics - INFO -   • CREAM HANGING HEART T-LIGHT HOLDER + damaged
+2026-02-18 22:42:47 - test_analytics - INFO -     Support: 0.037, Confidence: 0.302, Count: 261
+2026-02-18 22:42:47 - test_analytics - INFO -   • PARTY BUNTING + check
+2026-02-18 22:42:47 - test_analytics - INFO -     Support: 0.036, Confidence: 0.449, Count: 257
+2026-02-18 22:42:47 - test_analytics - INFO - 
+✅ Exported: market_basket_results.csv
+2026-02-18 22:42:47 - test_analytics - INFO - 
+======================================================================
+2026-02-18 22:42:47 - test_analytics - INFO - ✅ ALL ANALYTICS TESTS PASSED
+2026-02-18 22:42:47 - test_analytics - INFO - ======================================================================
+2026-02-18 22:42:47 - test_analytics - INFO - 
+📁 Generated Files:
+2026-02-18 22:42:47 - test_analytics - INFO -   • rfm_analysis_results.csv
+2026-02-18 22:42:47 - test_analytics - INFO -   • abc_analysis_results.csv
+2026-02-18 22:42:47 - test_analytics - INFO -   • cohort_retention_matrix.csv
+2026-02-18 22:42:47 - test_analytics - INFO -   • cohort_counts_matrix.csv
+2026-02-18 22:42:47 - test_analytics - INFO -   • clv_analysis_results.csv
+2026-02-18 22:42:47 - test_analytics - INFO -   • market_basket_results.csv
+2026-02-18 22:42:47 - test_analytics - INFO - 
+💡 Next Steps:
+2026-02-18 22:42:47 - test_analytics - INFO -   1. Review CSV files for detailed insights
+2026-02-18 22:42:47 - test_analytics - INFO -   2. Generate dashboard: python generate_analytics_dashboard.py
+2026-02-18 22:42:47 - test_analytics - INFO - 
+📊 Quick Summary:
+2026-02-18 22:42:47 - test_analytics - INFO -   • Customers Analyzed: 2,989
+2026-02-18 22:42:47 - test_analytics - INFO -   • Products Analyzed: 3,507
+2026-02-18 22:42:47 - test_analytics - INFO -   • Champions: 369
+2026-02-18 22:42:47 - test_analytics - INFO -   • Class A Products: 487
+2026-02-18 22:42:47 - test_analytics - INFO -   • Avg CLV: $1,150.12
+2026-02-18 23:28:17 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:28:17 - verify_analytics - INFO - 🔍 ANALYTICS VERIFICATION SYSTEM
+2026-02-18 23:28:17 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:28:17 - verify_analytics - INFO - 
+======================================================================
+2026-02-18 23:28:17 - verify_analytics - INFO - 1️⃣  VERIFYING RFM ANALYSIS
+2026-02-18 23:28:17 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:28:17 - verify_analytics - INFO - 
+📊 Comparison:
+2026-02-18 23:28:17 - verify_analytics - INFO -   CSV Customers: 2,989
+2026-02-18 23:28:17 - verify_analytics - INFO -   DB Customers:  2,989
+2026-02-18 23:28:17 - verify_analytics - INFO -   Match: ✅ YES
+2026-02-18 23:28:17 - verify_analytics - INFO - 
+  CSV Avg Recency: 5338 days
+2026-02-18 23:28:17 - verify_analytics - INFO -   DB Avg Recency:  5338 days
+2026-02-18 23:28:17 - verify_analytics - INFO - 
+  CSV Avg Frequency: 54.4
+2026-02-18 23:28:17 - verify_analytics - INFO -   DB Avg Frequency:  54.4
+2026-02-18 23:28:17 - verify_analytics - INFO - 
+  CSV Avg Monetary: $1,240.85
+2026-02-18 23:28:17 - verify_analytics - INFO -   DB Avg Monetary:  $1,240.85
+2026-02-18 23:28:17 - verify_analytics - INFO - 
+======================================================================
+2026-02-18 23:28:17 - verify_analytics - INFO - 2️⃣  VERIFYING ABC ANALYSIS
+2026-02-18 23:28:17 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:28:18 - verify_analytics - INFO - 
+📊 Comparison:
+2026-02-18 23:28:18 - verify_analytics - INFO -   CSV Products: 3,507
+2026-02-18 23:28:18 - verify_analytics - INFO -   DB Products:  3,507
+2026-02-18 23:28:18 - verify_analytics - INFO -   Match: ✅ YES
+2026-02-18 23:28:18 - verify_analytics - INFO - 
+  CSV Total Revenue: $3,726,200.30
+2026-02-18 23:28:18 - verify_analytics - INFO -   DB Total Revenue:  $3,726,200.30
+2026-02-18 23:28:18 - verify_analytics - INFO - 
+📦 ABC Class Distribution:
+2026-02-18 23:28:18 - verify_analytics - INFO -   Class A: 487 products (13.9%) → $2,606,424.89 (69.9%)
+2026-02-18 23:28:18 - verify_analytics - INFO -   Class B: 717 products (20.4%) → $746,640.13 (20.0%)
+2026-02-18 23:28:18 - verify_analytics - INFO -   Class C: 2,303 products (65.7%) → $373,135.28 (10.0%)
+2026-02-18 23:28:18 - verify_analytics - INFO - 
+======================================================================
+2026-02-18 23:28:18 - verify_analytics - INFO - 3️⃣  VERIFYING CLV ANALYSIS
+2026-02-18 23:28:18 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:28:18 - verify_analytics - ERROR - ❌ Verification failed: (psycopg2.errors.UndefinedFunction) function pg_catalog.extract(unknown, integer) does not exist
+LINE 7:                 EXTRACT(DAYS FROM (MAX(t.date) - MIN(t.date)...
+                        ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+
+[SQL: 
+        WITH customer_metrics AS (
+            SELECT 
+                c.customer_id,
+                COUNT(DISTINCT fs.sales_key) as purchase_count,
+                AVG(fs.sales_amount) as avg_purchase_value,
+                EXTRACT(DAYS FROM (MAX(t.date) - MIN(t.date)))::numeric / 365.25 as lifespan_years
+            FROM fact_sales fs
+            JOIN dim_customer c ON fs.customer_key = c.customer_key
+            JOIN dim_time t ON fs.time_key = t.time_key
+            WHERE c.is_current = TRUE
+            GROUP BY c.customer_id
+        )
+        SELECT 
+            COUNT(*) as customers,
+            ROUND(AVG(
+                (avg_purchase_value * (purchase_count / GREATEST(lifespan_years, 0.1)) * GREATEST(lifespan_years, 0.1)) 
+                / POWER(1.10, GREATEST(lifespan_years, 0.1))
+            ), 2) as avg_clv,
+            ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY 
+                (avg_purchase_value * (purchase_count / GREATEST(lifespan_years, 0.1)) * GREATEST(lifespan_years, 0.1)) 
+                / POWER(1.10, GREATEST(lifespan_years, 0.1))
+            ), 2) as median_clv
+        FROM customer_metrics
+    ]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-02-18 23:28:18 - verify_analytics - ERROR - Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedFunction: function pg_catalog.extract(unknown, integer) does not exist
+LINE 7:                 EXTRACT(DAYS FROM (MAX(t.date) - MIN(t.date)...
+                        ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Study Material\8th Sem\Major Project\etl\verify_analytics.py", line 232, in run_all_verifications
+    verify_clv_analysis()
+  File "D:\Study Material\8th Sem\Major Project\etl\verify_analytics.py", line 147, in verify_clv_analysis
+    db_results = pd.read_sql(query, conn)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\io\sql.py", line 734, in read_sql
+    return pandas_sql.read_query(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\io\sql.py", line 1836, in read_query
+    result = self.execute(sql, params)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\io\sql.py", line 1660, in execute
+    return self.con.execute(sql, *args)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedFunction) function pg_catalog.extract(unknown, integer) does not exist
+LINE 7:                 EXTRACT(DAYS FROM (MAX(t.date) - MIN(t.date)...
+                        ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+
+[SQL: 
+        WITH customer_metrics AS (
+            SELECT 
+                c.customer_id,
+                COUNT(DISTINCT fs.sales_key) as purchase_count,
+                AVG(fs.sales_amount) as avg_purchase_value,
+                EXTRACT(DAYS FROM (MAX(t.date) - MIN(t.date)))::numeric / 365.25 as lifespan_years
+            FROM fact_sales fs
+            JOIN dim_customer c ON fs.customer_key = c.customer_key
+            JOIN dim_time t ON fs.time_key = t.time_key
+            WHERE c.is_current = TRUE
+            GROUP BY c.customer_id
+        )
+        SELECT 
+            COUNT(*) as customers,
+            ROUND(AVG(
+                (avg_purchase_value * (purchase_count / GREATEST(lifespan_years, 0.1)) * GREATEST(lifespan_years, 0.1)) 
+                / POWER(1.10, GREATEST(lifespan_years, 0.1))
+            ), 2) as avg_clv,
+            ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY 
+                (avg_purchase_value * (purchase_count / GREATEST(lifespan_years, 0.1)) * GREATEST(lifespan_years, 0.1)) 
+                / POWER(1.10, GREATEST(lifespan_years, 0.1))
+            ), 2) as median_clv
+        FROM customer_metrics
+    ]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-02-18 23:29:38 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:29:38 - verify_analytics - INFO - 🔍 ANALYTICS VERIFICATION SYSTEM
+2026-02-18 23:29:38 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:29:38 - verify_analytics - INFO - 
+======================================================================
+2026-02-18 23:29:38 - verify_analytics - INFO - 1️⃣  VERIFYING RFM ANALYSIS
+2026-02-18 23:29:38 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:29:38 - verify_analytics - INFO - 
+📊 Comparison:
+2026-02-18 23:29:38 - verify_analytics - INFO -   CSV Customers: 2,989
+2026-02-18 23:29:38 - verify_analytics - INFO -   DB Customers:  2,989
+2026-02-18 23:29:38 - verify_analytics - INFO -   Match: ✅ YES
+2026-02-18 23:29:38 - verify_analytics - INFO - 
+  CSV Avg Recency: 5338 days
+2026-02-18 23:29:38 - verify_analytics - INFO -   DB Avg Recency:  5338 days
+2026-02-18 23:29:38 - verify_analytics - INFO - 
+  CSV Avg Frequency: 54.4
+2026-02-18 23:29:38 - verify_analytics - INFO -   DB Avg Frequency:  54.4
+2026-02-18 23:29:38 - verify_analytics - INFO - 
+  CSV Avg Monetary: $1,240.85
+2026-02-18 23:29:38 - verify_analytics - INFO -   DB Avg Monetary:  $1,240.85
+2026-02-18 23:29:38 - verify_analytics - INFO - 
+======================================================================
+2026-02-18 23:29:38 - verify_analytics - INFO - 2️⃣  VERIFYING ABC ANALYSIS
+2026-02-18 23:29:38 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:29:39 - verify_analytics - INFO - 
+📊 Comparison:
+2026-02-18 23:29:39 - verify_analytics - INFO -   CSV Products: 3,507
+2026-02-18 23:29:39 - verify_analytics - INFO -   DB Products:  3,507
+2026-02-18 23:29:39 - verify_analytics - INFO -   Match: ✅ YES
+2026-02-18 23:29:39 - verify_analytics - INFO - 
+  CSV Total Revenue: $3,726,200.30
+2026-02-18 23:29:39 - verify_analytics - INFO -   DB Total Revenue:  $3,726,200.30
+2026-02-18 23:29:39 - verify_analytics - INFO - 
+📦 ABC Class Distribution:
+2026-02-18 23:29:39 - verify_analytics - INFO -   Class A: 487 products (13.9%) → $2,606,424.89 (69.9%)
+2026-02-18 23:29:39 - verify_analytics - INFO -   Class B: 717 products (20.4%) → $746,640.13 (20.0%)
+2026-02-18 23:29:39 - verify_analytics - INFO -   Class C: 2,303 products (65.7%) → $373,135.28 (10.0%)
+2026-02-18 23:29:39 - verify_analytics - INFO - 
+======================================================================
+2026-02-18 23:29:39 - verify_analytics - INFO - 3️⃣  VERIFYING CLV ANALYSIS
+2026-02-18 23:29:39 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:29:39 - verify_analytics - ERROR - ❌ Verification failed: (psycopg2.errors.UndefinedFunction) function round(double precision, integer) does not exist
+LINE 20:             ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER B...
+                     ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+
+[SQL: 
+        WITH customer_metrics AS (
+            SELECT 
+                c.customer_id,
+                COUNT(DISTINCT fs.sales_key) as purchase_count,
+                AVG(fs.sales_amount) as avg_purchase_value,
+                (MAX(t.date) - MIN(t.date))::numeric / 365.25 as lifespan_years
+            FROM fact_sales fs
+            JOIN dim_customer c ON fs.customer_key = c.customer_key
+            JOIN dim_time t ON fs.time_key = t.time_key
+            WHERE c.is_current = TRUE
+            GROUP BY c.customer_id
+        )
+        SELECT 
+            COUNT(*) as customers,
+            ROUND(AVG(
+                (avg_purchase_value * (purchase_count / GREATEST(lifespan_years, 0.1)) * GREATEST(lifespan_years, 0.1)) 
+                / POWER(1.10, GREATEST(lifespan_years, 0.1))
+            ), 2) as avg_clv,
+            ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY 
+                (avg_purchase_value * (purchase_count / GREATEST(lifespan_years, 0.1)) * GREATEST(lifespan_years, 0.1)) 
+                / POWER(1.10, GREATEST(lifespan_years, 0.1))
+            ), 2) as median_clv
+        FROM customer_metrics
+    ]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-02-18 23:29:39 - verify_analytics - ERROR - Full traceback:
+Traceback (most recent call last):
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedFunction: function round(double precision, integer) does not exist
+LINE 20:             ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER B...
+                     ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Study Material\8th Sem\Major Project\etl\verify_analytics.py", line 232, in run_all_verifications
+    verify_clv_analysis()
+  File "D:\Study Material\8th Sem\Major Project\etl\verify_analytics.py", line 147, in verify_clv_analysis
+    db_results = pd.read_sql(query, conn)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\io\sql.py", line 734, in read_sql
+    return pandas_sql.read_query(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\io\sql.py", line 1836, in read_query
+    result = self.execute(sql, params)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\io\sql.py", line 1660, in execute
+    return self.con.execute(sql, *args)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedFunction) function round(double precision, integer) does not exist
+LINE 20:             ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER B...
+                     ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+
+[SQL: 
+        WITH customer_metrics AS (
+            SELECT 
+                c.customer_id,
+                COUNT(DISTINCT fs.sales_key) as purchase_count,
+                AVG(fs.sales_amount) as avg_purchase_value,
+                (MAX(t.date) - MIN(t.date))::numeric / 365.25 as lifespan_years
+            FROM fact_sales fs
+            JOIN dim_customer c ON fs.customer_key = c.customer_key
+            JOIN dim_time t ON fs.time_key = t.time_key
+            WHERE c.is_current = TRUE
+            GROUP BY c.customer_id
+        )
+        SELECT 
+            COUNT(*) as customers,
+            ROUND(AVG(
+                (avg_purchase_value * (purchase_count / GREATEST(lifespan_years, 0.1)) * GREATEST(lifespan_years, 0.1)) 
+                / POWER(1.10, GREATEST(lifespan_years, 0.1))
+            ), 2) as avg_clv,
+            ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY 
+                (avg_purchase_value * (purchase_count / GREATEST(lifespan_years, 0.1)) * GREATEST(lifespan_years, 0.1)) 
+                / POWER(1.10, GREATEST(lifespan_years, 0.1))
+            ), 2) as median_clv
+        FROM customer_metrics
+    ]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-02-18 23:32:29 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:32:29 - verify_analytics - INFO - 🔍 ANALYTICS VERIFICATION SYSTEM
+2026-02-18 23:32:29 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:32:29 - verify_analytics - INFO - 
+======================================================================
+2026-02-18 23:32:29 - verify_analytics - INFO - 1️⃣  VERIFYING RFM ANALYSIS
+2026-02-18 23:32:29 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:32:29 - verify_analytics - INFO - 
+📊 Comparison:
+2026-02-18 23:32:29 - verify_analytics - INFO -   CSV Customers: 2,989
+2026-02-18 23:32:29 - verify_analytics - INFO -   DB Customers:  2,989
+2026-02-18 23:32:29 - verify_analytics - INFO -   Match: ✅ YES
+2026-02-18 23:32:29 - verify_analytics - INFO - 
+  CSV Avg Recency:   5338 days
+2026-02-18 23:32:29 - verify_analytics - INFO -   DB Avg Recency:    5338 days
+2026-02-18 23:32:29 - verify_analytics - INFO - 
+  CSV Avg Frequency: 54.4
+2026-02-18 23:32:29 - verify_analytics - INFO -   DB Avg Frequency:  54.4
+2026-02-18 23:32:29 - verify_analytics - INFO - 
+  CSV Avg Monetary:  $1,240.85
+2026-02-18 23:32:29 - verify_analytics - INFO -   DB Avg Monetary:   $1,240.85
+2026-02-18 23:32:29 - verify_analytics - INFO - 
+======================================================================
+2026-02-18 23:32:29 - verify_analytics - INFO - 2️⃣  VERIFYING ABC ANALYSIS
+2026-02-18 23:32:29 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:32:30 - verify_analytics - INFO - 
+📊 Comparison:
+2026-02-18 23:32:30 - verify_analytics - INFO -   CSV Products: 3,507
+2026-02-18 23:32:30 - verify_analytics - INFO -   DB Products:  3,507
+2026-02-18 23:32:30 - verify_analytics - INFO -   Match: ✅ YES
+2026-02-18 23:32:30 - verify_analytics - INFO - 
+  CSV Total Revenue: $3,726,200.30
+2026-02-18 23:32:30 - verify_analytics - INFO -   DB Total Revenue:  $3,726,200.30
+2026-02-18 23:32:30 - verify_analytics - INFO - 
+📦 ABC Class Distribution:
+2026-02-18 23:32:30 - verify_analytics - INFO -   Class A: 487 products (13.9%) → $2,606,424.89 (69.9%)
+2026-02-18 23:32:30 - verify_analytics - INFO -   Class B: 717 products (20.4%) → $746,640.13 (20.0%)
+2026-02-18 23:32:30 - verify_analytics - INFO -   Class C: 2,303 products (65.7%) → $373,135.28 (10.0%)
+2026-02-18 23:32:30 - verify_analytics - INFO - 
+======================================================================
+2026-02-18 23:32:30 - verify_analytics - INFO - 3️⃣  VERIFYING CLV ANALYSIS
+2026-02-18 23:32:30 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:32:30 - verify_analytics - INFO - 
+📊 Comparison:
+2026-02-18 23:32:30 - verify_analytics - INFO -   CSV Customers:  2,989
+2026-02-18 23:32:30 - verify_analytics - INFO -   DB Customers:   2,989
+2026-02-18 23:32:30 - verify_analytics - INFO -   Match: ✅ YES
+2026-02-18 23:32:30 - verify_analytics - INFO - 
+  CSV Avg CLV:    $1,150.12
+2026-02-18 23:32:30 - verify_analytics - INFO -   DB Avg CLV:     $1,150.12
+2026-02-18 23:32:30 - verify_analytics - INFO - 
+  CSV Median CLV: $446.64
+2026-02-18 23:32:30 - verify_analytics - INFO -   DB Median CLV:  $446.64
+2026-02-18 23:32:30 - verify_analytics - INFO - 
+  CSV Total CLV:  $3,437,719.27
+2026-02-18 23:32:30 - verify_analytics - INFO - 
+💰 CLV Segment Distribution:
+2026-02-18 23:32:30 - verify_analytics - INFO -   Low Value: 748 customers (25.0%) → Avg CLV: $140.44
+2026-02-18 23:32:30 - verify_analytics - INFO -   Very High Value: 747 customers (25.0%) → Avg CLV: $3,452.50
+2026-02-18 23:32:30 - verify_analytics - INFO -   Medium Value: 747 customers (25.0%) → Avg CLV: $333.23
+2026-02-18 23:32:30 - verify_analytics - INFO -   High Value: 747 customers (25.0%) → Avg CLV: $675.68
+2026-02-18 23:32:30 - verify_analytics - INFO - 
+======================================================================
+2026-02-18 23:32:30 - verify_analytics - INFO - 4️⃣  DATA QUALITY CHECKS
+2026-02-18 23:32:30 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:32:30 - verify_analytics - INFO - 
+📊 Table Record Counts:
+2026-02-18 23:32:30 - verify_analytics - INFO -   fact_sales              163,199 records
+2026-02-18 23:32:30 - verify_analytics - INFO -   dim_customer              4,418 records
+2026-02-18 23:32:30 - verify_analytics - INFO -   dim_product              11,504 records
+2026-02-18 23:32:30 - verify_analytics - INFO -   dim_time                    127 records
+2026-02-18 23:32:30 - verify_analytics - INFO - 
+💰 Revenue Summary:
+2026-02-18 23:32:30 - verify_analytics - INFO -   Total Transactions: 163,199.0
+2026-02-18 23:32:30 - verify_analytics - INFO -   Unique Customers:   3,004.0
+2026-02-18 23:32:30 - verify_analytics - INFO -   Unique Products:    3,507.0
+2026-02-18 23:32:30 - verify_analytics - INFO -   Total Revenue:      $3,726,200.30
+2026-02-18 23:32:30 - verify_analytics - INFO -   Avg Transaction:    $22.83
+2026-02-18 23:32:30 - verify_analytics - INFO - 
+======================================================================
+2026-02-18 23:32:30 - verify_analytics - INFO - ✅ ALL VERIFICATIONS PASSED
+2026-02-18 23:32:30 - verify_analytics - INFO - ======================================================================
+2026-02-18 23:32:30 - verify_analytics - INFO -   • RFM Analysis: ✅ Verified
+2026-02-18 23:32:30 - verify_analytics - INFO -   • ABC Analysis: ✅ Verified
+2026-02-18 23:32:30 - verify_analytics - INFO -   • CLV Analysis: ✅ Verified
+2026-02-18 23:32:30 - verify_analytics - INFO -   • Data Quality: ✅ Verified
+2026-02-18 23:35:36 - excel_dashboard - INFO - ======================================================================
+2026-02-18 23:35:36 - excel_dashboard - INFO - 📊 GENERATING EXCEL DASHBOARD
+2026-02-18 23:35:36 - excel_dashboard - INFO - ======================================================================
+2026-02-18 23:35:37 - excel_dashboard - INFO - ✅ Loaded all analytics CSVs
+2026-02-18 23:36:18 - excel_dashboard - INFO - ======================================================================
+2026-02-18 23:36:18 - excel_dashboard - INFO - 📊 GENERATING EXCEL DASHBOARD
+2026-02-18 23:36:18 - excel_dashboard - INFO - ======================================================================
+2026-02-18 23:36:19 - excel_dashboard - INFO - ✅ Loaded all analytics CSVs
+2026-02-18 23:36:37 - excel_dashboard - INFO - ======================================================================
+2026-02-18 23:36:37 - excel_dashboard - INFO - 📊 GENERATING EXCEL DASHBOARD
+2026-02-18 23:36:37 - excel_dashboard - INFO - ======================================================================
+2026-02-18 23:36:37 - excel_dashboard - INFO - ✅ Loaded all analytics CSVs
+2026-02-18 23:37:17 - excel_dashboard - INFO - ======================================================================
+2026-02-18 23:37:17 - excel_dashboard - INFO - 📊 GENERATING EXCEL DASHBOARD
+2026-02-18 23:37:17 - excel_dashboard - INFO - ======================================================================
+2026-02-18 23:37:17 - excel_dashboard - INFO - ✅ Loaded all analytics CSVs
+2026-02-18 23:39:12 - excel_dashboard - INFO - ======================================================================
+2026-02-18 23:39:12 - excel_dashboard - INFO - 📊 GENERATING EXCEL DASHBOARD
+2026-02-18 23:39:12 - excel_dashboard - INFO - ======================================================================
+2026-02-18 23:39:13 - excel_dashboard - INFO - ✅ Loaded all analytics CSVs
+2026-02-18 23:41:06 - excel_dashboard - INFO - ======================================================================
+2026-02-18 23:41:06 - excel_dashboard - INFO - 📊 GENERATING EXCEL DASHBOARD
+2026-02-18 23:41:06 - excel_dashboard - INFO - ======================================================================
+2026-02-18 23:41:06 - excel_dashboard - INFO - ✅ Loaded all analytics CSVs
+2026-02-18 23:42:50 - excel_dashboard - INFO - ======================================================================
+2026-02-18 23:42:50 - excel_dashboard - INFO - 📊 GENERATING EXCEL DASHBOARD
+2026-02-18 23:42:50 - excel_dashboard - INFO - ======================================================================
+2026-02-18 23:42:50 - excel_dashboard - INFO - ✅ Loaded all analytics CSVs
+2026-02-18 23:43:40 - excel_dashboard - INFO - 
+✅ Excel dashboard saved: analytics_dashboard_20260218_234250.xlsx
+2026-02-18 23:43:40 - excel_dashboard - INFO - 
+📋 Sheets created:
+2026-02-18 23:43:40 - excel_dashboard - INFO -   1. Executive Summary  — KPIs + segment overview
+2026-02-18 23:43:40 - excel_dashboard - INFO -   2. RFM Analysis       — Colour-coded customer segments
+2026-02-18 23:43:40 - excel_dashboard - INFO -   3. ABC Analysis       — Green/Blue/Red class badges
+2026-02-18 23:43:40 - excel_dashboard - INFO -   4. Cohort Analysis    — Blue heat-map retention matrix
+2026-02-18 23:43:40 - excel_dashboard - INFO -   5. CLV Analysis       — Customers sorted by CLV
+2026-02-18 23:43:40 - excel_dashboard - INFO -   6. Market Basket      — Product associations

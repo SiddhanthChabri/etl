@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Retail Analytics API</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Segoe UI',sans-serif;background:#0a0d1a;color:#e0e0e0;min-height:100vh;}
+
+        /* ── HERO ── */
+        .hero{
+            background:linear-gradient(135deg,#0d1433 0%,#1a2560 50%,#0d1433 100%);
+            padding:60px 40px 50px;
+            text-align:center;
+            border-bottom:1px solid #1e2a50;
+            position:relative;
+            overflow:hidden;
+        }
+        .hero::before{
+            content:'';position:absolute;inset:0;
+            background:radial-gradient(ellipse at 50% 0%, rgba(68,114,196,0.18) 0%, transparent 70%);
+        }
+        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:2px;position:relative;}
+        .hero h1 span{color:#4472C4;}
+        .hero p{margin-top:12px;color:#8899bb;font-size:1rem;position:relative;}
+        .badge-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;position:relative;}
+        .badge{padding:4px 14px;border-radius:20px;font-size:0.75rem;font-weight:700;letter-spacing:.5px;}
+        .badge-blue{background:#1e3a6e;color:#7eb3ff;border:1px solid #2d4f8e;}
+        .badge-green{background:#1a3d1a;color:#7dcc7d;border:1px solid #2a5c2a;}
+        .badge-orange{background:#3d2a10;color:#ffaa55;border:1px solid #5c3f1a;}
+        .badge-purple{background:#2d1a4a;color:#bb88ff;border:1px solid #4a2d7a;}
+
+        /* ── STATUS BAR ── */
+        .status-bar{
+            background:#0f1428;
+            border-bottom:1px solid #1e2a50;
+            padding:12px 40px;
+            display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+        }
+        .status-item{display:flex;align-items:center;gap:8px;font-size:0.82rem;}
+        .dot{width:8px;height:8px;border-radius:50%;background:#70AD47;
+             box-shadow:0 0 6px #70AD47;animation:pulse 2s infinite;}
+        @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+        .dot.red{background:#e74c3c;box-shadow:0 0 6px #e74c3c;}
+        .dot.yellow{background:#FFC000;box-shadow:0 0 6px #FFC000;}
+        .status-label{color:#888;}
+        .status-val{color:#fff;font-weight:600;}
+
+        /* ── MAIN LAYOUT ── */
+        .container{max-width:1300px;margin:0 auto;padding:36px 32px;}
+
+        /* ── SECTION HEADERS ── */
+        .section-header{
+            display:flex;align-items:center;gap:12px;
+            margin:36px 0 18px;
+        }
+        .section-header h2{font-size:1.1rem;font-weight:700;color:#fff;}
+        .section-header .line{flex:1;height:1px;background:#1e2a50;}
+
+        /* ── KPI STRIP ── */
+        .kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:32px;}
+        .kpi{background:#111827;border:1px solid #1e2a50;border-radius:10px;padding:16px 18px;
+             transition:transform .2s,border-color .2s;}
+        .kpi:hover{transform:translateY(-3px);border-color:#4472C4;}
+        .kpi .ico{font-size:1.4rem;margin-bottom:6px;}
+        .kpi .val{font-size:1.6rem;font-weight:800;color:#fff;}
+        .kpi .lbl{font-size:0.72rem;color:#666;text-transform:uppercase;letter-spacing:.8px;margin-top:3px;}
+        .kpi.loading .val{color:#333;animation:shimmer 1.5s infinite;}
+        @keyframes shimmer{0%,100%{opacity:.3;}50%{opacity:.8;}}
+
+        /* ── ENDPOINT GRID ── */
+        .endpoint-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;}
+
+        /* ── MODULE CARD ── */
+        .module-card{background:#111827;border:1px solid #1e2a50;border-radius:12px;overflow:hidden;
+                     transition:border-color .2s,transform .2s;}
+        .module-card:hover{border-color:#4472C4;transform:translateY(-2px);}
+        .module-header{padding:16px 18px;display:flex;align-items:center;gap:12px;
+                       border-bottom:1px solid #1e2a50;}
+        .module-icon{font-size:1.5rem;}
+        .module-title{font-size:1rem;font-weight:700;color:#fff;}
+        .module-desc{font-size:0.75rem;color:#666;margin-top:2px;}
+        .endpoint-list{padding:10px 0;}
+        .ep{display:flex;align-items:center;gap:10px;padding:8px 18px;
+            cursor:pointer;transition:background .15s;text-decoration:none;}
+        .ep:hover{background:#1a2040;}
+        .method{font-size:0.65rem;font-weight:800;padding:2px 7px;border-radius:4px;
+                min-width:40px;text-align:center;letter-spacing:.5px;}
+        .get {background:#0d3a2a;color:#4ec994;border:1px solid #1a5c3e;}
+        .post{background:#2a1a3a;color:#bb88ff;border:1px solid #4a2d6a;}
+        .ep-path{font-size:0.78rem;color:#8899bb;font-family:'Courier New',monospace;}
+        .ep-desc{font-size:0.7rem;color:#555;margin-left:auto;text-align:right;max-width:120px;}
+
+        /* ── TRY IT PANEL ── */
+        .try-panel{
+            background:#111827;border:1px solid #1e2a50;border-radius:12px;
+            padding:24px;margin-top:32px;
+        }
+        .try-panel h3{font-size:1rem;font-weight:700;color:#fff;margin-bottom:16px;}
+        .try-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+        .try-row select,.try-row input{
+            background:#0a0d1a;border:1px solid #2d3a5a;border-radius:6px;
+            color:#e0e0e0;padding:9px 12px;font-size:0.84rem;
+        }
+        .try-row select{min-width:100px;}
+        .try-row input{flex:1;min-width:220px;}
+        .btn{
+            background:#4472C4;color:#fff;border:none;border-radius:6px;
+            padding:9px 22px;font-size:0.84rem;font-weight:700;cursor:pointer;
+            transition:background .2s;
+        }
+        .btn:hover{background:#2d5aad;}
+        .btn.red{background:#c0392b;}
+        .btn.red:hover{background:#a93226;}
+        .response-box{
+            background:#060810;border:1px solid #1e2a50;border-radius:8px;
+            padding:16px;margin-top:14px;font-family:'Courier New',monospace;
+            font-size:0.78rem;color:#7dcc7d;min-height:80px;max-height:320px;
+            overflow-y:auto;white-space:pre-wrap;word-break:break-all;
+            display:none;
+        }
+        .response-box.visible{display:block;}
+        .response-box.error{color:#e74c3c;}
+
+        /* ── CHURN SECTION ── */
+        .churn-form{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+        .form-group label{display:block;font-size:0.72rem;color:#666;
+                          text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+        .form-group input{
+            width:100%;background:#0a0d1a;border:1px solid #2d3a5a;
+            border-radius:6px;color:#e0e0e0;padding:8px 10px;font-size:0.84rem;
+        }
+        .churn-result{
+            background:#060810;border:1px solid #1e2a50;border-radius:10px;
+            padding:20px;margin-top:16px;display:none;
+        }
+        .churn-result.visible{display:block;}
+        .churn-prob{font-size:2.4rem;font-weight:800;text-align:center;}
+        .risk-badge{
+            display:inline-block;padding:4px 16px;border-radius:20px;
+            font-size:0.8rem;font-weight:700;margin-top:8px;
+        }
+
+        /* ── FOOTER ── */
+        footer{text-align:center;padding:28px;color:#333;font-size:0.78rem;
+               border-top:1px solid #1a2040;margin-top:40px;}
+
+        @media(max-width:600px){
+            .hero h1{font-size:1.6rem;}
+            .container{padding:20px 16px;}
+            .endpoint-grid{grid-template-columns:1fr;}
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── HERO ──────────────────────────────────────────────────────────── -->
+<div class="hero">
+    <h1>🛒 <span>Retail</span> Analytics API</h1>
+    <p>Data Warehouse · ETL Pipeline · Advanced Analytics · ML Churn Prediction</p>
+    <div class="badge-row">
+        <span class="badge badge-blue">FastAPI</span>
+        <span class="badge badge-blue">PostgreSQL</span>
+        <span class="badge badge-green">RFM · ABC · CLV</span>
+        <span class="badge badge-orange">Market Basket</span>
+        <span class="badge badge-purple">ML Churn Model</span>
+        <span class="badge badge-blue">Star Schema DWH</span>
+    </div>
+</div>
+
+<!-- ── STATUS BAR ──────────────────────────────────────────────────── -->
+<div class="status-bar">
+    <div class="status-item"><div class="dot" id="api-dot"></div>
+        <span class="status-label">API</span>
+        <span class="status-val" id="api-status">Checking...</span></div>
+    <div class="status-item"><div class="dot yellow" id="rfm-dot"></div>
+        <span class="status-label">RFM</span>
+        <span class="status-val" id="rfm-status">—</span></div>
+    <div class="status-item"><div class="dot yellow" id="abc-dot"></div>
+        <span class="status-label">ABC</span>
+        <span class="status-val" id="abc-status">—</span></div>
+    <div class="status-item"><div class="dot yellow" id="churn-dot"></div>
+        <span class="status-label">Churn Model</span>
+        <span class="status-val" id="churn-status">—</span></div>
+    <div class="status-item" style="margin-left:auto;color:#555;font-size:0.75rem">
+        v1.0.0 · <a href="/docs" style="color:#4472C4;text-decoration:none">Swagger UI ↗</a>
+        &nbsp;·&nbsp; <a href="/redoc" style="color:#4472C4;text-decoration:none">ReDoc ↗</a>
+    </div>
+</div>
+
+<!-- ── MAIN ──────────────────────────────────────────────────────────── -->
+<div class="container">
+
+    <!-- KPI strip -->
+    <div class="kpi-strip">
+        <div class="kpi loading"><div class="ico">👥</div><div class="val" id="k-customers">—</div><div class="lbl">Customers</div></div>
+        <div class="kpi loading"><div class="ico">📦</div><div class="val" id="k-products">—</div><div class="lbl">Products</div></div>
+        <div class="kpi loading"><div class="ico">💰</div><div class="val" id="k-revenue">—</div><div class="lbl">Total Revenue</div></div>
+        <div class="kpi loading"><div class="ico">💎</div><div class="val" id="k-clv">—</div><div class="lbl">Avg CLV</div></div>
+        <div class="kpi loading"><div class="ico">⚠️</div><div class="val" id="k-churn">—</div><div class="lbl">Churn Rate</div></div>
+        <div class="kpi loading"><div class="ico">⭐</div><div class="val" id="k-champions">—</div><div class="lbl">Champions</div></div>
+    </div>
+
+    <!-- ── ENDPOINT EXPLORER ── -->
+    <div class="section-header">
+        <h2>📡 API Endpoints</h2><div class="line"></div>
+    </div>
+
+    <div class="endpoint-grid">
+
+        <!-- RFM -->
+        <div class="module-card">
+            <div class="module-header">
+                <span class="module-icon">🎯</span>
+                <div><div class="module-title">RFM Analysis</div>
+                <div class="module-desc">Customer segmentation by recency, frequency & monetary</div></div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/rfm/customers?limit=5')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/rfm/customers</span>
+                    <span class="ep-desc">All customers</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/rfm/segments/summary')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/rfm/segments/summary</span>
+                    <span class="ep-desc">Segment stats</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/rfm/segments/list')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/rfm/segments/list</span>
+                    <span class="ep-desc">Segment names</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/rfm/top?n=5')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/rfm/top</span>
+                    <span class="ep-desc">Top customers</span></a>
+            </div>
+        </div>
+
+        <!-- ABC -->
+        <div class="module-card">
+            <div class="module-header">
+                <span class="module-icon">📦</span>
+                <div><div class="module-title">ABC Analysis</div>
+                <div class="module-desc">Product classification by revenue contribution</div></div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/abc/products?limit=5')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/abc/products</span>
+                    <span class="ep-desc">All products</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/abc/classes/summary')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/abc/classes/summary</span>
+                    <span class="ep-desc">Class stats</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/abc/top?n=5')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/abc/top</span>
+                    <span class="ep-desc">Top products</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/abc/categories')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/abc/categories</span>
+                    <span class="ep-desc">Category list</span></a>
+            </div>
+        </div>
+
+        <!-- CLV -->
+        <div class="module-card">
+            <div class="module-header">
+                <span class="module-icon">💎</span>
+                <div><div class="module-title">CLV Analysis</div>
+                <div class="module-desc">Customer lifetime value scoring & segments</div></div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/clv/customers?limit=5')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/clv/customers</span>
+                    <span class="ep-desc">All CLV scores</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/clv/segments/summary')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/clv/segments/summary</span>
+                    <span class="ep-desc">Segment breakdown</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/clv/top?n=5')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/clv/top</span>
+                    <span class="ep-desc">Top by CLV</span></a>
+            </div>
+        </div>
+
+        <!-- Cohort -->
+        <div class="module-card">
+            <div class="module-header">
+                <span class="module-icon">📅</span>
+                <div><div class="module-title">Cohort Analysis</div>
+                <div class="module-desc">Customer retention matrix by acquisition cohort</div></div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/cohort')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/cohort</span>
+                    <span class="ep-desc">Retention matrix</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/summary')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/summary</span>
+                    <span class="ep-desc">Full summary</span></a>
+            </div>
+        </div>
+
+        <!-- Market Basket -->
+        <div class="module-card">
+            <div class="module-header">
+                <span class="module-icon">🛒</span>
+                <div><div class="module-title">Market Basket</div>
+                <div class="module-desc">Association rules — products bought together</div></div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/basket/rules?limit=5')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/basket/rules</span>
+                    <span class="ep-desc">All rules</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/basket/top?n=5')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/basket/top</span>
+                    <span class="ep-desc">Top by lift</span></a>
+            </div>
+        </div>
+
+        <!-- Churn -->
+        <div class="module-card" style="border-color:#2d1a4a;">
+            <div class="module-header" style="background:#0d0a1a;">
+                <span class="module-icon">🤖</span>
+                <div><div class="module-title">Churn Prediction <span style="color:#bb88ff;font-size:0.7rem">ML</span></div>
+                <div class="module-desc">RandomForest model · Churn probability per customer</div></div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/churn/summary')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/churn/summary</span>
+                    <span class="ep-desc">Model metrics</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/churn/risk/critical')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/churn/risk/critical</span>
+                    <span class="ep-desc">Critical risk</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/churn/top-at-risk?n=5')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/churn/top-at-risk</span>
+                    <span class="ep-desc">High value at risk</span></a>
+            </div>
+        </div>
+
+        <!-- ETL -->
+        <div class="module-card">
+            <div class="module-header">
+                <span class="module-icon">⚙️</span>
+                <div><div class="module-title">ETL Pipeline</div>
+                <div class="module-desc">Trigger & monitor data pipeline jobs</div></div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/etl/status')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/etl/status</span>
+                    <span class="ep-desc">Job status</span></a>
+                <a class="ep" onclick="postEndpoint('/etl/run')">
+                    <span class="method post">POST</span>
+                    <span class="ep-path">/etl/run</span>
+                    <span class="ep-desc">Trigger ETL</span></a>
+                <a class="ep" onclick="postEndpoint('/etl/analytics/refresh')">
+                    <span class="method post">POST</span>
+                    <span class="ep-path">/etl/analytics/refresh</span>
+                    <span class="ep-desc">Refresh analytics</span></a>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="module-card">
+            <div class="module-header">
+                <span class="module-icon">📊</span>
+                <div><div class="module-title">Dashboard & Files</div>
+                <div class="module-desc">Visual dashboard & report downloads</div></div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" href="/dashboard" target="_blank">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/dashboard</span>
+                    <span class="ep-desc">Open dashboard ↗</span></a>
+                <a class="ep" href="/download/excel">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/download/excel</span>
+                    <span class="ep-desc">Download .xlsx ↓</span></a>
+                <a class="ep" href="/health" target="_blank">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/health</span>
+                    <span class="ep-desc">Health check</span></a>
+            </div>
+        </div>
+
+    </div><!-- /endpoint-grid -->
+
+    <!-- ── TRY IT ── -->
+    <div class="section-header" style="margin-top:40px;">
+        <h2>⚡ Try It Live</h2><div class="line"></div>
+    </div>
+
+    <div class="try-panel">
+        <h3>GET Request</h3>
+        <div class="try-row">
+            <input id="try-url" type="text" placeholder="/api/rfm/segments/summary" value="/api/rfm/segments/summary"/>
+            <button class="btn" onclick="sendTry()">Send →</button>
+            <button class="btn red" onclick="clearTry()">Clear</button>
+        </div>
+        <div class="response-box" id="try-response"></div>
+    </div>
+
+    <!-- ── CHURN PREDICTOR ── -->
+    <div class="section-header" style="margin-top:40px;">
+        <h2>🤖 Live Churn Predictor</h2><div class="line"></div>
+    </div>
+
+    <div class="try-panel">
+        <h3>Enter customer RFM values to predict churn probability</h3>
+        <div class="churn-form" style="margin-top:16px;">
+            <div class="form-group">
+                <label>Recency (days)</label>
+                <input id="c-recency"   type="number" value="365" placeholder="e.g. 365"/>
+            </div>
+            <div class="form-group">
+                <label>Frequency</label>
+                <input id="c-frequency" type="number" value="5"   placeholder="e.g. 5"/>
+            </div>
+            <div class="form-group">
+                <label>Monetary ($)</label>
+                <input id="c-monetary"  type="number" value="500" placeholder="e.g. 500"/>
+            </div>
+            <div class="form-group">
+                <label>R Score (1-5)</label>
+                <input id="c-r"         type="number" value="3"   min="1" max="5"/>
+            </div>
+            <div class="form-group">
+                <label>F Score (1-5)</label>
+                <input id="c-f"         type="number" value="3"   min="1" max="5"/>
+            </div>
+            <div class="form-group">
+                <label>M Score (1-5)</label>
+                <input id="c-m"         type="number" value="3"   min="1" max="5"/>
+            </div>
+        </div>
+        <div style="margin-top:16px;">
+            <button class="btn" onclick="predictChurn()">🤖 Predict Churn</button>
+        </div>
+        <div class="churn-result" id="churn-result">
+            <div style="text-align:center;">
+                <div class="churn-prob" id="churn-prob-val">—</div>
+                <div style="color:#888;font-size:0.8rem;margin-top:4px;">Churn Probability</div>
+                <div id="churn-risk-badge" style="margin-top:10px;"></div>
+                <div id="churn-raw" style="margin-top:16px;font-size:0.75rem;color:#555;
+                     font-family:monospace;text-align:left;background:#0a0d1a;
+                     padding:12px;border-radius:6px;"></div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /container -->
+
+<footer>
+    Retail Analytics API v1.0.0 &nbsp;·&nbsp;
+    Built with FastAPI + PostgreSQL + scikit-learn &nbsp;·&nbsp;
+    <a href="/docs" style="color:#4472C4;text-decoration:none">Swagger Docs</a> &nbsp;·&nbsp;
+    <a href="/dashboard" style="color:#4472C4;text-decoration:none">Dashboard</a>
+</footer>
+
+<script>
+const API = "";
+
+// ── Status check ──────────────────────────────────────────────────────
+async function checkStatus() {
+    try {
+        const r = await fetch(`${API}/health`);
+        const d = await r.json();
+        document.getElementById("api-status").textContent = "Online";
+        document.getElementById("api-dot").className = "dot";
+
+        const setDot = (id, ok) => {
+            document.getElementById(id).className = "dot " + (ok ? "" : "red");
+        };
+        setDot("rfm-dot",   d.files.rfm_csv);
+        setDot("abc-dot",   d.files.abc_csv);
+        setDot("churn-dot", d.files.churn_model);
+        document.getElementById("rfm-status").textContent   = d.files.rfm_csv    ? "Ready" : "Missing";
+        document.getElementById("abc-status").textContent   = d.files.abc_csv    ? "Ready" : "Missing";
+        document.getElementById("churn-status").textContent = d.files.churn_model ? "Loaded" : "Not trained";
+    } catch {
+        document.getElementById("api-status").textContent = "Offline";
+        document.getElementById("api-dot").className = "dot red";
+    }
+}
+
+// ── KPIs ──────────────────────────────────────────────────────────────
+async function loadKPIs() {
+    try {
+        const r = await fetch(`${API}/api/summary`);
+        const d = await r.json();
+
+        const fmt = n => n == null ? "—" : Number(n).toLocaleString("en-US",{maximumFractionDigits:0});
+        const fmtC = n => n == null ? "—" : "$" + Number(n).toLocaleString("en-US",{maximumFractionDigits:0});
+
+        document.getElementById("k-customers").textContent = fmt(d.rfm?.total_customers);
+        document.getElementById("k-products").textContent  = fmt(d.abc?.total_products);
+        document.getElementById("k-revenue").textContent   = fmtC(d.abc?.total_revenue);
+        document.getElementById("k-clv").textContent       = fmtC(d.clv?.avg_clv);
+        document.querySelectorAll(".kpi").forEach(k => k.classList.remove("loading"));
+
+        // Champions from RFM summary
+        const rfmR = await fetch(`${API}/api/rfm/segments/summary`);
+        const rfmD = await rfmR.json();
+        const champions = rfmD.find(s => s.segment === "Champions");
+        document.getElementById("k-champions").textContent = champions
+            ? fmt(champions.customer_count) : "—";
+    } catch(e) { console.warn("KPI load error", e); }
+
+    try {
+        const r = await fetch(`${API}/api/churn/summary`);
+        const d = await r.json();
+        document.getElementById("k-churn").textContent = d.churn_rate_pct + "%";
+    } catch { document.getElementById("k-churn").textContent = "—"; }
+}
+
+// ── Try It ────────────────────────────────────────────────────────────
+function tryEndpoint(url) {
+    document.getElementById("try-url").value = url;
+    sendTry();
+}
+
+async function postEndpoint(url) {
+    document.getElementById("try-url").value = url + " (POST)";
+    const box = document.getElementById("try-response");
+    box.classList.add("visible");
+    box.classList.remove("error");
+    box.textContent = "Sending POST...";
+    try {
+        const r = await fetch(`${API}${url}`, {method:"POST"});
+        const d = await r.json();
+        box.textContent = JSON.stringify(d, null, 2);
+    } catch(e) {
+        box.classList.add("error");
+        box.textContent = "Error: " + e.message;
+    }
+}
+
+async function sendTry() {
+    let url = document.getElementById("try-url").value.trim();
+    if (url.includes("(POST)")) { return; }
+    if (!url.startsWith("/")) url = "/" + url;
+    const box = document.getElementById("try-response");
+    box.classList.add("visible");
+    box.classList.remove("error");
+    box.textContent = "Loading...";
+    try {
+        const r = await fetch(`${API}${url}`);
+        const d = await r.json();
+        box.textContent = JSON.stringify(d, null, 2);
+    } catch(e) {
+        box.classList.add("error");
+        box.textContent = "Error: " + e.message;
+    }
+}
+
+function clearTry() {
+    document.getElementById("try-url").value = "";
+    const box = document.getElementById("try-response");
+    box.classList.remove("visible","error");
+    box.textContent = "";
+}
+
+// ── Churn Predictor ───────────────────────────────────────────────────
+async function predictChurn() {
+    const body = {
+        recency:   +document.getElementById("c-recency").value,
+        frequency: +document.getElementById("c-frequency").value,
+        monetary:  +document.getElementById("c-monetary").value,
+        r_score:   +document.getElementById("c-r").value,
+        f_score:   +document.getElementById("c-f").value,
+        m_score:   +document.getElementById("c-m").value,
+        rfm_value: +(document.getElementById("c-r").value +
+                     document.getElementById("c-f").value +
+                     document.getElementById("c-m").value)
+    };
+
+    const result = document.getElementById("churn-result");
+    result.classList.add("visible");
+    document.getElementById("churn-prob-val").textContent = "...";
+
+    try {
+        const r = await fetch(`${API}/api/churn/predict`, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(body)
+        });
+        const d = await r.json();
+
+        const pct  = d.churn_probability_pct;
+        const tier = d.risk_tier;
+
+        document.getElementById("churn-prob-val").textContent = pct + "%";
+        document.getElementById("churn-prob-val").style.color =
+            pct >= 75 ? "#e74c3c" : pct >= 50 ? "#FF7F00" : pct >= 25 ? "#FFC000" : "#70AD47";
+
+        const tierColors = {
+            "Critical Risk": "#e74c3c","High Risk": "#FF7F00",
+            "Medium Risk": "#FFC000","Low Risk": "#70AD47"
+        };
+        const tierBg = {
+            "Critical Risk":"#3a0a0a","High Risk":"#3a1a0a",
+            "Medium Risk":"#2a200a","Low Risk":"#0a2a0a"
+        };
+        document.getElementById("churn-risk-badge").innerHTML =
+            `<span class="risk-badge" style="background:${tierBg[tier]||"#1a1a1a"};
+             color:${tierColors[tier]||"#fff"};border:1px solid ${tierColors[tier]||"#fff"}">
+             ${tier}</span>`;
+
+        document.getElementById("churn-raw").textContent = JSON.stringify(d, null, 2);
+    } catch(e) {
+        document.getElementById("churn-prob-val").textContent = "Error";
+        document.getElementById("churn-raw").textContent = e.message;
+    }
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────
+checkStatus();
+loadKPIs();
+</script>
+</body>
+</html>

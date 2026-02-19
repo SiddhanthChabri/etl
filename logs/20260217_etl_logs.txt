@@ -1,0 +1,106 @@
+2026-02-17 00:28:58 - fix_perf_schema - INFO - ======================================================================
+2026-02-17 00:28:58 - fix_perf_schema - INFO - 🔧 FIXING QUERY PERFORMANCE TABLE SCHEMA
+2026-02-17 00:28:58 - fix_perf_schema - INFO - ======================================================================
+2026-02-17 00:28:58 - fix_perf_schema - INFO - Dropping old table...
+2026-02-17 00:28:58 - fix_perf_schema - INFO - Creating table with correct schema...
+2026-02-17 00:28:58 - fix_perf_schema - INFO - ✅ Table schema fixed successfully!
+2026-02-17 00:28:58 - fix_perf_schema - INFO - 
+📋 Verified Schema:
+2026-02-17 00:28:58 - fix_perf_schema - INFO -   • query_id                  integer
+2026-02-17 00:28:58 - fix_perf_schema - INFO -   • execution_id              integer
+2026-02-17 00:28:58 - fix_perf_schema - INFO -   • query_name                character varying
+2026-02-17 00:28:58 - fix_perf_schema - INFO -   • query_text                text
+2026-02-17 00:28:58 - fix_perf_schema - INFO -   • execution_time_ms         numeric
+2026-02-17 00:28:58 - fix_perf_schema - INFO -   • rows_affected             integer
+2026-02-17 00:28:58 - fix_perf_schema - INFO -   • timestamp                 timestamp without time zone
+2026-02-17 00:28:58 - fix_perf_schema - INFO -   • query_plan                text
+2026-02-17 00:28:58 - fix_perf_schema - INFO - 
+======================================================================
+2026-02-17 00:28:58 - fix_perf_schema - INFO - ✅ SCHEMA FIX COMPLETE
+2026-02-17 00:28:58 - fix_perf_schema - INFO - ======================================================================
+2026-02-17 00:28:58 - fix_perf_schema - INFO - 
+You can now run:
+2026-02-17 00:28:58 - fix_perf_schema - INFO -   python test_performance_monitor.py
+2026-02-17 00:29:12 - performance_monitor - INFO - ✅ Performance tracking tables initialized
+2026-02-17 00:29:12 - test_performance - INFO - ======================================================================
+2026-02-17 00:29:12 - test_performance - INFO - 🚀 TESTING PERFORMANCE MONITORING SYSTEM
+2026-02-17 00:29:12 - test_performance - INFO - ======================================================================
+2026-02-17 00:29:12 - test_performance - INFO - 
+======================================================================
+2026-02-17 00:29:12 - test_performance - INFO - TEST 1: Manual Session Management
+2026-02-17 00:29:12 - test_performance - INFO - ======================================================================
+2026-02-17 00:29:13 - performance_monitor - INFO - 📊 Started monitoring session: Manual ETL Test (ID: 4)
+2026-02-17 00:29:13 - test_performance - INFO - Processing data...
+2026-02-17 00:29:16 - performance_monitor - INFO - ✅ Session ended: SUCCESS | Duration: 3.03s | Records: 5,000
+2026-02-17 00:29:16 - test_performance - INFO - ✅ Manual monitoring test complete
+2026-02-17 00:29:18 - performance_monitor - INFO - 📊 Started monitoring session: Automated ETL Test (ID: 5)
+2026-02-17 00:29:18 - test_performance - INFO - 
+======================================================================
+2026-02-17 00:29:18 - test_performance - INFO - TEST 2: Decorator-Based Monitoring
+2026-02-17 00:29:18 - test_performance - INFO - ======================================================================
+2026-02-17 00:29:18 - test_performance - INFO - Processing with decorator...
+2026-02-17 00:29:20 - performance_monitor - INFO - ✅ Session ended: SUCCESS | Duration: 2.52s | Records: 3,500
+2026-02-17 00:29:20 - test_performance - INFO - Decorator result: {'inserted': 3000, 'updated': 500, 'rejected': 50}
+2026-02-17 00:29:21 - test_performance - INFO - 
+======================================================================
+2026-02-17 00:29:21 - test_performance - INFO - TEST 3: Query Performance Tracking
+2026-02-17 00:29:21 - test_performance - INFO - ======================================================================
+2026-02-17 00:29:22 - performance_monitor - INFO - 📊 Started monitoring session: Query Tracking Test (ID: 6)
+2026-02-17 00:29:22 - test_performance - INFO -   Tracked: Load Customer Dimension (450ms, 1000 rows)
+2026-02-17 00:29:23 - performance_monitor - WARNING - ⚠️  Slow query detected: Load Fact Sales (1200ms)
+2026-02-17 00:29:23 - test_performance - INFO -   Tracked: Load Fact Sales (1200ms, 5000 rows)
+2026-02-17 00:29:23 - test_performance - INFO -   Tracked: Update Watermark (150ms, 1 rows)
+2026-02-17 00:29:25 - performance_monitor - INFO - ✅ Session ended: SUCCESS | Duration: 2.56s | Records: 6,001
+2026-02-17 00:29:25 - test_performance - INFO - ✅ Query tracking test complete
+2026-02-17 00:29:26 - test_performance - INFO - 
+======================================================================
+2026-02-17 00:29:26 - test_performance - INFO - TEST 4: Performance Reports
+2026-02-17 00:29:26 - test_performance - INFO - ======================================================================
+2026-02-17 00:29:26 - test_performance - INFO - 
+📊 Execution Summary (Last 7 Days):
+2026-02-17 00:29:26 - test_performance - INFO - 
+⚠️  Slow Queries:
+2026-02-17 00:29:26 - test_performance - INFO - 
+📈 Performance Trend (Last 30 Days):
+2026-02-17 00:29:26 - performance_monitor - INFO - ======================================================================
+2026-02-17 00:29:26 - performance_monitor - INFO - 📊 PERFORMANCE REPORT
+2026-02-17 00:29:26 - performance_monitor - INFO - ======================================================================
+2026-02-17 00:29:26 - performance_monitor - INFO - 
+📈 Execution Summary (Last 7 Days):
+2026-02-17 00:29:26 - performance_monitor - INFO - 
+  Process: Query Tracking Test
+2026-02-17 00:29:26 - performance_monitor - INFO -     Total Runs: 2
+2026-02-17 00:29:26 - performance_monitor - INFO -     Success Rate: 100.0%
+2026-02-17 00:29:26 - performance_monitor - INFO -     Avg Duration: 2.55s
+2026-02-17 00:29:26 - performance_monitor - INFO -     Total Records: 12,002
+2026-02-17 00:29:26 - performance_monitor - INFO -     Avg CPU: 12.2%
+2026-02-17 00:29:26 - performance_monitor - INFO -     Avg Memory: 78.2 MB
+2026-02-17 00:29:26 - performance_monitor - INFO - 
+  Process: Manual ETL Test
+2026-02-17 00:29:26 - performance_monitor - INFO -     Total Runs: 2
+2026-02-17 00:29:26 - performance_monitor - INFO -     Success Rate: 100.0%
+2026-02-17 00:29:26 - performance_monitor - INFO -     Avg Duration: 3.02s
+2026-02-17 00:29:26 - performance_monitor - INFO -     Total Records: 10,000
+2026-02-17 00:29:26 - performance_monitor - INFO -     Avg CPU: 12.5%
+2026-02-17 00:29:26 - performance_monitor - INFO -     Avg Memory: 78.2 MB
+2026-02-17 00:29:26 - performance_monitor - INFO - 
+  Process: Automated ETL Test
+2026-02-17 00:29:26 - performance_monitor - INFO -     Total Runs: 2
+2026-02-17 00:29:26 - performance_monitor - INFO -     Success Rate: 100.0%
+2026-02-17 00:29:26 - performance_monitor - INFO -     Avg Duration: 2.52s
+2026-02-17 00:29:26 - performance_monitor - INFO -     Total Records: 7,000
+2026-02-17 00:29:26 - performance_monitor - INFO -     Avg CPU: 12.5%
+2026-02-17 00:29:26 - performance_monitor - INFO -     Avg Memory: 78.2 MB
+2026-02-17 00:29:26 - performance_monitor - INFO - 
+⚠️  Slow Queries (>500ms):
+2026-02-17 00:29:26 - performance_monitor - INFO - 
+  Query: Load Fact Sales
+2026-02-17 00:29:26 - performance_monitor - INFO -     Avg Time: 1200ms
+2026-02-17 00:29:26 - performance_monitor - INFO -     Max Time: 1200ms
+2026-02-17 00:29:26 - performance_monitor - INFO -     Executions: 1
+2026-02-17 00:29:26 - performance_monitor - INFO - 
+======================================================================
+2026-02-17 00:29:26 - test_performance - INFO - 
+======================================================================
+2026-02-17 00:29:26 - test_performance - INFO - ✅ ALL TESTS PASSED
+2026-02-17 00:29:26 - test_performance - INFO - ======================================================================

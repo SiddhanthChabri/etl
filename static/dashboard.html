@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Retail Analytics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f1117;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        /* ── HEADER ── */
+        header {
+            background: linear-gradient(135deg, #1a1f35 0%, #2d3561 100%);
+            padding: 20px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #4472C4;
+        }
+        header h1 { font-size: 1.6rem; color: #fff; letter-spacing: 1px; }
+        header h1 span { color: #4472C4; }
+        #last-updated { font-size: 0.78rem; color: #888; }
+
+        /* ── NAV TABS ── */
+        nav {
+            background: #161b2e;
+            display: flex;
+            gap: 4px;
+            padding: 12px 32px;
+            border-bottom: 1px solid #2a2f45;
+            flex-wrap: wrap;
+        }
+        nav button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            background: #1e2540;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        nav button:hover  { background: #2d3561; color: #fff; }
+        nav button.active { background: #4472C4; color: #fff; }
+
+        /* ── MAIN LAYOUT ── */
+        main { padding: 24px 32px; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* ── KPI CARDS ── */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .kpi-card {
+            background: #1a1f35;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #4472C4;
+            transition: transform 0.2s;
+        }
+        .kpi-card:hover { transform: translateY(-3px); }
+        .kpi-card .label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        .kpi-card .value { font-size: 1.9rem; font-weight: 700; color: #fff; margin-top: 6px; }
+        .kpi-card .sub   { font-size: 0.75rem; color: #70AD47; margin-top: 4px; }
+        .kpi-card.green  { border-left-color: #70AD47; }
+        .kpi-card.orange { border-left-color: #ED7D31; }
+        .kpi-card.red    { border-left-color: #e74c3c; }
+        .kpi-card.yellow { border-left-color: #FFC000; }
+
+        /* ── SECTION TITLE ── */
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 14px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #2a2f45;
+        }
+
+        /* ── CHART GRID ── */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+        .chart-card {
+            background: #1a1f35;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .chart-card canvas { max-height: 300px; }
+
+        /* ── TABLE ── */
+        .table-card {
+            background: #1a1f35;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+        th {
+            background: #2d3561;
+            color: #fff;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td { padding: 9px 14px; border-bottom: 1px solid #22283d; color: #ccc; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #22283d; }
+
+        /* ── BADGES ── */
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-champions        { background: #70AD47; color: #fff; }
+        .badge-loyal            { background: #4472C4; color: #fff; }
+        .badge-potential        { background: #ED7D31; color: #fff; }
+        .badge-recent           { background: #FFC000; color: #222; }
+        .badge-promising        { background: #5B9BD5; color: #fff; }
+        .badge-attention        { background: #FF7F00; color: #fff; }
+        .badge-sleep            { background: #e74c3c; color: #fff; }
+        .badge-risk             { background: #9B1C1C; color: #fff; }
+        .badge-a                { background: #70AD47; color: #fff; }
+        .badge-b                { background: #4472C4; color: #fff; }
+        .badge-c                { background: #e74c3c; color: #fff; }
+        .badge-veryhigh         { background: #70AD47; color: #fff; }
+        .badge-high             { background: #4472C4; color: #fff; }
+        .badge-medium           { background: #ED7D31; color: #fff; }
+        .badge-low              { background: #e74c3c; color: #fff; }
+
+        /* ── LOADING ── */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: #4472C4;
+            font-size: 1rem;
+        }
+        .spinner {
+            width: 32px; height: 32px;
+            border: 3px solid #2d3561;
+            border-top-color: #4472C4;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 12px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── COHORT HEATMAP ── */
+        .heatmap-table td {
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 60px;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 600px) {
+            main { padding: 16px; }
+            nav  { padding: 10px 16px; }
+            header { padding: 14px 16px; }
+            .chart-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>📊 <span>Retail</span> Analytics Dashboard</h1>
+    <span id="last-updated">Loading...</span>
+</header>
+
+<nav>
+    <button class="active" onclick="showTab('overview')">🏠 Overview</button>
+    <button onclick="showTab('rfm')">🎯 RFM</button>
+    <button onclick="showTab('abc')">📦 ABC</button>
+    <button onclick="showTab('clv')">💎 CLV</button>
+    <button onclick="showTab('cohort')">📅 Cohort</button>
+    <button onclick="showTab('basket')">🛒 Market Basket</button>
+</nav>
+
+<main>
+
+    <!-- ══════════════════════════════════════════════════
+         TAB 1: OVERVIEW
+    ══════════════════════════════════════════════════ -->
+    <div id="tab-overview" class="tab-content active">
+        <div class="kpi-grid" id="overview-kpis">
+            <div class="loading"><div class="spinner"></div> Loading KPIs...</div>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="section-title">💰 Revenue by ABC Class</div>
+                <canvas id="chart-abc-revenue"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="section-title">🎯 Customer Segments Distribution</div>
+                <canvas id="chart-rfm-segments"></canvas>
+            </div>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="section-title">💎 CLV Segment Distribution</div>
+                <canvas id="chart-clv-segments"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="section-title">📦 ABC Product Distribution</div>
+                <canvas id="chart-abc-products"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         TAB 2: RFM
+    ══════════════════════════════════════════════════ -->
+    <div id="tab-rfm" class="tab-content">
+        <div class="kpi-grid" id="rfm-kpis">
+            <div class="loading"><div class="spinner"></div> Loading...</div>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="section-title">Segment Revenue Share</div>
+                <canvas id="chart-rfm-revenue"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="section-title">Avg Frequency per Segment</div>
+                <canvas id="chart-rfm-freq"></canvas>
+            </div>
+        </div>
+        <div class="table-card">
+            <div class="section-title">🏆 Top 20 Customers by Revenue</div>
+            <table>
+                <thead><tr>
+                    <th>#</th><th>Customer</th><th>State</th>
+                    <th>Recency (days)</th><th>Frequency</th>
+                    <th>Monetary ($)</th><th>Segment</th>
+                </tr></thead>
+                <tbody id="rfm-table-body">
+                    <tr><td colspan="7" style="text-align:center">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         TAB 3: ABC
+    ══════════════════════════════════════════════════ -->
+    <div id="tab-abc" class="tab-content">
+        <div class="kpi-grid" id="abc-kpis">
+            <div class="loading"><div class="spinner"></div> Loading...</div>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="section-title">Revenue by Class</div>
+                <canvas id="chart-abc-rev2"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="section-title">Product Count by Class</div>
+                <canvas id="chart-abc-count"></canvas>
+            </div>
+        </div>
+        <div class="table-card">
+            <div class="section-title">🏆 Top 20 Products by Revenue</div>
+            <table>
+                <thead><tr>
+                    <th>#</th><th>Product</th><th>Category</th>
+                    <th>Revenue ($)</th><th>Transactions</th><th>Class</th>
+                </tr></thead>
+                <tbody id="abc-table-body">
+                    <tr><td colspan="6" style="text-align:center">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         TAB 4: CLV
+    ══════════════════════════════════════════════════ -->
+    <div id="tab-clv" class="tab-content">
+        <div class="kpi-grid" id="clv-kpis">
+            <div class="loading"><div class="spinner"></div> Loading...</div>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="section-title">CLV Segment Distribution</div>
+                <canvas id="chart-clv-dist"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="section-title">Avg CLV per Segment</div>
+                <canvas id="chart-clv-avg"></canvas>
+            </div>
+        </div>
+        <div class="table-card">
+            <div class="section-title">💎 Top 20 Customers by CLV</div>
+            <table>
+                <thead><tr>
+                    <th>#</th><th>Customer</th><th>State</th>
+                    <th>Purchases</th><th>Total Revenue ($)</th>
+                    <th>CLV ($)</th><th>Segment</th>
+                </tr></thead>
+                <tbody id="clv-table-body">
+                    <tr><td colspan="7" style="text-align:center">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         TAB 5: COHORT
+    ══════════════════════════════════════════════════ -->
+    <div id="tab-cohort" class="tab-content">
+        <div class="kpi-grid">
+            <div class="kpi-card green">
+                <div class="label">What is Cohort Analysis?</div>
+                <div class="value" style="font-size:1rem;margin-top:8px;line-height:1.6">
+                    Groups customers by their first purchase month and tracks
+                    how many return in subsequent months.
+                </div>
+            </div>
+        </div>
+        <div class="table-card">
+            <div class="section-title">📅 Retention Heatmap (% of cohort returning)</div>
+            <div id="cohort-table-container">
+                <div class="loading"><div class="spinner"></div> Loading cohort data...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         TAB 6: MARKET BASKET
+    ══════════════════════════════════════════════════ -->
+    <div id="tab-basket" class="tab-content">
+        <div class="kpi-grid" id="basket-kpis">
+            <div class="loading"><div class="spinner"></div> Loading...</div>
+        </div>
+        <div class="table-card">
+            <div class="section-title">🛒 Top Association Rules (by Lift)</div>
+            <table>
+                <thead><tr>
+                    <th>#</th><th>Antecedents</th><th>Consequents</th>
+                    <th>Support</th><th>Confidence</th><th>Lift</th>
+                </tr></thead>
+                <tbody id="basket-table-body">
+                    <tr><td colspan="6" style="text-align:center">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<script>
+// ── API base URL (same origin) ──────────────────────────────────────────
+const API = "";
+
+// ── Helpers ────────────────────────────────────────────────────────────
+const fmt  = n  => n == null ? "—" : Number(n).toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
+const fmtI = n  => n == null ? "—" : Number(n).toLocaleString("en-US");
+const segBadge = seg => {
+    if (!seg) return "";
+    const map = {
+        "champions":"champions","loyal customers":"loyal","potential loyalists":"potential",
+        "recent customers":"recent","promising":"promising","need attention":"attention",
+        "about to sleep":"sleep","at risk":"risk",
+        "very high value":"veryhigh","high value":"high","medium value":"medium","low value":"low",
+        "a":"a","b":"b","c":"c"
+    };
+    const key = seg.toLowerCase().trim();
+    const cls = map[key] || "loyal";
+    return `<span class="badge badge-${cls}">${seg}</span>`;
+};
+
+// ── Chart defaults ─────────────────────────────────────────────────────
+Chart.defaults.color = "#aaa";
+Chart.defaults.borderColor = "#2a2f45";
+const PALETTE = ["#4472C4","#70AD47","#ED7D31","#FFC000","#e74c3c","#5B9BD5","#9B1C1C","#FF7F00"];
+
+function makeDonut(id, labels, data, colors) {
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    if (ctx._chart) ctx._chart.destroy();
+    ctx._chart = new Chart(ctx, {
+        type: "doughnut",
+        data: { labels, datasets: [{ data, backgroundColor: colors || PALETTE, borderWidth:2, borderColor:"#0f1117" }] },
+        options: { plugins: { legend: { position:"right" } }, cutout:"60%" }
+    });
+}
+
+function makeBar(id, labels, data, label, color) {
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    if (ctx._chart) ctx._chart.destroy();
+    ctx._chart = new Chart(ctx, {
+        type: "bar",
+        data: { labels, datasets: [{ label, data, backgroundColor: color || "#4472C4", borderRadius:6 }] },
+        options: { plugins:{ legend:{ display:false } }, scales:{ y:{ grid:{ color:"#2a2f45" } }, x:{ grid:{ display:false } } } }
+    });
+}
+
+// ── Tab switching ──────────────────────────────────────────────────────
+function showTab(name) {
+    document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+    document.querySelectorAll("nav button").forEach(el => el.classList.remove("active"));
+    document.getElementById("tab-"+name).classList.add("active");
+    event.currentTarget.classList.add("active");
+}
+
+// ── Fetch & render functions ───────────────────────────────────────────
+
+async function loadOverview() {
+    const res  = await fetch(`${API}/api/summary`);
+    const data = await res.json();
+
+    // KPI cards
+    const rfm = data.rfm || {}, abc = data.abc || {}, clv = data.clv || {};
+    document.getElementById("overview-kpis").innerHTML = `
+        <div class="kpi-card"><div class="label">Total Customers</div><div class="value">${fmtI(rfm.total_customers)}</div></div>
+        <div class="kpi-card green"><div class="label">Total Products</div><div class="value">${fmtI(abc.total_products)}</div></div>
+        <div class="kpi-card orange"><div class="label">Total Revenue</div><div class="value">$${fmt(abc.total_revenue)}</div></div>
+        <div class="kpi-card yellow"><div class="label">Avg CLV</div><div class="value">$${fmt(clv.avg_clv)}</div></div>
+        <div class="kpi-card red"><div class="label">Total CLV</div><div class="value">$${fmt(clv.total_clv)}</div></div>
+        <div class="kpi-card"><div class="label">Avg Monetary / Customer</div><div class="value">$${fmt(rfm.avg_monetary)}</div></div>
+    `;
+
+    // ABC revenue donut
+    if (abc.class_distribution) {
+        const cls = abc.class_distribution;
+        makeDonut("chart-abc-revenue", ["Class A","Class B","Class C"],
+            [cls.A||0, cls.B||0, cls.C||0], ["#70AD47","#4472C4","#e74c3c"]);
+    }
+
+    // RFM segments donut
+    if (rfm.segments) {
+        const segs = rfm.segments;
+        makeDonut("chart-rfm-segments", Object.keys(segs), Object.values(segs));
+    }
+
+    // CLV segments donut
+    if (clv.segments) {
+        makeDonut("chart-clv-segments",
+            ["Very High Value","High Value","Medium Value","Low Value"],
+            [clv.segments["Very High Value"]||0, clv.segments["High Value"]||0,
+             clv.segments["Medium Value"]||0,   clv.segments["Low Value"]||0],
+            ["#70AD47","#4472C4","#ED7D31","#e74c3c"]);
+    }
+
+    // ABC product count donut
+    if (abc.class_distribution) {
+        const cls = abc.class_distribution;
+        makeDonut("chart-abc-products", ["Class A","Class B","Class C"],
+            [cls.A||0, cls.B||0, cls.C||0], ["#70AD47","#4472C4","#e74c3c"]);
+    }
+
+    document.getElementById("last-updated").textContent =
+        "Last updated: " + new Date().toLocaleString();
+}
+
+async function loadRFM() {
+    const [sumRes, topRes] = await Promise.all([
+        fetch(`${API}/api/rfm/segments/summary`),
+        fetch(`${API}/api/rfm/top?n=20`)
+    ]);
+    const summary = await sumRes.json();
+    const top     = await topRes.json();
+
+    // KPIs
+    const champions = summary.find(s => s.segment === "Champions") || {};
+    const total = summary.reduce((a,s) => a + s.customer_count, 0);
+    document.getElementById("rfm-kpis").innerHTML = `
+        <div class="kpi-card"><div class="label">Total Customers</div><div class="value">${fmtI(total)}</div></div>
+        <div class="kpi-card green"><div class="label">Champions</div><div class="value">${fmtI(champions.customer_count||0)}</div><div class="sub">Highest value</div></div>
+        <div class="kpi-card orange"><div class="label">Avg Recency</div><div class="value">${fmtI(summary.reduce((a,s)=>a+(s.avg_recency||0),0)/summary.length|0)}</div><div class="sub">days</div></div>
+        <div class="kpi-card yellow"><div class="label">Avg Frequency</div><div class="value">${(summary.reduce((a,s)=>a+(s.avg_frequency||0),0)/summary.length).toFixed(1)}</div><div class="sub">orders</div></div>
+    `;
+
+    // Revenue bar chart
+    makeBar("chart-rfm-revenue",
+        summary.map(s=>s.segment),
+        summary.map(s=>+(s.total_revenue||0).toFixed(2)),
+        "Total Revenue", "#4472C4");
+
+    // Frequency bar chart
+    makeBar("chart-rfm-freq",
+        summary.map(s=>s.segment),
+        summary.map(s=>+(s.avg_frequency||0).toFixed(1)),
+        "Avg Frequency", "#70AD47");
+
+    // Table
+    document.getElementById("rfm-table-body").innerHTML = top.map((r,i) => `
+        <tr>
+            <td>${i+1}</td>
+            <td>${r.customer_name||"—"}</td>
+            <td>${r.state||"—"}</td>
+            <td>${fmtI(r.recency)}</td>
+            <td>${fmtI(r.frequency)}</td>
+            <td>$${fmt(r.monetary)}</td>
+            <td>${segBadge(r.segment)}</td>
+        </tr>`).join("");
+}
+
+async function loadABC() {
+    const [sumRes, topRes] = await Promise.all([
+        fetch(`${API}/api/abc/classes/summary`),
+        fetch(`${API}/api/abc/top?n=20`)
+    ]);
+    const summary = await sumRes.json();
+    const top     = await topRes.json();
+
+    // KPIs
+    const classA = summary.find(s=>s.abc_class==="A")||{};
+    document.getElementById("abc-kpis").innerHTML = `
+        <div class="kpi-card green"><div class="label">Class A Products</div><div class="value">${fmtI(classA.product_count||0)}</div><div class="sub">${classA.product_pct||0}% of products</div></div>
+        <div class="kpi-card green"><div class="label">Class A Revenue</div><div class="value">$${fmt(classA.total_revenue||0)}</div><div class="sub">${classA.revenue_pct||0}% of revenue</div></div>
+        <div class="kpi-card"><div class="label">Total Products</div><div class="value">${fmtI(summary.reduce((a,s)=>a+(s.product_count||0),0))}</div></div>
+        <div class="kpi-card orange"><div class="label">Total Revenue</div><div class="value">$${fmt(summary.reduce((a,s)=>a+(s.total_revenue||0),0))}</div></div>
+    `;
+
+    makeBar("chart-abc-rev2",
+        summary.map(s=>`Class ${s.abc_class}`),
+        summary.map(s=>+(s.total_revenue||0).toFixed(2)),
+        "Revenue", ["#70AD47","#4472C4","#e74c3c"]);
+
+    makeBar("chart-abc-count",
+        summary.map(s=>`Class ${s.abc_class}`),
+        summary.map(s=>s.product_count||0),
+        "Products", ["#70AD47","#4472C4","#e74c3c"]);
+
+    document.getElementById("abc-table-body").innerHTML = top.map((r,i) => `
+        <tr>
+            <td>${i+1}</td>
+            <td>${r.product_name||"—"}</td>
+            <td>${r.category||"—"}</td>
+            <td>$${fmt(r.total_revenue)}</td>
+            <td>${fmtI(r.transaction_count)}</td>
+            <td>${segBadge(r.abc_class)}</td>
+        </tr>`).join("");
+}
+
+async function loadCLV() {
+    const [sumRes, topRes] = await Promise.all([
+        fetch(`${API}/api/clv/segments/summary`),
+        fetch(`${API}/api/clv/top?n=20`)
+    ]);
+    const summary = await sumRes.json();
+    const top     = await topRes.json();
+
+    const totalCLV = summary.reduce((a,s)=>a+(s.total_clv||0),0);
+    const totalCust= summary.reduce((a,s)=>a+(s.customer_count||0),0);
+    document.getElementById("clv-kpis").innerHTML = `
+        <div class="kpi-card"><div class="label">Total Customers</div><div class="value">${fmtI(totalCust)}</div></div>
+        <div class="kpi-card green"><div class="label">Total CLV</div><div class="value">$${fmt(totalCLV)}</div></div>
+        <div class="kpi-card yellow"><div class="label">Avg CLV</div><div class="value">$${fmt(totalCLV/totalCust||0)}</div></div>
+        <div class="kpi-card orange"><div class="label">Avg Purchases</div><div class="value">${(summary.reduce((a,s)=>a+(s.avg_purchases||0),0)/summary.length).toFixed(1)}</div></div>
+    `;
+
+    const segOrder = ["Very High Value","High Value","Medium Value","Low Value"];
+    const ordered  = segOrder.map(s => summary.find(x=>x.clv_segment===s) || {clv_segment:s,customer_count:0,avg_clv:0});
+
+    makeDonut("chart-clv-dist",
+        ordered.map(s=>s.clv_segment),
+        ordered.map(s=>s.customer_count||0),
+        ["#70AD47","#4472C4","#ED7D31","#e74c3c"]);
+
+    makeBar("chart-clv-avg",
+        ordered.map(s=>s.clv_segment),
+        ordered.map(s=>+(s.avg_clv||0).toFixed(2)),
+        "Avg CLV", ["#70AD47","#4472C4","#ED7D31","#e74c3c"]);
+
+    document.getElementById("clv-table-body").innerHTML = top.map((r,i) => `
+        <tr>
+            <td>${i+1}</td>
+            <td>${r.customer_name||"—"}</td>
+            <td>${r.state||"—"}</td>
+            <td>${fmtI(r.purchase_count)}</td>
+            <td>$${fmt(r.total_revenue)}</td>
+            <td>$${fmt(r.clv_discounted)}</td>
+            <td>${segBadge(r.clv_segment)}</td>
+        </tr>`).join("");
+}
+
+async function loadCohort() {
+    const res  = await fetch(`${API}/api/cohort`);
+    const data = await res.json();
+    const { cohorts, months, matrix } = data;
+
+    function retentionColor(pct) {
+        if (pct == null) return "#1a1f35";
+        if (pct >= 80) return "#1a5c1a";
+        if (pct >= 60) return "#256325";
+        if (pct >= 40) return "#2d7a2d";
+        if (pct >= 20) return "#1e4a7a";
+        if (pct >= 10) return "#1a3560";
+        return "#22283d";
+    }
+
+    let html = `<table class="heatmap-table"><thead><tr>
+        <th>Cohort</th>
+        ${months.map(m=>`<th>M${m}</th>`).join("")}
+    </tr></thead><tbody>`;
+
+    for (const cohort of cohorts) {
+        html += `<tr><td style="font-weight:600;color:#fff;white-space:nowrap">${cohort}</td>`;
+        for (const m of months) {
+            const val = matrix[cohort] && matrix[cohort][m];
+            const pct = val != null ? (+val).toFixed(1) : null;
+            const bg  = retentionColor(pct ? +pct : null);
+            html += `<td style="background:${bg};color:#fff">${pct != null ? pct+"%" : ""}</td>`;
+        }
+        html += "</tr>";
+    }
+    html += "</tbody></table>";
+    document.getElementById("cohort-table-container").innerHTML = html;
+}
+
+async function loadBasket() {
+    const res  = await fetch(`${API}/api/basket/top?n=50`);
+    const data = await res.json();
+
+    const total = data.length;
+    const avgConf = (data.reduce((a,r)=>a+(r.confidence||0),0)/total||0).toFixed(3);
+    const avgLift = (data.reduce((a,r)=>a+(r.lift||0),0)/total||0).toFixed(3);
+    document.getElementById("basket-kpis").innerHTML = `
+        <div class="kpi-card"><div class="label">Total Rules</div><div class="value">${fmtI(total)}</div></div>
+        <div class="kpi-card green"><div class="label">Avg Confidence</div><div class="value">${avgConf}</div></div>
+        <div class="kpi-card orange"><div class="label">Avg Lift</div><div class="value">${avgLift}</div></div>
+    `;
+
+    document.getElementById("basket-table-body").innerHTML = data.map((r,i) => `
+        <tr>
+            <td>${i+1}</td>
+            <td>${r.antecedents||"—"}</td>
+            <td>${r.consequents||"—"}</td>
+            <td>${(r.support||0).toFixed(4)}</td>
+            <td>${(r.confidence||0).toFixed(4)}</td>
+            <td>${(r.lift||0).toFixed(3)}</td>
+        </tr>`).join("");
+}
+
+// ── Boot ────────────────────────────────────────────────────────────────
+(async () => {
+    try { await loadOverview(); } catch(e) { console.error("Overview error", e); }
+    try { await loadRFM();      } catch(e) { console.error("RFM error", e); }
+    try { await loadABC();      } catch(e) { console.error("ABC error", e); }
+    try { await loadCLV();      } catch(e) { console.error("CLV error", e); }
+    try { await loadCohort();   } catch(e) { console.error("Cohort error", e); }
+    try { await loadBasket();   } catch(e) { console.error("Basket error", e); }
+})();
+</script>
+</body>
+</html>

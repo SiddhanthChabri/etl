@@ -1,0 +1,78 @@
+{
+  "model_name": "Random Forest",
+  "trained_at": "2026-02-19T02:15:38.918371",
+  "recency_threshold": 5402,
+  "features": [
+    "recency",
+    "frequency",
+    "monetary",
+    "r_score",
+    "f_score",
+    "m_score",
+    "rfm_value",
+    "avg_order_value",
+    "revenue_per_day",
+    "recency_x_frequency",
+    "monetary_x_frequency",
+    "log_monetary",
+    "log_frequency",
+    "log_recency",
+    "segment_score",
+    "clv_discounted",
+    "lifespan_years",
+    "clv_purchase_count"
+  ],
+  "metrics": {
+    "accuracy": 1.0,
+    "auc_roc": 1.0,
+    "cv_score": 1.0
+  },
+  "confusion_matrix": {
+    "tn": 450,
+    "fp": 0,
+    "fn": 0,
+    "tp": 148
+  },
+  "top_features": [
+    {
+      "feature": "recency",
+      "importance": 0.4164
+    },
+    {
+      "feature": "log_recency",
+      "importance": 0.2917
+    },
+    {
+      "feature": "r_score",
+      "importance": 0.1239
+    },
+    {
+      "feature": "rfm_value",
+      "importance": 0.0549
+    },
+    {
+      "feature": "segment_score",
+      "importance": 0.0539
+    },
+    {
+      "feature": "lifespan_years",
+      "importance": 0.0187
+    },
+    {
+      "feature": "monetary",
+      "importance": 0.0077
+    },
+    {
+      "feature": "monetary_x_frequency",
+      "importance": 0.0073
+    },
+    {
+      "feature": "revenue_per_day",
+      "importance": 0.0071
+    },
+    {
+      "feature": "log_monetary",
+      "importance": 0.0042
+    }
+  ]
+}

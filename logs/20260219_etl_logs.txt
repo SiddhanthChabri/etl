@@ -1,0 +1,100 @@
+2026-02-19 02:15:29 - churn_prediction - INFO - ======================================================================
+2026-02-19 02:15:29 - churn_prediction - INFO - 🤖 ML CHURN PREDICTION PIPELINE
+2026-02-19 02:15:29 - churn_prediction - INFO - ======================================================================
+2026-02-19 02:15:29 - churn_prediction - INFO - ✅ Loaded RFM data: 2,989 customers
+2026-02-19 02:15:29 - churn_prediction - INFO - 
+1️⃣  LABELLING CHURN
+2026-02-19 02:15:29 - churn_prediction - INFO -   Churn threshold (recency): 5402 days
+2026-02-19 02:15:29 - churn_prediction - INFO -   Churned customers:         739 (24.7%)
+2026-02-19 02:15:29 - churn_prediction - INFO -   Active customers:          2,250 (75.3%)
+2026-02-19 02:15:29 - churn_prediction - INFO - 
+2️⃣  FEATURE ENGINEERING
+2026-02-19 02:15:29 - churn_prediction - INFO -   Features built: 18
+2026-02-19 02:15:29 - churn_prediction - INFO -     • recency
+2026-02-19 02:15:29 - churn_prediction - INFO -     • frequency
+2026-02-19 02:15:29 - churn_prediction - INFO -     • monetary
+2026-02-19 02:15:29 - churn_prediction - INFO -     • r_score
+2026-02-19 02:15:29 - churn_prediction - INFO -     • f_score
+2026-02-19 02:15:29 - churn_prediction - INFO -     • m_score
+2026-02-19 02:15:29 - churn_prediction - INFO -     • rfm_value
+2026-02-19 02:15:29 - churn_prediction - INFO -     • avg_order_value
+2026-02-19 02:15:29 - churn_prediction - INFO -     • revenue_per_day
+2026-02-19 02:15:29 - churn_prediction - INFO -     • recency_x_frequency
+2026-02-19 02:15:29 - churn_prediction - INFO -     • monetary_x_frequency
+2026-02-19 02:15:29 - churn_prediction - INFO -     • log_monetary
+2026-02-19 02:15:29 - churn_prediction - INFO -     • log_frequency
+2026-02-19 02:15:29 - churn_prediction - INFO -     • log_recency
+2026-02-19 02:15:29 - churn_prediction - INFO -     • segment_score
+2026-02-19 02:15:29 - churn_prediction - INFO -     • clv_discounted
+2026-02-19 02:15:29 - churn_prediction - INFO -     • lifespan_years
+2026-02-19 02:15:29 - churn_prediction - INFO -     • clv_purchase_count
+2026-02-19 02:15:29 - churn_prediction - INFO - 
+3️⃣  TRAIN/TEST SPLIT (80/20, stratified)
+2026-02-19 02:15:29 - churn_prediction - INFO -   Train: 2,391  |  Test: 598
+2026-02-19 02:15:29 - churn_prediction - INFO - 
+4️⃣  TRAINING MODELS
+2026-02-19 02:15:29 - churn_prediction - INFO - 
+📊 Model Comparison:
+2026-02-19 02:15:29 - churn_prediction - INFO -   Model                       Accuracy    AUC-ROC   CV Score
+2026-02-19 02:15:29 - churn_prediction - INFO -   ----------------------------------------------------------
+2026-02-19 02:15:33 - churn_prediction - INFO -   Random Forest                 1.0000     1.0000     1.0000
+2026-02-19 02:15:37 - churn_prediction - INFO -   Gradient Boosting             1.0000     1.0000     1.0000
+2026-02-19 02:15:38 - churn_prediction - INFO -   Logistic Regression           0.9783     0.9998     0.9990
+2026-02-19 02:15:38 - churn_prediction - INFO - 
+  🏆 Best model: Random Forest (AUC: 1.0000)
+2026-02-19 02:15:38 - churn_prediction - INFO - 
+5️⃣  EVALUATING BEST MODEL
+2026-02-19 02:15:38 - churn_prediction - INFO - 
+📋 Classification Report:
+2026-02-19 02:15:38 - churn_prediction - INFO -                 precision    recall  f1-score   support
+2026-02-19 02:15:38 - churn_prediction - INFO -         Active       1.00      1.00      1.00       450
+2026-02-19 02:15:38 - churn_prediction - INFO -        Churned       1.00      1.00      1.00       148
+2026-02-19 02:15:38 - churn_prediction - INFO -       accuracy                           1.00       598
+2026-02-19 02:15:38 - churn_prediction - INFO -      macro avg       1.00      1.00      1.00       598
+2026-02-19 02:15:38 - churn_prediction - INFO -   weighted avg       1.00      1.00      1.00       598
+2026-02-19 02:15:38 - churn_prediction - INFO - 
+🔢 Confusion Matrix:
+2026-02-19 02:15:38 - churn_prediction - INFO -   True Negative  (Active   → Active):      450
+2026-02-19 02:15:38 - churn_prediction - INFO -   False Positive (Active   → Churned):       0
+2026-02-19 02:15:38 - churn_prediction - INFO -   False Negative (Churned  → Active):        0
+2026-02-19 02:15:38 - churn_prediction - INFO -   True Positive  (Churned  → Churned):     148
+2026-02-19 02:15:38 - churn_prediction - INFO - 
+🔑 Top 10 Feature Importances:
+2026-02-19 02:15:38 - churn_prediction - INFO -   recency                        0.4164  ████████████████████
+2026-02-19 02:15:38 - churn_prediction - INFO -   log_recency                    0.2917  ██████████████
+2026-02-19 02:15:38 - churn_prediction - INFO -   r_score                        0.1239  ██████
+2026-02-19 02:15:38 - churn_prediction - INFO -   rfm_value                      0.0549  ██
+2026-02-19 02:15:38 - churn_prediction - INFO -   segment_score                  0.0539  ██
+2026-02-19 02:15:38 - churn_prediction - INFO -   lifespan_years                 0.0187  
+2026-02-19 02:15:38 - churn_prediction - INFO -   monetary                       0.0077  
+2026-02-19 02:15:38 - churn_prediction - INFO -   monetary_x_frequency           0.0073  
+2026-02-19 02:15:38 - churn_prediction - INFO -   revenue_per_day                0.0071  
+2026-02-19 02:15:38 - churn_prediction - INFO -   log_monetary                   0.0042  
+2026-02-19 02:15:38 - churn_prediction - INFO - 
+6️⃣  PREDICTING ALL CUSTOMERS
+2026-02-19 02:15:38 - churn_prediction - INFO - 
+⚠️  Churn Risk Distribution:
+2026-02-19 02:15:38 - churn_prediction - INFO -   Critical Risk           739 customers (24.7%)
+2026-02-19 02:15:38 - churn_prediction - INFO -   High Risk                 0 customers (0.0%)
+2026-02-19 02:15:38 - churn_prediction - INFO -   Medium Risk               0 customers (0.0%)
+2026-02-19 02:15:38 - churn_prediction - INFO -   Low Risk              2,250 customers (75.3%)
+2026-02-19 02:15:38 - churn_prediction - INFO - 
+7️⃣  SAVING MODEL & RESULTS
+2026-02-19 02:15:38 - churn_prediction - INFO - 
+💾 Saved:
+2026-02-19 02:15:38 - churn_prediction - INFO -   models/churn_model.pkl
+2026-02-19 02:15:38 - churn_prediction - INFO -   models/churn_features.json
+2026-02-19 02:15:38 - churn_prediction - INFO -   models/churn_model_metadata.json
+2026-02-19 02:15:38 - churn_prediction - INFO -   churn_predictions.csv
+2026-02-19 02:15:38 - churn_prediction - INFO - 
+======================================================================
+2026-02-19 02:15:38 - churn_prediction - INFO - ✅ CHURN PREDICTION COMPLETE
+2026-02-19 02:15:38 - churn_prediction - INFO - ======================================================================
+2026-02-19 02:15:38 - churn_prediction - INFO -   Best Model:  Random Forest
+2026-02-19 02:15:38 - churn_prediction - INFO -   AUC-ROC:     1.0000
+2026-02-19 02:15:38 - churn_prediction - INFO -   Accuracy:    1.0000
+2026-02-19 02:15:38 - churn_prediction - INFO - 
+  Next step → add churn router to FastAPI:
+2026-02-19 02:15:38 - churn_prediction - INFO -   GET /api/churn/customer/{id}
+2026-02-19 02:15:38 - churn_prediction - INFO -   GET /api/churn/risk/critical
+2026-02-19 02:15:38 - churn_prediction - INFO -   GET /api/churn/summary

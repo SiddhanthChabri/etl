@@ -1,0 +1,315 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Data Quality Dashboard - Report #3</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 20px;
+                min-height: 100vh;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 10px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                overflow: hidden;
+            }
+
+            .header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 30px;
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 2.5em;
+                margin-bottom: 10px;
+            }
+
+            .header p {
+                opacity: 0.9;
+                font-size: 1.1em;
+            }
+
+            .metrics {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+                padding: 30px;
+                background: #f8f9fa;
+            }
+
+            .metric-card {
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                text-align: center;
+            }
+
+            .metric-value {
+                font-size: 2.5em;
+                font-weight: bold;
+                margin: 10px 0;
+            }
+
+            .metric-label {
+                color: #666;
+                font-size: 0.9em;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .metric-passed { color: #28a745; }
+            .metric-failed { color: #dc3545; }
+            .metric-warning { color: #ffc107; }
+            .metric-total { color: #667eea; }
+
+            .details {
+                padding: 30px;
+            }
+
+            .details h2 {
+                margin-bottom: 20px;
+                color: #333;
+            }
+
+            .check-item {
+                background: #f8f9fa;
+                padding: 15px;
+                margin-bottom: 15px;
+                border-radius: 8px;
+                border-left: 4px solid #ddd;
+            }
+
+            .check-item.pass {
+                border-left-color: #28a745;
+                background: #d4edda;
+            }
+
+            .check-item.fail {
+                border-left-color: #dc3545;
+                background: #f8d7da;
+            }
+
+            .check-item.warning {
+                border-left-color: #ffc107;
+                background: #fff3cd;
+            }
+
+            .check-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+
+            .check-name {
+                font-weight: bold;
+                font-size: 1.1em;
+            }
+
+            .status-badge {
+                padding: 5px 15px;
+                border-radius: 20px;
+                font-size: 0.8em;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+
+            .status-pass {
+                background: #28a745;
+                color: white;
+            }
+
+            .status-fail {
+                background: #dc3545;
+                color: white;
+            }
+
+            .status-warning {
+                background: #ffc107;
+                color: black;
+            }
+
+            .check-details {
+                margin-top: 10px;
+                padding-top: 10px;
+                border-top: 1px solid rgba(0,0,0,0.1);
+            }
+
+            .check-details p {
+                margin: 5px 0;
+                color: #555;
+            }
+
+            .footer {
+                background: #f8f9fa;
+                padding: 20px;
+                text-align: center;
+                color: #666;
+                border-top: 1px solid #ddd;
+            }
+
+            .progress-bar {
+                width: 100%;
+                height: 30px;
+                background: #e9ecef;
+                border-radius: 15px;
+                overflow: hidden;
+                margin: 20px 0;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: bold;
+                transition: width 0.3s ease;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>📊 Data Quality Dashboard</h1>
+                <p>Report #3 - February 16, 2026 at 11:39 PM</p>
+            </div>
+
+            <div class="metrics">
+                <div class="metric-card">
+                    <div class="metric-label">Total Checks</div>
+                    <div class="metric-value metric-total">8</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">✅ Passed</div>
+                    <div class="metric-value metric-passed">8</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">⚠️ Warnings</div>
+                    <div class="metric-value metric-warning">0</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">❌ Failed</div>
+                    <div class="metric-value metric-failed">0</div>
+                </div>
+            </div>
+
+            <div style="padding: 0 30px;">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100.0%">
+                        100.0% Pass Rate
+                    </div>
+                </div>
+            </div>
+
+            <div class="details">
+                <h2>📋 Check Details</h2>
+    
+                <div class="check-item pass">
+                    <div class="check-header">
+                        <span class="check-name">Referential Integrity</span>
+                        <span class="status-badge status-pass">PASS</span>
+                    </div>
+                    <div class="check-details">
+        <p><strong>Relationship:</strong> fact_sales.customer_key -> dim_customer.customer_key</p><p><strong>Orphaned Records:</strong> 0</p>
+                    </div>
+                </div>
+        
+                <div class="check-item pass">
+                    <div class="check-header">
+                        <span class="check-name">Referential Integrity</span>
+                        <span class="status-badge status-pass">PASS</span>
+                    </div>
+                    <div class="check-details">
+        <p><strong>Relationship:</strong> fact_sales.product_key -> dim_product.product_key</p><p><strong>Orphaned Records:</strong> 0</p>
+                    </div>
+                </div>
+        
+                <div class="check-item pass">
+                    <div class="check-header">
+                        <span class="check-name">Referential Integrity</span>
+                        <span class="status-badge status-pass">PASS</span>
+                    </div>
+                    <div class="check-details">
+        <p><strong>Relationship:</strong> fact_sales.store_key -> dim_store.store_key</p><p><strong>Orphaned Records:</strong> 0</p>
+                    </div>
+                </div>
+        
+                <div class="check-item pass">
+                    <div class="check-header">
+                        <span class="check-name">Referential Integrity</span>
+                        <span class="status-badge status-pass">PASS</span>
+                    </div>
+                    <div class="check-details">
+        <p><strong>Relationship:</strong> fact_sales.time_key -> dim_time.time_key</p><p><strong>Orphaned Records:</strong> 0</p>
+                    </div>
+                </div>
+        
+                <div class="check-item pass">
+                    <div class="check-header">
+                        <span class="check-name">Statistical Anomaly Detection</span>
+                        <span class="status-badge status-pass">PASS</span>
+                    </div>
+                    <div class="check-details">
+        <p><strong>Table:</strong> fact_sales</p><p><strong>Column:</strong> quantity_sold</p><p><strong>Data Std:</strong> 205.0</p><p><strong>Data Mean:</strong> 13.23</p><p><strong>Anomaly Count:</strong> 100</p><p><strong>Anomaly Stats:</strong> {'max': 80995.0, 'min': 630.0, 'mean': 2009.34}</p><p><strong>Total Records:</strong> 163,199</p><p><strong>Anomaly Percentage:</strong> 0.06</p>
+                    </div>
+                </div>
+        
+                <div class="check-item pass">
+                    <div class="check-header">
+                        <span class="check-name">Statistical Anomaly Detection</span>
+                        <span class="status-badge status-pass">PASS</span>
+                    </div>
+                    <div class="check-details">
+        <p><strong>Table:</strong> fact_sales</p><p><strong>Column:</strong> sales_amount</p><p><strong>Data Std:</strong> 423.31</p><p><strong>Data Mean:</strong> 22.83</p><p><strong>Anomaly Count:</strong> 97</p><p><strong>Anomaly Stats:</strong> {'max': 168469.6, 'min': 1295.0, 'mean': 3795.5264948453605}</p><p><strong>Total Records:</strong> 163,199</p><p><strong>Anomaly Percentage:</strong> 0.06</p>
+                    </div>
+                </div>
+        
+                <div class="check-item pass">
+                    <div class="check-header">
+                        <span class="check-name">Schema Validation</span>
+                        <span class="status-badge status-pass">PASS</span>
+                    </div>
+                    <div class="check-details">
+        <p><strong>Table:</strong> fact_sales</p><p><strong>Actual Columns:</strong> 9</p><p><strong>Expected Columns:</strong> 9</p>
+                    </div>
+                </div>
+        
+                <div class="check-item pass">
+                    <div class="check-header">
+                        <span class="check-name">Duplicate Detection</span>
+                        <span class="status-badge status-pass">PASS</span>
+                    </div>
+                    <div class="check-details">
+        <p><strong>Table:</strong> fact_sales</p><p><strong>Unique Columns:</strong> time_key, customer_key, product_key</p><p><strong>Duplicate Groups:</strong> 0</p>
+                    </div>
+                </div>
+        
+            </div>
+
+            <div class="footer">
+                <p>Generated by Retail Data Warehouse ETL System</p>
+                <p>Report ID: 3 | Timestamp: 2026-02-16 23:39:15.602911</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    
