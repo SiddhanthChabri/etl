@@ -191,3 +191,5 @@ secrets.py
 *.pkl
 models/
 *.log
+db_connection.py
+
