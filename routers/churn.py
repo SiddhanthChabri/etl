@@ -10,7 +10,9 @@ import joblib
 import json
 import os
 
+
 router = APIRouter()
+
 
 MODEL_PATH    = "models/churn_model.pkl"
 FEATURES_PATH = "models/churn_features.json"
@@ -18,6 +20,7 @@ META_PATH     = "models/churn_model_metadata.json"
 CSV_PATH      = "churn_predictions.csv"
 
 
+# ── Helpers ───────────────────────────────────────────────────────────────────
 def load_model():
     if not os.path.exists(MODEL_PATH):
         raise HTTPException(status_code=404,
@@ -36,6 +39,7 @@ def load_predictions() -> pd.DataFrame:
     return df
 
 
+# ── Summary ───────────────────────────────────────────────────────────────────
 @router.get("/summary", summary="Churn prediction summary & model metrics")
 def get_churn_summary():
     if not os.path.exists(META_PATH):
@@ -45,39 +49,45 @@ def get_churn_summary():
 
     dist = df["churn_risk_tier"].value_counts().to_dict()
     return {
-        "model":       meta["model_name"],
-        "trained_at":  meta["trained_at"],
-        "metrics":     meta["metrics"],
-        "top_features":meta["top_features"][:5],
-        "risk_distribution": dist,
-        "total_customers": len(df),
-        "predicted_churners": int(df["churn_prediction"].sum()),
-        "churn_rate_pct": round(df["churn_prediction"].mean() * 100, 2),
+        "model"              : meta["model_name"],
+        "trained_at"         : meta["trained_at"],
+        "metrics"            : meta["metrics"],
+        "top_features"       : meta["top_features"][:5],
+        "risk_distribution"  : dist,
+        "total_customers"    : len(df),
+        "predicted_churners" : int(df["churn_prediction"].sum()),
+        "churn_rate_pct"     : round(df["churn_prediction"].mean() * 100, 2),
     }
 
 
-@router.get("/customer/{customer_id}", summary="Get churn prediction for a customer")
+# ── Single customer churn ─────────────────────────────────────────────────────
+@router.get("/customer/{customer_id}",
+            summary="Get churn prediction for a customer")
 def get_customer_churn(customer_id: str):
     df     = load_predictions()
     result = df[df["customer_id"].astype(str) == str(customer_id)]
     if result.empty:
-        raise HTTPException(status_code=404, detail=f"Customer '{customer_id}' not found")
+        raise HTTPException(status_code=404,
+            detail=f"Customer '{customer_id}' not found")
     row = result.iloc[0].to_dict()
-    row["churn_probability_pct"] = round(float(row.get("churn_probability", 0)) * 100, 2)
+    row["churn_probability_pct"] = round(
+        float(row.get("churn_probability", 0)) * 100, 2)
     return row
 
 
-@router.get("/risk/{tier}", summary="Get all customers in a risk tier")
+# ── Customers by risk tier ────────────────────────────────────────────────────
+@router.get("/risk/{tier}",
+            summary="Get all customers in a risk tier")
 def get_customers_by_risk(
-    tier:   str = "critical",
-    limit:  int = Query(50),
+    tier  : str = "critical",
+    limit : int = Query(50),
     offset: int = Query(0)
 ):
     tier_map = {
         "critical": "Critical Risk",
-        "high":     "High Risk",
-        "medium":   "Medium Risk",
-        "low":      "Low Risk"
+        "high"    : "High Risk",
+        "medium"  : "Medium Risk",
+        "low"     : "Low Risk"
     }
     tier_label = tier_map.get(tier.lower())
     if not tier_label:
@@ -90,7 +100,9 @@ def get_customers_by_risk(
     return {"tier": tier_label, "total": total, "data": df.to_dict("records")}
 
 
-@router.get("/top-at-risk", summary="Top N high-value customers most likely to churn")
+# ── Top at-risk customers ─────────────────────────────────────────────────────
+@router.get("/top-at-risk",
+            summary="Top N high-value customers most likely to churn")
 def get_top_at_risk(n: int = Query(20)):
     """High monetary value + high churn probability = biggest business risk"""
     df = load_predictions()
@@ -104,13 +116,14 @@ def get_top_at_risk(n: int = Query(20)):
     return top.to_dict("records")
 
 
+# ── Custom predict ────────────────────────────────────────────────────────────
 class PredictRequest(BaseModel):
-    recency:   float
+    recency  : float
     frequency: float
-    monetary:  float
-    r_score:   int = 3
-    f_score:   int = 3
-    m_score:   int = 3
+    monetary : float
+    r_score  : int   = 3
+    f_score  : int   = 3
+    m_score  : int   = 3
     rfm_value: float = 333
 
 
@@ -121,38 +134,38 @@ def predict_custom(req: PredictRequest):
     Useful for scoring new/hypothetical customers.
     """
     model, features = load_model()
-    rfm_df = pd.read_csv("rfm_analysis_results.csv")
 
     input_data = {
-        "recency":   req.recency,
-        "frequency": req.frequency,
-        "monetary":  req.monetary,
-        "r_score":   req.r_score,
-        "f_score":   req.f_score,
-        "m_score":   req.m_score,
-        "rfm_value": req.rfm_value,
-        "avg_order_value":      req.monetary / max(req.frequency, 1),
-        "revenue_per_day":      req.monetary / max(req.recency, 1),
-        "recency_x_frequency":  req.recency  * req.frequency,
+        "recency"             : req.recency,
+        "frequency"           : req.frequency,
+        "monetary"            : req.monetary,
+        "r_score"             : req.r_score,
+        "f_score"             : req.f_score,
+        "m_score"             : req.m_score,
+        "rfm_value"           : req.rfm_value,
+        "avg_order_value"     : req.monetary / max(req.frequency, 1),
+        "revenue_per_day"     : req.monetary / max(req.recency, 1),
+        "recency_x_frequency" : req.recency  * req.frequency,
         "monetary_x_frequency": req.monetary * req.frequency,
-        "log_monetary":         np.log1p(req.monetary),
-        "log_frequency":        np.log1p(req.frequency),
-        "log_recency":          np.log1p(req.recency),
-        "segment_score":        3,
+        "log_monetary"        : np.log1p(req.monetary),
+        "log_frequency"       : np.log1p(req.frequency),
+        "log_recency"         : np.log1p(req.recency),
+        "segment_score"       : 3,
     }
+
     # Fill any extra features with 0
-    row = pd.DataFrame([{f: input_data.get(f, 0) for f in features}])
+    row  = pd.DataFrame([{f: input_data.get(f, 0) for f in features}])
     prob = float(model.predict_proba(row)[0][1])
 
-    if prob >= 0.75: risk = "Critical Risk"
+    if   prob >= 0.75: risk = "Critical Risk"
     elif prob >= 0.50: risk = "High Risk"
     elif prob >= 0.25: risk = "Medium Risk"
-    else: risk = "Low Risk"
+    else:              risk = "Low Risk"
 
     return {
-        "churn_probability":     round(prob, 4),
+        "churn_probability"    : round(prob, 4),
         "churn_probability_pct": round(prob * 100, 2),
-        "churn_prediction":      int(prob >= 0.5),
-        "risk_tier":             risk,
-        "input":                 req.dict()
+        "churn_prediction"     : int(prob >= 0.5),
+        "risk_tier"            : risk,
+        "input"                : req.dict()
     }

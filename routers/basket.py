@@ -52,9 +52,35 @@ def get_recommendations(product_name: str, limit: int = Query(5)):
     return {"product": product_name, "recommendations": recs.to_dict("records")}
 
 
-@router.get("/top", summary="Top N strongest association rules by lift")
-def get_top_rules(n: int = Query(10)):
-    df = load_basket()
-    if "lift" in df.columns:
-        df = df.nlargest(n, "lift")
-    return df.head(n).to_dict("records")
+@router.get("/top")
+def get_basket_top(n: int = Query(50)):
+    path = "market_basket_results.csv"
+    if not os.path.exists(path):
+        raise HTTPException(status_code=404, detail="market_basket_results.csv not found.")
+
+    df = pd.read_csv(path)
+
+    # Compute lift = confidence_a_to_b / support(b)
+    # Since we don't have support_b, use confidence_a_to_b as proxy sort key
+    # Sort by confidence_a_to_b descending
+    if "confidence_a_to_b" in df.columns:
+        df = df.sort_values("confidence_a_to_b", ascending=False)
+
+    df = df.head(n)
+
+    # Rename to standard names the dashboard expects
+    df = df.rename(columns={
+        "product_a"        : "antecedents",
+        "product_b"        : "consequents",
+        "confidence_a_to_b": "confidence",
+        "confidence_b_to_a": "confidence_b_to_a",
+        "count"            : "transaction_count"
+    })
+
+    # Compute lift approximation: confidence / support
+    df["lift"] = (df["confidence"] / df["support"]).round(4)
+
+    df = df.replace([float("inf"), float("-inf")], None)
+    df = df.where(pd.notnull(df), None)
+
+    return df.to_dict("records")

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Retail Analytics Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.27.0/plotly.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -136,21 +137,21 @@
             font-weight: 700;
             text-transform: uppercase;
         }
-        .badge-champions        { background: #70AD47; color: #fff; }
-        .badge-loyal            { background: #4472C4; color: #fff; }
-        .badge-potential        { background: #ED7D31; color: #fff; }
-        .badge-recent           { background: #FFC000; color: #222; }
-        .badge-promising        { background: #5B9BD5; color: #fff; }
-        .badge-attention        { background: #FF7F00; color: #fff; }
-        .badge-sleep            { background: #e74c3c; color: #fff; }
-        .badge-risk             { background: #9B1C1C; color: #fff; }
-        .badge-a                { background: #70AD47; color: #fff; }
-        .badge-b                { background: #4472C4; color: #fff; }
-        .badge-c                { background: #e74c3c; color: #fff; }
-        .badge-veryhigh         { background: #70AD47; color: #fff; }
-        .badge-high             { background: #4472C4; color: #fff; }
-        .badge-medium           { background: #ED7D31; color: #fff; }
-        .badge-low              { background: #e74c3c; color: #fff; }
+        .badge-champions { background: #70AD47; color: #fff; }
+        .badge-loyal     { background: #4472C4; color: #fff; }
+        .badge-potential { background: #ED7D31; color: #fff; }
+        .badge-recent    { background: #FFC000; color: #222; }
+        .badge-promising { background: #5B9BD5; color: #fff; }
+        .badge-attention { background: #FF7F00; color: #fff; }
+        .badge-sleep     { background: #e74c3c; color: #fff; }
+        .badge-risk      { background: #9B1C1C; color: #fff; }
+        .badge-a         { background: #70AD47; color: #fff; }
+        .badge-b         { background: #4472C4; color: #fff; }
+        .badge-c         { background: #e74c3c; color: #fff; }
+        .badge-veryhigh  { background: #70AD47; color: #fff; }
+        .badge-high      { background: #4472C4; color: #fff; }
+        .badge-medium    { background: #ED7D31; color: #fff; }
+        .badge-low       { background: #e74c3c; color: #fff; }
 
         /* ── LOADING ── */
         .loading {
@@ -179,10 +180,77 @@
             min-width: 60px;
         }
 
+        /* ── SHAP TAB ── */
+        .shap-card {
+            background: #1a1f35;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .shap-card h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .shap-card p {
+            color: #888;
+            font-size: 0.84rem;
+            line-height: 1.5;
+            margin-bottom: 4px;
+        }
+        .shap-input-row {
+            display: flex;
+            gap: 12px;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+        .shap-input-row input {
+            flex: 1;
+            padding: 10px 14px;
+            background: #0f1117;
+            color: #fff;
+            border: 1px solid #2a2f45;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            min-width: 200px;
+        }
+        .shap-input-row input:focus {
+            outline: none;
+            border-color: #4472C4;
+        }
+        .shap-btn {
+            padding: 10px 24px;
+            background: #4472C4;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .shap-btn:hover    { background: #2d5aa0; }
+        .shap-btn:disabled { background: #2a2f45; cursor: not-allowed; }
+        .shap-error {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            display: none;
+        }
+        .shap-breakdown-header {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 12px;
+            font-weight: 600;
+            padding: 10px 0 6px;
+            border-bottom: 1px solid #2a2f45;
+        }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 600px) {
-            main { padding: 16px; }
-            nav  { padding: 10px 16px; }
+            main   { padding: 16px; }
+            nav    { padding: 10px 16px; }
             header { padding: 14px 16px; }
             .chart-grid { grid-template-columns: 1fr; }
         }
@@ -196,207 +264,289 @@
 </header>
 
 <nav>
-    <button class="active" onclick="showTab('overview')">🏠 Overview</button>
-    <button onclick="showTab('rfm')">🎯 RFM</button>
-    <button onclick="showTab('abc')">📦 ABC</button>
-    <button onclick="showTab('clv')">💎 CLV</button>
-    <button onclick="showTab('cohort')">📅 Cohort</button>
-    <button onclick="showTab('basket')">🛒 Market Basket</button>
+    <button class="active" onclick="showTab('overview', this)">🏠 Overview</button>
+    <button onclick="showTab('rfm',      this)">🎯 RFM</button>
+    <button onclick="showTab('abc',      this)">📦 ABC</button>
+    <button onclick="showTab('clv',      this)">💎 CLV</button>
+    <button onclick="showTab('cohort',   this)">📅 Cohort</button>
+    <button onclick="showTab('basket',   this)">🛒 Market Basket</button>
+    <button onclick="showTab('shap',     this)">🧠 SHAP</button>
 </nav>
 
 <main>
 
-    <!-- ══════════════════════════════════════════════════
-         TAB 1: OVERVIEW
-    ══════════════════════════════════════════════════ -->
-    <div id="tab-overview" class="tab-content active">
-        <div class="kpi-grid" id="overview-kpis">
-            <div class="loading"><div class="spinner"></div> Loading KPIs...</div>
+<!-- ══════════════════════════════════════════════
+     TAB 1 — OVERVIEW
+══════════════════════════════════════════════ -->
+<div id="tab-overview" class="tab-content active">
+    <div class="kpi-grid" id="overview-kpis">
+        <div class="loading"><div class="spinner"></div> Loading KPIs...</div>
+    </div>
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="section-title">💰 Revenue by ABC Class</div>
+            <canvas id="chart-abc-revenue"></canvas>
         </div>
-        <div class="chart-grid">
-            <div class="chart-card">
-                <div class="section-title">💰 Revenue by ABC Class</div>
-                <canvas id="chart-abc-revenue"></canvas>
-            </div>
-            <div class="chart-card">
-                <div class="section-title">🎯 Customer Segments Distribution</div>
-                <canvas id="chart-rfm-segments"></canvas>
-            </div>
+        <div class="chart-card">
+            <div class="section-title">🎯 Customer Segments</div>
+            <canvas id="chart-rfm-segments"></canvas>
         </div>
-        <div class="chart-grid">
-            <div class="chart-card">
-                <div class="section-title">💎 CLV Segment Distribution</div>
-                <canvas id="chart-clv-segments"></canvas>
-            </div>
-            <div class="chart-card">
-                <div class="section-title">📦 ABC Product Distribution</div>
-                <canvas id="chart-abc-products"></canvas>
+    </div>
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="section-title">💎 CLV Segment Distribution</div>
+            <canvas id="chart-clv-segments"></canvas>
+        </div>
+        <div class="chart-card">
+            <div class="section-title">📦 ABC Product Distribution</div>
+            <canvas id="chart-abc-products"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 2 — RFM
+══════════════════════════════════════════════ -->
+<div id="tab-rfm" class="tab-content">
+    <div class="kpi-grid" id="rfm-kpis">
+        <div class="loading"><div class="spinner"></div> Loading...</div>
+    </div>
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="section-title">Segment Revenue Share</div>
+            <canvas id="chart-rfm-revenue"></canvas>
+        </div>
+        <div class="chart-card">
+            <div class="section-title">Avg Frequency per Segment</div>
+            <canvas id="chart-rfm-freq"></canvas>
+        </div>
+    </div>
+    <div class="table-card">
+        <div class="section-title">🏆 Top 20 Customers by Revenue</div>
+        <table>
+            <thead><tr>
+                <th>#</th><th>Customer</th><th>State</th>
+                <th>Recency (days)</th><th>Frequency</th>
+                <th>Monetary ($)</th><th>Segment</th>
+            </tr></thead>
+            <tbody id="rfm-table-body">
+                <tr><td colspan="7" style="text-align:center">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 3 — ABC
+══════════════════════════════════════════════ -->
+<div id="tab-abc" class="tab-content">
+    <div class="kpi-grid" id="abc-kpis">
+        <div class="loading"><div class="spinner"></div> Loading...</div>
+    </div>
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="section-title">Revenue by Class</div>
+            <canvas id="chart-abc-rev2"></canvas>
+        </div>
+        <div class="chart-card">
+            <div class="section-title">Product Count by Class</div>
+            <canvas id="chart-abc-count"></canvas>
+        </div>
+    </div>
+    <div class="table-card">
+        <div class="section-title">🏆 Top 20 Products by Revenue</div>
+        <table>
+            <thead><tr>
+                <th>#</th><th>Product</th><th>Category</th>
+                <th>Revenue ($)</th><th>Transactions</th><th>Class</th>
+            </tr></thead>
+            <tbody id="abc-table-body">
+                <tr><td colspan="6" style="text-align:center">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 4 — CLV
+══════════════════════════════════════════════ -->
+<div id="tab-clv" class="tab-content">
+    <div class="kpi-grid" id="clv-kpis">
+        <div class="loading"><div class="spinner"></div> Loading...</div>
+    </div>
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="section-title">CLV Segment Distribution</div>
+            <canvas id="chart-clv-dist"></canvas>
+        </div>
+        <div class="chart-card">
+            <div class="section-title">Avg CLV per Segment</div>
+            <canvas id="chart-clv-avg"></canvas>
+        </div>
+    </div>
+    <div class="table-card">
+        <div class="section-title">💎 Top 20 Customers by CLV</div>
+        <table>
+            <thead><tr>
+                <th>#</th><th>Customer</th><th>State</th>
+                <th>Purchases</th><th>Total Revenue ($)</th>
+                <th>CLV ($)</th><th>Segment</th>
+            </tr></thead>
+            <tbody id="clv-table-body">
+                <tr><td colspan="7" style="text-align:center">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 5 — COHORT
+══════════════════════════════════════════════ -->
+<div id="tab-cohort" class="tab-content">
+    <div class="kpi-grid">
+        <div class="kpi-card green">
+            <div class="label">What is Cohort Analysis?</div>
+            <div class="value" style="font-size:1rem;margin-top:8px;line-height:1.6">
+                Groups customers by their first purchase month and tracks
+                how many return in subsequent months.
             </div>
         </div>
     </div>
+    <div class="table-card">
+        <div class="section-title">📅 Retention Heatmap (% of cohort returning)</div>
+        <div id="cohort-table-container">
+            <div class="loading"><div class="spinner"></div> Loading cohort data...</div>
+        </div>
+    </div>
+</div>
 
-    <!-- ══════════════════════════════════════════════════
-         TAB 2: RFM
-    ══════════════════════════════════════════════════ -->
-    <div id="tab-rfm" class="tab-content">
-        <div class="kpi-grid" id="rfm-kpis">
-            <div class="loading"><div class="spinner"></div> Loading...</div>
+<!-- ══════════════════════════════════════════════
+     TAB 6 — MARKET BASKET
+══════════════════════════════════════════════ -->
+<div id="tab-basket" class="tab-content">
+    <div class="kpi-grid" id="basket-kpis">
+        <div class="loading"><div class="spinner"></div> Loading...</div>
+    </div>
+    <div class="table-card">
+        <div class="section-title">🛒 Top Association Rules (by Lift)</div>
+        <table>
+            <thead><tr>
+                <th>#</th>
+                <th>Antecedents (Product A)</th>
+                <th>Consequents (Product B)</th>
+                <th>Support</th>
+                <th>Confidence A→B</th>
+                <th>Lift</th>
+            </tr></thead>
+            <tbody id="basket-table-body">
+                <tr><td colspan="6" style="text-align:center">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     TAB 7 — SHAP
+══════════════════════════════════════════════ -->
+<div id="tab-shap" class="tab-content">
+
+    <!-- Global Bar Plot -->
+    <div class="shap-card">
+        <div class="section-title">🧠 SHAP Explainability</div>
+        <h3>Global Feature Importance</h3>
+        <p>Mean |SHAP value| per feature — how much each feature shifts the churn
+           probability on average across all customers.</p>
+        <div id="shap-bar-plot" style="width:100%; height:480px; margin-top:16px;">
+            <div class="loading"><div class="spinner"></div> Computing SHAP values...</div>
         </div>
-        <div class="chart-grid">
-            <div class="chart-card">
-                <div class="section-title">Segment Revenue Share</div>
-                <canvas id="chart-rfm-revenue"></canvas>
-            </div>
-            <div class="chart-card">
-                <div class="section-title">Avg Frequency per Segment</div>
-                <canvas id="chart-rfm-freq"></canvas>
-            </div>
+    </div>
+
+    <!-- Beeswarm Summary -->
+    <div class="shap-card">
+        <h3>SHAP Beeswarm Summary</h3>
+        <p>Each dot is one customer. Colour = feature value (red&nbsp;=&nbsp;high, blue&nbsp;=&nbsp;low).
+           X-axis = SHAP value (impact on churn probability).</p>
+        <div id="shap-summary-plot" style="width:100%; height:560px; margin-top:16px;">
+            <div class="loading"><div class="spinner"></div> Computing SHAP values...</div>
         </div>
-        <div class="table-card">
-            <div class="section-title">🏆 Top 20 Customers by Revenue</div>
-            <table>
-                <thead><tr>
-                    <th>#</th><th>Customer</th><th>State</th>
-                    <th>Recency (days)</th><th>Frequency</th>
-                    <th>Monetary ($)</th><th>Segment</th>
-                </tr></thead>
-                <tbody id="rfm-table-body">
-                    <tr><td colspan="7" style="text-align:center">Loading...</td></tr>
-                </tbody>
+    </div>
+
+    <!-- Per-Customer Waterfall -->
+    <div class="shap-card">
+        <h3>Customer-Level Churn Explanation</h3>
+        <p>Enter a Customer ID to see exactly which features drove their churn prediction.</p>
+
+        <div class="shap-input-row">
+            <input id="shap-cust-input"
+                   type="text"
+                   placeholder="Enter Customer ID..."
+                   onkeydown="if(event.key==='Enter') loadWaterfall()"/>
+            <button id="shap-explain-btn" class="shap-btn" onclick="loadWaterfall()">
+                Explain ➜
+            </button>
+        </div>
+
+        <div id="shap-error" class="shap-error"></div>
+
+        <!-- JSON breakdown table -->
+        <div id="shap-breakdown-container" style="display:none; margin-bottom:20px; overflow-x:auto;">
+            <div id="shap-breakdown-header" class="shap-breakdown-header"></div>
+            <table style="width:100%; border-collapse:collapse; font-size:0.84rem;">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th style="text-align:right;">Feature Value</th>
+                        <th style="text-align:right;">SHAP Value</th>
+                        <th>Direction</th>
+                    </tr>
+                </thead>
+                <tbody id="shap-breakdown-body"></tbody>
             </table>
         </div>
+
+        <!-- Plotly waterfall chart -->
+        <div id="shap-waterfall-plot" style="width:100%; height:500px; display:none;"></div>
+
     </div>
 
-    <!-- ══════════════════════════════════════════════════
-         TAB 3: ABC
-    ══════════════════════════════════════════════════ -->
-    <div id="tab-abc" class="tab-content">
-        <div class="kpi-grid" id="abc-kpis">
-            <div class="loading"><div class="spinner"></div> Loading...</div>
-        </div>
-        <div class="chart-grid">
-            <div class="chart-card">
-                <div class="section-title">Revenue by Class</div>
-                <canvas id="chart-abc-rev2"></canvas>
-            </div>
-            <div class="chart-card">
-                <div class="section-title">Product Count by Class</div>
-                <canvas id="chart-abc-count"></canvas>
-            </div>
-        </div>
-        <div class="table-card">
-            <div class="section-title">🏆 Top 20 Products by Revenue</div>
-            <table>
-                <thead><tr>
-                    <th>#</th><th>Product</th><th>Category</th>
-                    <th>Revenue ($)</th><th>Transactions</th><th>Class</th>
-                </tr></thead>
-                <tbody id="abc-table-body">
-                    <tr><td colspan="6" style="text-align:center">Loading...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- ══════════════════════════════════════════════════
-         TAB 4: CLV
-    ══════════════════════════════════════════════════ -->
-    <div id="tab-clv" class="tab-content">
-        <div class="kpi-grid" id="clv-kpis">
-            <div class="loading"><div class="spinner"></div> Loading...</div>
-        </div>
-        <div class="chart-grid">
-            <div class="chart-card">
-                <div class="section-title">CLV Segment Distribution</div>
-                <canvas id="chart-clv-dist"></canvas>
-            </div>
-            <div class="chart-card">
-                <div class="section-title">Avg CLV per Segment</div>
-                <canvas id="chart-clv-avg"></canvas>
-            </div>
-        </div>
-        <div class="table-card">
-            <div class="section-title">💎 Top 20 Customers by CLV</div>
-            <table>
-                <thead><tr>
-                    <th>#</th><th>Customer</th><th>State</th>
-                    <th>Purchases</th><th>Total Revenue ($)</th>
-                    <th>CLV ($)</th><th>Segment</th>
-                </tr></thead>
-                <tbody id="clv-table-body">
-                    <tr><td colspan="7" style="text-align:center">Loading...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- ══════════════════════════════════════════════════
-         TAB 5: COHORT
-    ══════════════════════════════════════════════════ -->
-    <div id="tab-cohort" class="tab-content">
-        <div class="kpi-grid">
-            <div class="kpi-card green">
-                <div class="label">What is Cohort Analysis?</div>
-                <div class="value" style="font-size:1rem;margin-top:8px;line-height:1.6">
-                    Groups customers by their first purchase month and tracks
-                    how many return in subsequent months.
-                </div>
-            </div>
-        </div>
-        <div class="table-card">
-            <div class="section-title">📅 Retention Heatmap (% of cohort returning)</div>
-            <div id="cohort-table-container">
-                <div class="loading"><div class="spinner"></div> Loading cohort data...</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══════════════════════════════════════════════════
-         TAB 6: MARKET BASKET
-    ══════════════════════════════════════════════════ -->
-    <div id="tab-basket" class="tab-content">
-        <div class="kpi-grid" id="basket-kpis">
-            <div class="loading"><div class="spinner"></div> Loading...</div>
-        </div>
-        <div class="table-card">
-            <div class="section-title">🛒 Top Association Rules (by Lift)</div>
-            <table>
-                <thead><tr>
-                    <th>#</th><th>Antecedents</th><th>Consequents</th>
-                    <th>Support</th><th>Confidence</th><th>Lift</th>
-                </tr></thead>
-                <tbody id="basket-table-body">
-                    <tr><td colspan="6" style="text-align:center">Loading...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+</div><!-- end tab-shap -->
 
 </main>
 
 <script>
-// ── API base URL (same origin) ──────────────────────────────────────────
+// ── API base ──────────────────────────────────────────────────────────────────
 const API = "";
 
-// ── Helpers ────────────────────────────────────────────────────────────
-const fmt  = n  => n == null ? "—" : Number(n).toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
-const fmtI = n  => n == null ? "—" : Number(n).toLocaleString("en-US");
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const fmt  = n => n == null ? "—" : Number(n).toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
+const fmtI = n => n == null ? "—" : Number(n).toLocaleString("en-US");
+
 const segBadge = seg => {
     if (!seg) return "";
     const map = {
-        "champions":"champions","loyal customers":"loyal","potential loyalists":"potential",
-        "recent customers":"recent","promising":"promising","need attention":"attention",
-        "about to sleep":"sleep","at risk":"risk",
-        "very high value":"veryhigh","high value":"high","medium value":"medium","low value":"low",
-        "a":"a","b":"b","c":"c"
+        "champions"          : "champions",
+        "loyal customers"    : "loyal",
+        "potential loyalists": "potential",
+        "recent customers"   : "recent",
+        "promising"          : "promising",
+        "need attention"     : "attention",
+        "about to sleep"     : "sleep",
+        "at risk"            : "risk",
+        "very high value"    : "veryhigh",
+        "high value"         : "high",
+        "medium value"       : "medium",
+        "low value"          : "low",
+        "a"                  : "a",
+        "b"                  : "b",
+        "c"                  : "c"
     };
-    const key = seg.toLowerCase().trim();
-    const cls = map[key] || "loyal";
+    const cls = map[seg.toLowerCase().trim()] || "loyal";
     return `<span class="badge badge-${cls}">${seg}</span>`;
 };
 
-// ── Chart defaults ─────────────────────────────────────────────────────
-Chart.defaults.color = "#aaa";
+// ── Chart.js defaults ─────────────────────────────────────────────────────────
+Chart.defaults.color       = "#aaa";
 Chart.defaults.borderColor = "#2a2f45";
 const PALETTE = ["#4472C4","#70AD47","#ED7D31","#FFC000","#e74c3c","#5B9BD5","#9B1C1C","#FF7F00"];
 
@@ -406,8 +556,9 @@ function makeDonut(id, labels, data, colors) {
     if (ctx._chart) ctx._chart.destroy();
     ctx._chart = new Chart(ctx, {
         type: "doughnut",
-        data: { labels, datasets: [{ data, backgroundColor: colors || PALETTE, borderWidth:2, borderColor:"#0f1117" }] },
-        options: { plugins: { legend: { position:"right" } }, cutout:"60%" }
+        data: { labels, datasets:[{ data, backgroundColor: colors||PALETTE,
+                                    borderWidth:2, borderColor:"#0f1117" }] },
+        options: { plugins:{ legend:{ position:"right" } }, cutout:"60%" }
     });
 }
 
@@ -415,71 +566,105 @@ function makeBar(id, labels, data, label, color) {
     const ctx = document.getElementById(id);
     if (!ctx) return;
     if (ctx._chart) ctx._chart.destroy();
+    const bgColor = Array.isArray(color) ? color : (color || "#4472C4");
     ctx._chart = new Chart(ctx, {
         type: "bar",
-        data: { labels, datasets: [{ label, data, backgroundColor: color || "#4472C4", borderRadius:6 }] },
-        options: { plugins:{ legend:{ display:false } }, scales:{ y:{ grid:{ color:"#2a2f45" } }, x:{ grid:{ display:false } } } }
+        data: { labels, datasets:[{ label, data, backgroundColor:bgColor, borderRadius:6 }] },
+        options: {
+            plugins: { legend:{ display:false } },
+            scales:  { y:{ grid:{ color:"#2a2f45" } }, x:{ grid:{ display:false } } }
+        }
     });
 }
 
-// ── Tab switching ──────────────────────────────────────────────────────
-function showTab(name) {
+// ── Plotly base layout (dark theme) ──────────────────────────────────────────
+const PLOTLY_LAYOUT = {
+    paper_bgcolor: "#1a1f35",
+    plot_bgcolor : "#1a1f35",
+    font         : { color:"#e0e0e0", size:12 },
+    margin       : { l:180, r:40, t:60, b:60 },
+    xaxis        : { gridcolor:"#2a2f45", zerolinecolor:"#555" },
+    yaxis        : { gridcolor:"#2a2f45" }
+};
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function showTab(name, btn) {
     document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
     document.querySelectorAll("nav button").forEach(el => el.classList.remove("active"));
-    document.getElementById("tab-"+name).classList.add("active");
-    event.currentTarget.classList.add("active");
+    document.getElementById("tab-" + name).classList.add("active");
+    if (btn) btn.classList.add("active");
+    // Resize Plotly charts when SHAP tab is shown
+    if (name === "shap") {
+        ["shap-bar-plot","shap-summary-plot","shap-waterfall-plot"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el && el._isPlotly) Plotly.Plots.resize(el);
+        });
+    }
 }
 
-// ── Fetch & render functions ───────────────────────────────────────────
-
+// ── Overview ──────────────────────────────────────────────────────────────────
 async function loadOverview() {
     const res  = await fetch(`${API}/api/summary`);
     const data = await res.json();
+    const rfm  = data.rfm || {}, abc = data.abc || {}, clv = data.clv || {};
 
-    // KPI cards
-    const rfm = data.rfm || {}, abc = data.abc || {}, clv = data.clv || {};
     document.getElementById("overview-kpis").innerHTML = `
-        <div class="kpi-card"><div class="label">Total Customers</div><div class="value">${fmtI(rfm.total_customers)}</div></div>
-        <div class="kpi-card green"><div class="label">Total Products</div><div class="value">${fmtI(abc.total_products)}</div></div>
-        <div class="kpi-card orange"><div class="label">Total Revenue</div><div class="value">$${fmt(abc.total_revenue)}</div></div>
-        <div class="kpi-card yellow"><div class="label">Avg CLV</div><div class="value">$${fmt(clv.avg_clv)}</div></div>
-        <div class="kpi-card red"><div class="label">Total CLV</div><div class="value">$${fmt(clv.total_clv)}</div></div>
-        <div class="kpi-card"><div class="label">Avg Monetary / Customer</div><div class="value">$${fmt(rfm.avg_monetary)}</div></div>
+        <div class="kpi-card">
+            <div class="label">Total Customers</div>
+            <div class="value">${fmtI(rfm.total_customers)}</div>
+        </div>
+        <div class="kpi-card green">
+            <div class="label">Total Products</div>
+            <div class="value">${fmtI(abc.total_products)}</div>
+        </div>
+        <div class="kpi-card orange">
+            <div class="label">Total Revenue</div>
+            <div class="value">$${fmt(abc.total_revenue)}</div>
+        </div>
+        <div class="kpi-card yellow">
+            <div class="label">Avg CLV</div>
+            <div class="value">$${fmt(clv.avg_clv)}</div>
+        </div>
+        <div class="kpi-card red">
+            <div class="label">Total CLV</div>
+            <div class="value">$${fmt(clv.total_clv)}</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">Avg Monetary / Customer</div>
+            <div class="value">$${fmt(rfm.avg_monetary)}</div>
+        </div>
     `;
 
-    // ABC revenue donut
     if (abc.class_distribution) {
-        const cls = abc.class_distribution;
-        makeDonut("chart-abc-revenue", ["Class A","Class B","Class C"],
-            [cls.A||0, cls.B||0, cls.C||0], ["#70AD47","#4472C4","#e74c3c"]);
+        const c = abc.class_distribution;
+        makeDonut("chart-abc-revenue",
+            ["Class A","Class B","Class C"],
+            [c.A||0, c.B||0, c.C||0],
+            ["#70AD47","#4472C4","#e74c3c"]);
     }
-
-    // RFM segments donut
     if (rfm.segments) {
-        const segs = rfm.segments;
-        makeDonut("chart-rfm-segments", Object.keys(segs), Object.values(segs));
+        makeDonut("chart-rfm-segments",
+            Object.keys(rfm.segments), Object.values(rfm.segments));
     }
-
-    // CLV segments donut
     if (clv.segments) {
         makeDonut("chart-clv-segments",
             ["Very High Value","High Value","Medium Value","Low Value"],
             [clv.segments["Very High Value"]||0, clv.segments["High Value"]||0,
-             clv.segments["Medium Value"]||0,   clv.segments["Low Value"]||0],
+             clv.segments["Medium Value"]||0,    clv.segments["Low Value"]||0],
             ["#70AD47","#4472C4","#ED7D31","#e74c3c"]);
     }
-
-    // ABC product count donut
     if (abc.class_distribution) {
-        const cls = abc.class_distribution;
-        makeDonut("chart-abc-products", ["Class A","Class B","Class C"],
-            [cls.A||0, cls.B||0, cls.C||0], ["#70AD47","#4472C4","#e74c3c"]);
+        const c = abc.class_distribution;
+        makeDonut("chart-abc-products",
+            ["Class A","Class B","Class C"],
+            [c.A||0, c.B||0, c.C||0],
+            ["#70AD47","#4472C4","#e74c3c"]);
     }
-
     document.getElementById("last-updated").textContent =
         "Last updated: " + new Date().toLocaleString();
 }
 
+// ── RFM ───────────────────────────────────────────────────────────────────────
 async function loadRFM() {
     const [sumRes, topRes] = await Promise.all([
         fetch(`${API}/api/rfm/segments/summary`),
@@ -488,41 +673,32 @@ async function loadRFM() {
     const summary = await sumRes.json();
     const top     = await topRes.json();
 
-    // KPIs
     const champions = summary.find(s => s.segment === "Champions") || {};
-    const total = summary.reduce((a,s) => a + s.customer_count, 0);
+    const total     = summary.reduce((a, s) => a + s.customer_count, 0);
+    const avgRec    = Math.floor(summary.reduce((a,s) => a+(s.avg_recency||0),0) / summary.length);
+    const avgFreq   = (summary.reduce((a,s) => a+(s.avg_frequency||0),0) / summary.length).toFixed(1);
+
     document.getElementById("rfm-kpis").innerHTML = `
         <div class="kpi-card"><div class="label">Total Customers</div><div class="value">${fmtI(total)}</div></div>
         <div class="kpi-card green"><div class="label">Champions</div><div class="value">${fmtI(champions.customer_count||0)}</div><div class="sub">Highest value</div></div>
-        <div class="kpi-card orange"><div class="label">Avg Recency</div><div class="value">${fmtI(summary.reduce((a,s)=>a+(s.avg_recency||0),0)/summary.length|0)}</div><div class="sub">days</div></div>
-        <div class="kpi-card yellow"><div class="label">Avg Frequency</div><div class="value">${(summary.reduce((a,s)=>a+(s.avg_frequency||0),0)/summary.length).toFixed(1)}</div><div class="sub">orders</div></div>
+        <div class="kpi-card orange"><div class="label">Avg Recency</div><div class="value">${fmtI(avgRec)}</div><div class="sub">days</div></div>
+        <div class="kpi-card yellow"><div class="label">Avg Frequency</div><div class="value">${avgFreq}</div><div class="sub">orders</div></div>
     `;
 
-    // Revenue bar chart
-    makeBar("chart-rfm-revenue",
-        summary.map(s=>s.segment),
-        summary.map(s=>+(s.total_revenue||0).toFixed(2)),
-        "Total Revenue", "#4472C4");
+    makeBar("chart-rfm-revenue", summary.map(s=>s.segment),
+        summary.map(s=>+(s.total_revenue||0).toFixed(2)), "Total Revenue", "#4472C4");
+    makeBar("chart-rfm-freq", summary.map(s=>s.segment),
+        summary.map(s=>+(s.avg_frequency||0).toFixed(1)), "Avg Frequency", "#70AD47");
 
-    // Frequency bar chart
-    makeBar("chart-rfm-freq",
-        summary.map(s=>s.segment),
-        summary.map(s=>+(s.avg_frequency||0).toFixed(1)),
-        "Avg Frequency", "#70AD47");
-
-    // Table
     document.getElementById("rfm-table-body").innerHTML = top.map((r,i) => `
         <tr>
-            <td>${i+1}</td>
-            <td>${r.customer_name||"—"}</td>
-            <td>${r.state||"—"}</td>
-            <td>${fmtI(r.recency)}</td>
-            <td>${fmtI(r.frequency)}</td>
-            <td>$${fmt(r.monetary)}</td>
-            <td>${segBadge(r.segment)}</td>
+            <td>${i+1}</td><td>${r.customer_name||"—"}</td><td>${r.state||"—"}</td>
+            <td>${fmtI(r.recency)}</td><td>${fmtI(r.frequency)}</td>
+            <td>$${fmt(r.monetary)}</td><td>${segBadge(r.segment)}</td>
         </tr>`).join("");
 }
 
+// ── ABC ───────────────────────────────────────────────────────────────────────
 async function loadABC() {
     const [sumRes, topRes] = await Promise.all([
         fetch(`${API}/api/abc/classes/summary`),
@@ -531,36 +707,33 @@ async function loadABC() {
     const summary = await sumRes.json();
     const top     = await topRes.json();
 
-    // KPIs
-    const classA = summary.find(s=>s.abc_class==="A")||{};
+    const classA    = summary.find(s => s.abc_class === "A") || {};
+    const totalProd = summary.reduce((a,s) => a+(s.product_count||0), 0);
+    const totalRev  = summary.reduce((a,s) => a+(s.total_revenue||0), 0);
+
     document.getElementById("abc-kpis").innerHTML = `
         <div class="kpi-card green"><div class="label">Class A Products</div><div class="value">${fmtI(classA.product_count||0)}</div><div class="sub">${classA.product_pct||0}% of products</div></div>
         <div class="kpi-card green"><div class="label">Class A Revenue</div><div class="value">$${fmt(classA.total_revenue||0)}</div><div class="sub">${classA.revenue_pct||0}% of revenue</div></div>
-        <div class="kpi-card"><div class="label">Total Products</div><div class="value">${fmtI(summary.reduce((a,s)=>a+(s.product_count||0),0))}</div></div>
-        <div class="kpi-card orange"><div class="label">Total Revenue</div><div class="value">$${fmt(summary.reduce((a,s)=>a+(s.total_revenue||0),0))}</div></div>
+        <div class="kpi-card"><div class="label">Total Products</div><div class="value">${fmtI(totalProd)}</div></div>
+        <div class="kpi-card orange"><div class="label">Total Revenue</div><div class="value">$${fmt(totalRev)}</div></div>
     `;
 
-    makeBar("chart-abc-rev2",
-        summary.map(s=>`Class ${s.abc_class}`),
-        summary.map(s=>+(s.total_revenue||0).toFixed(2)),
-        "Revenue", ["#70AD47","#4472C4","#e74c3c"]);
-
-    makeBar("chart-abc-count",
-        summary.map(s=>`Class ${s.abc_class}`),
-        summary.map(s=>s.product_count||0),
-        "Products", ["#70AD47","#4472C4","#e74c3c"]);
+    makeBar("chart-abc-rev2", summary.map(s=>`Class ${s.abc_class}`),
+        summary.map(s=>+(s.total_revenue||0).toFixed(2)), "Revenue",
+        ["#70AD47","#4472C4","#e74c3c"]);
+    makeBar("chart-abc-count", summary.map(s=>`Class ${s.abc_class}`),
+        summary.map(s=>s.product_count||0), "Products",
+        ["#70AD47","#4472C4","#e74c3c"]);
 
     document.getElementById("abc-table-body").innerHTML = top.map((r,i) => `
         <tr>
-            <td>${i+1}</td>
-            <td>${r.product_name||"—"}</td>
-            <td>${r.category||"—"}</td>
-            <td>$${fmt(r.total_revenue)}</td>
-            <td>${fmtI(r.transaction_count)}</td>
+            <td>${i+1}</td><td>${r.product_name||"—"}</td><td>${r.category||"—"}</td>
+            <td>$${fmt(r.total_revenue)}</td><td>${fmtI(r.transaction_count)}</td>
             <td>${segBadge(r.abc_class)}</td>
         </tr>`).join("");
 }
 
+// ── CLV ───────────────────────────────────────────────────────────────────────
 async function loadCLV() {
     const [sumRes, topRes] = await Promise.all([
         fetch(`${API}/api/clv/segments/summary`),
@@ -569,40 +742,36 @@ async function loadCLV() {
     const summary = await sumRes.json();
     const top     = await topRes.json();
 
-    const totalCLV = summary.reduce((a,s)=>a+(s.total_clv||0),0);
-    const totalCust= summary.reduce((a,s)=>a+(s.customer_count||0),0);
+    const totalCLV  = summary.reduce((a,s) => a+(s.total_clv||0), 0);
+    const totalCust = summary.reduce((a,s) => a+(s.customer_count||0), 0);
+    const avgPurch  = (summary.reduce((a,s) => a+(s.avg_purchases||0),0) / summary.length).toFixed(1);
+
     document.getElementById("clv-kpis").innerHTML = `
         <div class="kpi-card"><div class="label">Total Customers</div><div class="value">${fmtI(totalCust)}</div></div>
         <div class="kpi-card green"><div class="label">Total CLV</div><div class="value">$${fmt(totalCLV)}</div></div>
         <div class="kpi-card yellow"><div class="label">Avg CLV</div><div class="value">$${fmt(totalCLV/totalCust||0)}</div></div>
-        <div class="kpi-card orange"><div class="label">Avg Purchases</div><div class="value">${(summary.reduce((a,s)=>a+(s.avg_purchases||0),0)/summary.length).toFixed(1)}</div></div>
+        <div class="kpi-card orange"><div class="label">Avg Purchases</div><div class="value">${avgPurch}</div></div>
     `;
 
     const segOrder = ["Very High Value","High Value","Medium Value","Low Value"];
-    const ordered  = segOrder.map(s => summary.find(x=>x.clv_segment===s) || {clv_segment:s,customer_count:0,avg_clv:0});
+    const ordered  = segOrder.map(s =>
+        summary.find(x => x.clv_segment === s) || { clv_segment:s, customer_count:0, avg_clv:0 });
 
-    makeDonut("chart-clv-dist",
-        ordered.map(s=>s.clv_segment),
-        ordered.map(s=>s.customer_count||0),
+    makeDonut("chart-clv-dist", ordered.map(s=>s.clv_segment),
+        ordered.map(s=>s.customer_count||0), ["#70AD47","#4472C4","#ED7D31","#e74c3c"]);
+    makeBar("chart-clv-avg", ordered.map(s=>s.clv_segment),
+        ordered.map(s=>+(s.avg_clv||0).toFixed(2)), "Avg CLV",
         ["#70AD47","#4472C4","#ED7D31","#e74c3c"]);
-
-    makeBar("chart-clv-avg",
-        ordered.map(s=>s.clv_segment),
-        ordered.map(s=>+(s.avg_clv||0).toFixed(2)),
-        "Avg CLV", ["#70AD47","#4472C4","#ED7D31","#e74c3c"]);
 
     document.getElementById("clv-table-body").innerHTML = top.map((r,i) => `
         <tr>
-            <td>${i+1}</td>
-            <td>${r.customer_name||"—"}</td>
-            <td>${r.state||"—"}</td>
-            <td>${fmtI(r.purchase_count)}</td>
-            <td>$${fmt(r.total_revenue)}</td>
-            <td>$${fmt(r.clv_discounted)}</td>
-            <td>${segBadge(r.clv_segment)}</td>
+            <td>${i+1}</td><td>${r.customer_name||"—"}</td><td>${r.state||"—"}</td>
+            <td>${fmtI(r.purchase_count)}</td><td>$${fmt(r.total_revenue)}</td>
+            <td>$${fmt(r.clv_discounted)}</td><td>${segBadge(r.clv_segment)}</td>
         </tr>`).join("");
 }
 
+// ── Cohort ────────────────────────────────────────────────────────────────────
 async function loadCohort() {
     const res  = await fetch(`${API}/api/cohort`);
     const data = await res.json();
@@ -619,14 +788,13 @@ async function loadCohort() {
     }
 
     let html = `<table class="heatmap-table"><thead><tr>
-        <th>Cohort</th>
-        ${months.map(m=>`<th>M${m}</th>`).join("")}
+        <th>Cohort</th>${months.map(m=>`<th>${m}</th>`).join("")}
     </tr></thead><tbody>`;
 
     for (const cohort of cohorts) {
         html += `<tr><td style="font-weight:600;color:#fff;white-space:nowrap">${cohort}</td>`;
         for (const m of months) {
-            const val = matrix[cohort] && matrix[cohort][m];
+            const val = matrix[cohort]?.[m];
             const pct = val != null ? (+val).toFixed(1) : null;
             const bg  = retentionColor(pct ? +pct : null);
             html += `<td style="background:${bg};color:#fff">${pct != null ? pct+"%" : ""}</td>`;
@@ -637,38 +805,259 @@ async function loadCohort() {
     document.getElementById("cohort-table-container").innerHTML = html;
 }
 
+// ── Market Basket ─────────────────────────────────────────────────────────────
 async function loadBasket() {
-    const res  = await fetch(`${API}/api/basket/top?n=50`);
-    const data = await res.json();
+    try {
+        const res  = await fetch(`${API}/api/basket/top?n=50`);
+        const data = await res.json();
 
-    const total = data.length;
-    const avgConf = (data.reduce((a,r)=>a+(r.confidence||0),0)/total||0).toFixed(3);
-    const avgLift = (data.reduce((a,r)=>a+(r.lift||0),0)/total||0).toFixed(3);
-    document.getElementById("basket-kpis").innerHTML = `
-        <div class="kpi-card"><div class="label">Total Rules</div><div class="value">${fmtI(total)}</div></div>
-        <div class="kpi-card green"><div class="label">Avg Confidence</div><div class="value">${avgConf}</div></div>
-        <div class="kpi-card orange"><div class="label">Avg Lift</div><div class="value">${avgLift}</div></div>
-    `;
+        if (!data || data.length === 0) {
+            document.getElementById("basket-kpis").innerHTML =
+                `<div class="kpi-card red">
+                    <div class="label">Status</div>
+                    <div class="value" style="font-size:1rem">No rules found</div>
+                 </div>`;
+            document.getElementById("basket-table-body").innerHTML =
+                `<tr><td colspan="6" style="text-align:center;color:#888">
+                 No association rules found.</td></tr>`;
+            return;
+        }
 
-    document.getElementById("basket-table-body").innerHTML = data.map((r,i) => `
-        <tr>
-            <td>${i+1}</td>
-            <td>${r.antecedents||"—"}</td>
-            <td>${r.consequents||"—"}</td>
-            <td>${(r.support||0).toFixed(4)}</td>
-            <td>${(r.confidence||0).toFixed(4)}</td>
-            <td>${(r.lift||0).toFixed(3)}</td>
-        </tr>`).join("");
+        const total   = data.length;
+        const avgConf = (data.reduce((a, r) =>
+            a + (parseFloat(r.confidence) || 0), 0) / total).toFixed(3);
+        const avgLift = (data.reduce((a, r) =>
+            a + (parseFloat(r.lift) || 0), 0) / total).toFixed(3);
+        const maxLift = Math.max(...data.map(r => parseFloat(r.lift) || 0)).toFixed(3);
+
+        document.getElementById("basket-kpis").innerHTML = `
+            <div class="kpi-card">
+                <div class="label">Total Rules</div>
+                <div class="value">${fmtI(total)}</div>
+            </div>
+            <div class="kpi-card green">
+                <div class="label">Avg Confidence</div>
+                <div class="value">${avgConf}</div>
+            </div>
+            <div class="kpi-card orange">
+                <div class="label">Avg Lift</div>
+                <div class="value">${avgLift}</div>
+            </div>
+            <div class="kpi-card yellow">
+                <div class="label">Max Lift</div>
+                <div class="value">${maxLift}</div>
+            </div>
+        `;
+
+        document.getElementById("basket-table-body").innerHTML = data.map((r, i) => {
+            const ant  = r.antecedents || "—";
+            const con  = r.consequents || "—";
+            const sup  = parseFloat(r.support)    || 0;
+            const conf = parseFloat(r.confidence) || 0;
+            const lift = parseFloat(r.lift)       || 0;
+            const txn  = r.transaction_count ? fmtI(r.transaction_count) : "—";
+            return `
+            <tr>
+                <td>${i + 1}</td>
+                <td style="color:#e0e0e0;font-weight:500">${ant}</td>
+                <td style="color:#e0e0e0;font-weight:500">${con}</td>
+                <td>${sup.toFixed(4)}</td>
+                <td>${conf.toFixed(4)}</td>
+                <td style="color:${lift >= 2 ? '#70AD47' : lift >= 1.5 ? '#FFC000' : '#ccc'};
+                            font-weight:600">${lift.toFixed(3)}</td>
+            </tr>`;
+        }).join("");
+
+    } catch(e) {
+        document.getElementById("basket-kpis").innerHTML =
+            `<div class="kpi-card red">
+                <div class="label">Error</div>
+                <div class="value" style="font-size:0.9rem">${e.message}</div>
+             </div>`;
+    }
 }
 
-// ── Boot ────────────────────────────────────────────────────────────────
+
+// ── SHAP Plotly Charts ────────────────────────────────────────────────────────
+async function loadSHAP() {
+
+    // ── Bar chart ──────────────────────────────────────────────────────────
+    try {
+        const res  = await fetch(`${API}/api/churn/explain/bar-data`);
+        const data = await res.json();
+
+        Plotly.newPlot("shap-bar-plot", [{
+            type        : "bar",
+            orientation : "h",
+            x           : data.values,
+            y           : data.features,
+            marker      : {
+                color     : data.values,
+                colorscale: [[0,"#4472C4"],[1,"#ED7D31"]],
+                showscale : false
+            },
+            hovertemplate: "<b>%{y}</b><br>Mean |SHAP|: %{x:.4f}<extra></extra>"
+        }], {
+            ...PLOTLY_LAYOUT,
+            title : { text:"SHAP Feature Importance (Mean |SHAP Value|)", font:{ color:"#fff", size:14 } },
+            height: 480,
+            xaxis : { ...PLOTLY_LAYOUT.xaxis, title:"Mean |SHAP Value|" }
+        }, { responsive:true, displayModeBar:false });
+
+    } catch(e) {
+        document.getElementById("shap-bar-plot").innerHTML =
+            `<div style="color:#888;padding:60px;text-align:center;font-size:0.9rem">
+             ⚠️ Could not load bar chart: ${e.message}</div>`;
+    }
+
+    // ── Beeswarm summary ───────────────────────────────────────────────────
+    try {
+        const res  = await fetch(`${API}/api/churn/explain/summary-data`);
+        const data = await res.json();
+
+        const byFeature = {};
+        data.points.forEach(p => {
+            if (!byFeature[p.feature]) byFeature[p.feature] = [];
+            byFeature[p.feature].push(p);
+        });
+
+        const traces = data.features.map(feat => {
+            const pts = byFeature[feat] || [];
+            return {
+                type  : "scatter",
+                mode  : "markers",
+                name  : feat,
+                x     : pts.map(p => p.shap_value),
+                y     : pts.map(() => feat),
+                marker: {
+                    size        : 5,
+                    color       : pts.map(p => p.feat_value),
+                    colorscale  : [[0,"#3182bd"],[0.5,"#9ecae1"],[1,"#e6550d"]],
+                    showscale   : false,
+                    opacity     : 0.7
+                },
+                hovertemplate: `<b>${feat}</b><br>SHAP: %{x:.4f}<extra></extra>`
+            };
+        });
+
+        Plotly.newPlot("shap-summary-plot", traces, {
+            ...PLOTLY_LAYOUT,
+            title     : { text:"SHAP Beeswarm — Feature Impact on Churn Probability", font:{ color:"#fff", size:14 } },
+            height    : 560,
+            showlegend: false,
+            xaxis     : { ...PLOTLY_LAYOUT.xaxis, title:"SHAP Value", zeroline:true },
+            yaxis     : { ...PLOTLY_LAYOUT.yaxis, title:"" }
+        }, { responsive:true, displayModeBar:false });
+
+    } catch(e) {
+        document.getElementById("shap-summary-plot").innerHTML =
+            `<div style="color:#888;padding:60px;text-align:center;font-size:0.9rem">
+             ⚠️ Could not load summary chart: ${e.message}</div>`;
+    }
+}
+
+// ── SHAP Waterfall (per customer) ─────────────────────────────────────────────
+async function loadWaterfall() {
+    const customerId  = document.getElementById("shap-cust-input").value.trim();
+    const errDiv      = document.getElementById("shap-error");
+    const wfDiv       = document.getElementById("shap-waterfall-plot");
+    const bdContainer = document.getElementById("shap-breakdown-container");
+    const btn         = document.getElementById("shap-explain-btn");
+
+    errDiv.style.display      = "none";
+    errDiv.textContent        = "";
+    wfDiv.style.display       = "none";
+    bdContainer.style.display = "none";
+
+    if (!customerId) {
+        errDiv.textContent   = "⚠️ Please enter a Customer ID.";
+        errDiv.style.display = "block";
+        return;
+    }
+
+    btn.disabled    = true;
+    btn.textContent = "Loading...";
+
+    try {
+        const res = await fetch(`${API}/api/churn/explain/customer/${customerId}`);
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.detail || `HTTP ${res.status}`);
+        }
+        const data = await res.json();
+
+        // Breakdown header
+        document.getElementById("shap-breakdown-header").textContent =
+            `Customer ${data.customer_id}  |  Churn Probability: ${(data.churn_probability*100).toFixed(1)}%  |  Risk: ${data.risk_tier}`;
+
+        // Breakdown table rows
+        const tbody = document.getElementById("shap-breakdown-body");
+        tbody.innerHTML = "";
+        data.explanation.forEach(row => {
+            const isUp  = row.direction === "increases_churn";
+            const color = isUp ? "#e74c3c" : "#70AD47";
+            const arrow = isUp ? "▲ Increases churn" : "▼ Decreases churn";
+            const sign  = row.shap_value > 0 ? "+" : "";
+            tbody.innerHTML += `
+                <tr>
+                    <td style="color:#ddd">${row.feature}</td>
+                    <td style="text-align:right;color:#aaa">${row.value}</td>
+                    <td style="text-align:right;color:${color};font-weight:600">${sign}${row.shap_value}</td>
+                    <td style="color:${color};font-size:0.8rem">${arrow}</td>
+                </tr>`;
+        });
+        bdContainer.style.display = "block";
+
+        // Plotly waterfall (horizontal bar)
+        const explanation = data.explanation.slice(0, 15);
+        const featLabels  = explanation.map(r => r.feature);
+        const shapVals    = explanation.map(r => r.shap_value);
+        const colors      = shapVals.map(v => v > 0 ? "#e74c3c" : "#70AD47");
+
+        wfDiv.style.display = "block";
+        Plotly.newPlot("shap-waterfall-plot", [{
+            type         : "bar",
+            orientation  : "h",
+            x            : shapVals,
+            y            : featLabels,
+            marker       : { color: colors },
+            hovertemplate: "<b>%{y}</b><br>SHAP: %{x:.4f}<extra></extra>"
+        }], {
+            ...PLOTLY_LAYOUT,
+            title : {
+                text: `Churn Explanation — Customer ${customerId} &nbsp;|&nbsp; ${(data.churn_probability*100).toFixed(1)}% churn risk`,
+                font: { color:"#fff", size:13 }
+            },
+            height: 500,
+            xaxis : { ...PLOTLY_LAYOUT.xaxis, title:"SHAP Value", zeroline:true },
+            shapes: [{
+                type: "line",
+                x0:0, x1:0,
+                y0:-0.5, y1: explanation.length - 0.5,
+                line: { color:"#888", width:1, dash:"dot" }
+            }]
+        }, { responsive:true, displayModeBar:false });
+
+    } catch(e) {
+        errDiv.textContent   = `Error: ${e.message}`;
+        errDiv.style.display = "block";
+    }
+
+    btn.disabled    = false;
+    btn.textContent = "Explain ➜";
+}
+
+// ── Boot — load all tabs in parallel ─────────────────────────────────────────
 (async () => {
-    try { await loadOverview(); } catch(e) { console.error("Overview error", e); }
-    try { await loadRFM();      } catch(e) { console.error("RFM error", e); }
-    try { await loadABC();      } catch(e) { console.error("ABC error", e); }
-    try { await loadCLV();      } catch(e) { console.error("CLV error", e); }
-    try { await loadCohort();   } catch(e) { console.error("Cohort error", e); }
-    try { await loadBasket();   } catch(e) { console.error("Basket error", e); }
+    await Promise.allSettled([
+        loadOverview(),
+        loadRFM(),
+        loadABC(),
+        loadCLV(),
+        loadCohort(),
+        loadBasket(),
+        loadSHAP()
+    ]);
 })();
 </script>
 </body>

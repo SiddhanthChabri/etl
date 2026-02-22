@@ -6,9 +6,11 @@ Retail Analytics API
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from routers import rfm, abc, clv, basket, etl, dashboard, churn
 import uvicorn
+from routers.explain import router as explain_router
+
 
 app = FastAPI(
     title="🛒 Retail Analytics API",
@@ -49,6 +51,7 @@ A complete REST API for retail analytics powered by a PostgreSQL Data Warehouse.
     ]
 )
 
+
 # ── CORS ──────────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
@@ -58,22 +61,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # ── STATIC FILES ──────────────────────────────────────────────────────────
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
 # ── ROUTERS ───────────────────────────────────────────────────────────────
-app.include_router(rfm.router,       prefix="/api/rfm",       tags=["RFM Analysis"])
-app.include_router(abc.router,       prefix="/api/abc",       tags=["ABC Analysis"])
-app.include_router(clv.router,       prefix="/api/clv",       tags=["CLV Analysis"])
-app.include_router(basket.router,    prefix="/api/basket",    tags=["Market Basket"])
-app.include_router(churn.router,     prefix="/api/churn",     tags=["Churn Prediction 🤖"])
-app.include_router(etl.router,       prefix="/etl",           tags=["ETL Pipeline"])
-app.include_router(dashboard.router, prefix="",               tags=["Dashboard"])
+app.include_router(rfm.router,       prefix="/api/rfm",    tags=["RFM Analysis"])
+app.include_router(abc.router,       prefix="/api/abc",    tags=["ABC Analysis"])
+app.include_router(clv.router,       prefix="/api/clv",    tags=["CLV Analysis"])
+app.include_router(basket.router,    prefix="/api/basket", tags=["Market Basket"])
+app.include_router(churn.router,     prefix="/api/churn",  tags=["Churn Prediction 🤖"])
+app.include_router(etl.router,       prefix="/etl",        tags=["ETL Pipeline"])
+app.include_router(dashboard.router, prefix="",            tags=["Dashboard"])
+app.include_router(explain_router)
 
 
-# ── ROOT ──────────────────────────────────────────────────────────────────
-@app.get("/", tags=["Health"], summary="API root — links to all modules")
+# ── ROOT — Serve landing page ─────────────────────────────────────────────
+@app.get("/", tags=["Health"], summary="API root — serve landing page",
+         include_in_schema=False)
 def root():
+    return FileResponse("static/index.html")
+
+
+# ── API INFO — JSON for programmatic access ───────────────────────────────
+@app.get("/api", tags=["Health"], summary="API info JSON")
+def api_info():
     return {
         "status":  "✅ running",
         "app":     "Retail Analytics API",
@@ -87,40 +100,70 @@ def root():
             "cohort":         "/api/cohort",
         },
         "endpoints": {
-            "rfm":    {"all_customers": "/api/rfm/customers", "single_customer": "/api/rfm/customer/{id}",
-                       "segment_summary": "/api/rfm/segments/summary", "top_customers": "/api/rfm/top"},
-            "abc":    {"all_products": "/api/abc/products", "single_product": "/api/abc/product/{id}",
-                       "class_summary": "/api/abc/classes/summary", "top_products": "/api/abc/top"},
-            "clv":    {"all_customers": "/api/clv/customers", "single_customer": "/api/clv/customer/{id}",
-                       "segment_summary": "/api/clv/segments/summary", "top_customers": "/api/clv/top"},
-            "basket": {"all_rules": "/api/basket/rules", "recommendations": "/api/basket/recommendations/{product}",
-                       "top_rules": "/api/basket/top"},
-            "churn":  {"summary": "/api/churn/summary", "single_customer": "/api/churn/customer/{id}",
-                       "by_risk_tier": "/api/churn/risk/{tier}", "top_at_risk": "/api/churn/top-at-risk",
-                       "predict_custom": "POST /api/churn/predict"},
-            "etl":    {"status": "/etl/status", "run_etl": "POST /etl/run",
-                       "refresh_analytics": "POST /etl/analytics/refresh",
-                       "quality_check": "POST /etl/quality/check"}
+            "rfm": {
+                "all_customers"  : "/api/rfm/customers",
+                "single_customer": "/api/rfm/customer/{id}",
+                "segment_summary": "/api/rfm/segments/summary",
+                "top_customers"  : "/api/rfm/top"
+            },
+            "abc": {
+                "all_products"  : "/api/abc/products",
+                "single_product": "/api/abc/product/{id}",
+                "class_summary" : "/api/abc/classes/summary",
+                "top_products"  : "/api/abc/top"
+            },
+            "clv": {
+                "all_customers"  : "/api/clv/customers",
+                "single_customer": "/api/clv/customer/{id}",
+                "segment_summary": "/api/clv/segments/summary",
+                "top_customers"  : "/api/clv/top"
+            },
+            "basket": {
+                "all_rules"      : "/api/basket/rules",
+                "recommendations": "/api/basket/recommendations/{product}",
+                "top_rules"      : "/api/basket/top"
+            },
+            "churn": {
+                "summary"        : "/api/churn/summary",
+                "single_customer": "/api/churn/customer/{id}",
+                "by_risk_tier"   : "/api/churn/risk/{tier}",
+                "top_at_risk"    : "/api/churn/top-at-risk",
+                "predict_custom" : "POST /api/churn/predict"
+            },
+            "etl": {
+                "status"            : "/etl/status",
+                "run_etl"           : "POST /etl/run",
+                "refresh_analytics" : "POST /etl/analytics/refresh",
+                "quality_check"     : "POST /etl/quality/check"
+            }
         }
     }
 
 
 # ── HEALTH CHECK ──────────────────────────────────────────────────────────
-@app.get("/health", tags=["Health"], summary="Health check — shows which data files exist")
+@app.get("/health", tags=["Health"],
+         summary="Health check — shows which data files exist")
 def health():
     import os
+    # Use absolute path relative to main.py location
+    base = os.path.dirname(os.path.abspath(__file__))
+
+    def exists(filename):
+        return os.path.exists(os.path.join(base, filename))
+
     return {
         "status": "ok",
         "files": {
-            "rfm_csv":     os.path.exists("rfm_analysis_results.csv"),
-            "abc_csv":     os.path.exists("abc_analysis_results.csv"),
-            "clv_csv":     os.path.exists("clv_analysis_results.csv"),
-            "cohort_csv":  os.path.exists("cohort_retention_matrix.csv"),
-            "basket_csv":  os.path.exists("market_basket_results.csv"),
-            "churn_csv":   os.path.exists("churn_predictions.csv"),
-            "churn_model": os.path.exists("models/churn_model.pkl"),
+            "rfm_csv"    : exists("rfm_analysis_results.csv"),
+            "abc_csv"    : exists("abc_analysis_results.csv"),
+            "clv_csv"    : exists("clv_analysis_results.csv"),
+            "cohort_csv" : exists("cohort_retention_matrix.csv"),
+            "basket_csv" : exists("market_basket_results.csv"),
+            "churn_csv"  : exists("churn_predictions.csv"),
+            "churn_model": exists("models/churn_model.pkl"),
         }
     }
+
 
 
 # ── RUN ───────────────────────────────────────────────────────────────────

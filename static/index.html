@@ -313,7 +313,7 @@
                 <div class="module-desc">Association rules — products bought together</div></div>
             </div>
             <div class="endpoint-list">
-                <a class="ep" onclick="tryEndpoint('/api/basket/rules?limit=5')">
+                <a class="ep" onclick="tryEndpoint('/api/basket/top?n=5')">
                     <span class="method get">GET</span>
                     <span class="ep-path">/api/basket/rules</span>
                     <span class="ep-desc">All rules</span></a>
@@ -328,8 +328,10 @@
         <div class="module-card" style="border-color:#2d1a4a;">
             <div class="module-header" style="background:#0d0a1a;">
                 <span class="module-icon">🤖</span>
-                <div><div class="module-title">Churn Prediction <span style="color:#bb88ff;font-size:0.7rem">ML</span></div>
-                <div class="module-desc">RandomForest model · Churn probability per customer</div></div>
+                <div>
+                    <div class="module-title">Churn Prediction <span style="color:#bb88ff;font-size:0.7rem">ML</span></div>
+                    <div class="module-desc">RandomForest model · Churn probability per customer</div>
+                </div>
             </div>
             <div class="endpoint-list">
                 <a class="ep" onclick="tryEndpoint('/api/churn/summary')">
@@ -344,8 +346,46 @@
                     <span class="method get">GET</span>
                     <span class="ep-path">/api/churn/top-at-risk</span>
                     <span class="ep-desc">High value at risk</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/churn/customer/12350')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/churn/customer/{id}</span>
+                    <span class="ep-desc">Single customer</span></a>
             </div>
         </div>
+
+<!-- SHAP -->
+<div class="module-card" style="border-color:#1a3a2a;">
+    <div class="module-header" style="background:#0a1a10;">
+        <span class="module-icon">🧠</span>
+        <div>
+            <div class="module-title">SHAP Explainability <span style="color:#4ec994;font-size:0.7rem">XAI</span></div>
+            <div class="module-desc">Feature importance · Per-customer churn explanation</div>
+        </div>
+    </div>
+    <div class="endpoint-list">
+        <a class="ep" onclick="tryEndpoint('/api/churn/explain/importance')">
+            <span class="method get">GET</span>
+            <span class="ep-path">/api/churn/explain/importance</span>
+            <span class="ep-desc">Global importance</span></a>
+        <a class="ep" onclick="tryEndpoint('/api/churn/explain/bar-data')">
+            <span class="method get">GET</span>
+            <span class="ep-path">/api/churn/explain/bar-data</span>
+            <span class="ep-desc">Bar chart JSON</span></a>
+        <a class="ep" onclick="tryEndpoint('/api/churn/explain/summary-data')">
+            <span class="method get">GET</span>
+            <span class="ep-path">/api/churn/explain/summary-data</span>
+            <span class="ep-desc">Beeswarm JSON</span></a>
+        <a class="ep" onclick="tryEndpoint('/api/churn/explain/customer/12350')">
+            <span class="method get">GET</span>
+            <span class="ep-path">/api/churn/explain/customer/{id}</span>
+            <span class="ep-desc">Customer breakdown</span></a>
+        <a class="ep" onclick="tryEndpoint('/api/churn/explain/customer/12350/waterfall')">
+            <span class="method get">GET</span>
+            <span class="ep-path">/api/churn/explain/customer/{id}/waterfall</span>
+            <span class="ep-desc">Waterfall PNG</span></a>
+    </div>
+</div>
+
 
         <!-- ETL -->
         <div class="module-card">
@@ -481,13 +521,15 @@ async function checkStatus() {
         const setDot = (id, ok) => {
             document.getElementById(id).className = "dot " + (ok ? "" : "red");
         };
-        setDot("rfm-dot",   d.files.rfm_csv);
-        setDot("abc-dot",   d.files.abc_csv);
+        // AFTER (correct key names matching your /health response)
+        setDot("rfm-dot",   d.files.rfm_results);
+        setDot("abc-dot",   d.files.abc_results);
         setDot("churn-dot", d.files.churn_model);
-        document.getElementById("rfm-status").textContent   = d.files.rfm_csv    ? "Ready" : "Missing";
-        document.getElementById("abc-status").textContent   = d.files.abc_csv    ? "Ready" : "Missing";
-        document.getElementById("churn-status").textContent = d.files.churn_model ? "Loaded" : "Not trained";
-    } catch {
+        document.getElementById("rfm-status").textContent   = d.files.rfm_results  ? "Ready"  : "Missing";
+        document.getElementById("abc-status").textContent   = d.files.abc_results  ? "Ready"  : "Missing";
+        document.getElementById("churn-status").textContent = d.files.churn_model  ? "Loaded" : "Not trained";
+
+    } catch(e) {
         document.getElementById("api-status").textContent = "Offline";
         document.getElementById("api-dot").className = "dot red";
     }

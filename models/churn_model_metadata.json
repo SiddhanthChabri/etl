@@ -1,7 +1,7 @@
 {
   "model_name": "Random Forest",
-  "trained_at": "2026-02-19T02:15:38.918371",
-  "recency_threshold": 5402,
+  "trained_at": "2026-02-22T12:44:08.078949",
+  "recency_threshold": 5406,
   "features": [
     "recency",
     "frequency",
@@ -36,11 +36,11 @@
   "top_features": [
     {
       "feature": "recency",
-      "importance": 0.4164
+      "importance": 0.4163
     },
     {
       "feature": "log_recency",
-      "importance": 0.2917
+      "importance": 0.2919
     },
     {
       "feature": "r_score",
