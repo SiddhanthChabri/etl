@@ -1,0 +1,6 @@
+2026-02-23 01:25:02 - shap_explainability - WARNING - Missing features in data: ['avg_order_value', 'revenue_per_day', 'recency_x_frequency', 'monetary_x_frequency', 'log_monetary', 'log_frequency', 'log_recency', 'segment_score', 'clv_discounted', 'lifespan_years', 'clv_purchase_count']. Filling with 0.
+2026-02-23 01:25:03 - shap_explainability - INFO - Computing SHAP values on 500 samples...
+2026-02-23 01:25:04 - shap_explainability - INFO - SHAP values computed successfully.
+2026-02-23 01:25:04 - shap_explainability - WARNING - Missing features in data: ['avg_order_value', 'revenue_per_day', 'recency_x_frequency', 'monetary_x_frequency', 'log_monetary', 'log_frequency', 'log_recency', 'segment_score', 'clv_discounted', 'lifespan_years', 'clv_purchase_count']. Filling with 0.
+2026-02-23 01:25:04 - shap_explainability - INFO - Computing SHAP values on 500 samples...
+2026-02-23 01:25:05 - shap_explainability - INFO - SHAP values computed successfully.

@@ -166,6 +166,9 @@
         <span class="badge badge-orange">Market Basket</span>
         <span class="badge badge-purple">ML Churn Model</span>
         <span class="badge badge-blue">Star Schema DWH</span>
+        <span class="badge badge-green">Demand Forecasting</span>
+        <span class="badge badge-orange">Price Elasticity</span>
+        <span class="badge badge-purple">Customer Journey</span>
     </div>
 </div>
 
@@ -183,6 +186,15 @@
     <div class="status-item"><div class="dot yellow" id="churn-dot"></div>
         <span class="status-label">Churn Model</span>
         <span class="status-val" id="churn-status">—</span></div>
+    <div class="status-item"><div class="dot yellow" id="forecast-dot"></div>
+        <span class="status-label">Forecast</span>
+        <span class="status-val" id="forecast-status">—</span></div>
+    <div class="status-item"><div class="dot yellow" id="elasticity-dot"></div>
+        <span class="status-label">Elasticity</span>
+        <span class="status-val" id="elasticity-status">—</span></div>
+    <div class="status-item"><div class="dot yellow" id="journey-dot"></div>
+        <span class="status-label">Journey</span>
+        <span class="status-val" id="journey-status">—</span></div>
     <div class="status-item" style="margin-left:auto;color:#555;font-size:0.75rem">
         v1.0.0 · <a href="/docs" style="color:#4472C4;text-decoration:none">Swagger UI ↗</a>
         &nbsp;·&nbsp; <a href="/redoc" style="color:#4472C4;text-decoration:none">ReDoc ↗</a>
@@ -433,6 +445,105 @@
             </div>
         </div>
 
+        <!-- Demand Forecasting -->
+        <div class="module-card" style="border-color:#1a3d2a;">
+            <div class="module-header" style="background:#0a1a10;">
+                <span class="module-icon">📈</span>
+                <div>
+                    <div class="module-title">Demand Forecasting <span style="color:#4ec994;font-size:0.7rem">Prophet/ETS</span></div>
+                    <div class="module-desc">30-day demand forecast per product & category</div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/forecast/summary')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/forecast/summary</span>
+                    <span class="ep-desc">Overview & KPIs</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/forecast/top?n=5')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/forecast/top</span>
+                    <span class="ep-desc">Top products</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/forecast/categories')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/forecast/categories</span>
+                    <span class="ep-desc">Category list</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/forecast/accuracy')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/forecast/accuracy</span>
+                    <span class="ep-desc">Model accuracy</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/forecast/products?limit=5')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/forecast/products</span>
+                    <span class="ep-desc">All forecasts</span></a>
+            </div>
+        </div>
+
+        <!-- Price Elasticity -->
+        <div class="module-card" style="border-color:#3d2a10;">
+            <div class="module-header" style="background:#1a1005;">
+                <span class="module-icon">💹</span>
+                <div>
+                    <div class="module-title">Price Elasticity <span style="color:#ffaa55;font-size:0.7rem">Log-Log OLS</span></div>
+                    <div class="module-desc">Demand sensitivity to price changes per product</div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/elasticity/summary')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/elasticity/summary</span>
+                    <span class="ep-desc">Distribution & stats</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/elasticity/top/elastic?n=5')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/elasticity/top/elastic</span>
+                    <span class="ep-desc">Most elastic</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/elasticity/top/inelastic?n=5')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/elasticity/top/inelastic</span>
+                    <span class="ep-desc">Most inelastic</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/elasticity/categories')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/elasticity/categories</span>
+                    <span class="ep-desc">By category</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/elasticity/products?limit=5&significant_only=true')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/elasticity/products</span>
+                    <span class="ep-desc">All products</span></a>
+            </div>
+        </div>
+
+        <!-- Customer Journey -->
+        <div class="module-card" style="border-color:#2d1a4a;">
+            <div class="module-header" style="background:#120a22;">
+                <span class="module-icon">🗺️</span>
+                <div>
+                    <div class="module-title">Customer Journey <span style="color:#bb88ff;font-size:0.7rem">Sankey</span></div>
+                    <div class="module-desc">Purchase tier transitions · retention funnel · sequences</div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/journey/summary')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/journey/summary</span>
+                    <span class="ep-desc">Journey metadata</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/journey/sankey-data')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/journey/sankey-data</span>
+                    <span class="ep-desc">Sankey JSON</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/journey/funnel')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/journey/funnel</span>
+                    <span class="ep-desc">Retention funnel</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/journey/transitions')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/journey/transitions</span>
+                    <span class="ep-desc">Transition matrix</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/journey/sequences?limit=5')">
+                    <span class="method get">GET</span>
+                    <span class="ep-path">/api/journey/sequences</span>
+                    <span class="ep-desc">Purchase paths</span></a>
+            </div>
+        </div>
+
     </div><!-- /endpoint-grid -->
 
     <!-- ── TRY IT ── -->
@@ -502,7 +613,7 @@
 
 <footer>
     Retail Analytics API v1.0.0 &nbsp;·&nbsp;
-    Built with FastAPI + PostgreSQL + scikit-learn &nbsp;·&nbsp;
+    FastAPI · PostgreSQL · scikit-learn · Prophet · SHAP &nbsp;·&nbsp;
     <a href="/docs" style="color:#4472C4;text-decoration:none">Swagger Docs</a> &nbsp;·&nbsp;
     <a href="/dashboard" style="color:#4472C4;text-decoration:none">Dashboard</a>
 </footer>
@@ -521,13 +632,19 @@ async function checkStatus() {
         const setDot = (id, ok) => {
             document.getElementById(id).className = "dot " + (ok ? "" : "red");
         };
-        // AFTER (correct key names matching your /health response)
-        setDot("rfm-dot",   d.files.rfm_results);
-        setDot("abc-dot",   d.files.abc_results);
-        setDot("churn-dot", d.files.churn_model);
-        document.getElementById("rfm-status").textContent   = d.files.rfm_results  ? "Ready"  : "Missing";
-        document.getElementById("abc-status").textContent   = d.files.abc_results  ? "Ready"  : "Missing";
-        document.getElementById("churn-status").textContent = d.files.churn_model  ? "Loaded" : "Not trained";
+        const f = d.files || {};
+        setDot("rfm-dot",        f.rfm_csv);
+        setDot("abc-dot",        f.abc_csv);
+        setDot("churn-dot",      f.churn_model);
+        setDot("forecast-dot",   f.forecast_csv);
+        setDot("elasticity-dot", f.elasticity_csv ?? false);
+        setDot("journey-dot",    f.journey_csv ?? false);
+        document.getElementById("rfm-status").textContent        = f.rfm_csv       ? "Ready"    : "Missing";
+        document.getElementById("abc-status").textContent        = f.abc_csv       ? "Ready"    : "Missing";
+        document.getElementById("churn-status").textContent      = f.churn_model   ? "Loaded"   : "Not trained";
+        document.getElementById("forecast-status").textContent   = f.forecast_csv  ? "Ready"    : "Missing";
+        document.getElementById("elasticity-status").textContent = f.elasticity_csv ?? false ? "Ready" : "Missing";
+        document.getElementById("journey-status").textContent    = f.journey_csv   ?? false ? "Ready" : "Missing";
 
     } catch(e) {
         document.getElementById("api-status").textContent = "Offline";

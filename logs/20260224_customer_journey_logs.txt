@@ -1,0 +1,11 @@
+2026-02-24 04:06:18 - customer_journey - INFO - ============================================================
+2026-02-24 04:06:18 - customer_journey - INFO - CUSTOMER JOURNEY ANALYSIS
+2026-02-24 04:06:18 - customer_journey - INFO - ============================================================
+2026-02-24 04:06:18 - customer_journey - INFO - Fetching customer transactions from data warehouse...
+2026-02-24 04:06:18 - customer_journey - INFO -   7,150 transactions | 2,989 customers
+2026-02-24 04:06:18 - customer_journey - INFO -   Tier thresholds — Low < 215.39, Medium 215.39–402.91, High > 402.91
+2026-02-24 04:06:23 - customer_journey - INFO - Saved transitions -> journey_transitions.csv
+2026-02-24 04:06:23 - customer_journey - INFO - Saved sequences   -> journey_sequences.csv
+2026-02-24 04:06:23 - customer_journey - INFO - Saved funnel      -> journey_funnel.csv
+2026-02-24 04:06:23 - customer_journey - INFO - Saved metadata    -> models/journey_metadata.json
+2026-02-24 04:06:23 - customer_journey - INFO - Customer journey analysis complete.

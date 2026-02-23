@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
-from routers import rfm, abc, clv, basket, etl, dashboard, churn
+from routers import rfm, abc, clv, basket, etl, dashboard, churn, forecast, elasticity, journey
 import uvicorn
 from routers.explain import router as explain_router
 
@@ -28,6 +28,8 @@ A complete REST API for retail analytics powered by a PostgreSQL Data Warehouse.
 | 📅 **Cohort Analysis** | Retention tracking by customer acquisition cohort |
 | 🛒 **Market Basket** | Association rules — products bought together |
 | 🤖 **Churn Prediction** | ML model to identify customers likely to leave |
+| 📈 **Demand Forecasting** | Time-series forecast of product demand (Prophet/ETS) |
+| 💹 **Price Elasticity** | Log-log OLS regression — demand sensitivity to price |
 | ⚙️  **ETL Pipeline** | Trigger & monitor incremental data loads |
 | 📊 **Dashboard** | Serve HTML dashboard & download Excel reports |
 
@@ -48,6 +50,9 @@ A complete REST API for retail analytics powered by a PostgreSQL Data Warehouse.
         {"name": "Churn Prediction 🤖", "description": "ML-based churn probability scoring per customer"},
         {"name": "ETL Pipeline",        "description": "Trigger & monitor ETL pipeline jobs"},
         {"name": "Dashboard",           "description": "HTML dashboard, Excel download & cohort data"},
+        {"name": "Demand Forecasting",  "description": "Time-series demand forecasting per product & category"},
+        {"name": "Price Elasticity",    "description": "Log-log OLS elasticity of demand per product & category"},
+        {"name": "Customer Journey",    "description": "Purchase sequence analysis — tier transitions & Sankey flow"},
     ]
 )
 
@@ -74,6 +79,9 @@ app.include_router(basket.router,    prefix="/api/basket", tags=["Market Basket"
 app.include_router(churn.router,     prefix="/api/churn",  tags=["Churn Prediction 🤖"])
 app.include_router(etl.router,       prefix="/etl",        tags=["ETL Pipeline"])
 app.include_router(dashboard.router, prefix="",            tags=["Dashboard"])
+app.include_router(forecast.router,   prefix="/api/forecast",    tags=["Demand Forecasting"])
+app.include_router(elasticity.router, prefix="/api/elasticity", tags=["Price Elasticity"])
+app.include_router(journey.router,    prefix="/api/journey",    tags=["Customer Journey"])
 app.include_router(explain_router)
 
 
@@ -135,6 +143,24 @@ def api_info():
                 "run_etl"           : "POST /etl/run",
                 "refresh_analytics" : "POST /etl/analytics/refresh",
                 "quality_check"     : "POST /etl/quality/check"
+            },
+            "forecast": {
+                "summary"         : "/api/forecast/summary",
+                "all_products"    : "/api/forecast/products",
+                "single_product"  : "/api/forecast/product/{id}",
+                "top_products"    : "/api/forecast/top",
+                "by_category"     : "/api/forecast/category/{category}",
+                "categories_list" : "/api/forecast/categories",
+                "accuracy_metrics": "/api/forecast/accuracy",
+            },
+            "elasticity": {
+                "summary"        : "/api/elasticity/summary",
+                "all_products"   : "/api/elasticity/products",
+                "single_product" : "/api/elasticity/product/{id}",
+                "by_type"        : "/api/elasticity/type/{type}",
+                "top_elastic"    : "/api/elasticity/top/elastic",
+                "top_inelastic"  : "/api/elasticity/top/inelastic",
+                "by_category"    : "/api/elasticity/categories",
             }
         }
     }
@@ -154,13 +180,17 @@ def health():
     return {
         "status": "ok",
         "files": {
-            "rfm_csv"    : exists("rfm_analysis_results.csv"),
-            "abc_csv"    : exists("abc_analysis_results.csv"),
-            "clv_csv"    : exists("clv_analysis_results.csv"),
-            "cohort_csv" : exists("cohort_retention_matrix.csv"),
-            "basket_csv" : exists("market_basket_results.csv"),
-            "churn_csv"  : exists("churn_predictions.csv"),
-            "churn_model": exists("models/churn_model.pkl"),
+            "rfm_csv"         : exists("rfm_analysis_results.csv"),
+            "abc_csv"         : exists("abc_analysis_results.csv"),
+            "clv_csv"         : exists("clv_analysis_results.csv"),
+            "cohort_csv"      : exists("cohort_retention_matrix.csv"),
+            "basket_csv"      : exists("market_basket_results.csv"),
+            "churn_csv"       : exists("churn_predictions.csv"),
+            "churn_model"     : exists("models/churn_model.pkl"),
+            "forecast_csv"    : exists("demand_forecast_results.csv"),
+            "forecast_model"  : exists("models/demand_forecast_metadata.json"),
+            "elasticity_csv"  : exists("price_elasticity_results.csv"),
+            "journey_csv"     : exists("journey_transitions.csv"),
         }
     }
 

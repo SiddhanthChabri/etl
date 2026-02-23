@@ -1,0 +1,13 @@
+from_tier,to_tier,count,probability
+High,High,936,0.3966
+High,Churned,850,0.3602
+High,Medium,396,0.1678
+High,Low,178,0.0754
+Low,Churned,1112,0.4712
+Low,Low,722,0.3059
+Low,Medium,348,0.1475
+Low,High,178,0.0754
+Medium,Churned,1027,0.4226
+Medium,Medium,643,0.2646
+Medium,High,382,0.1572
+Medium,Low,378,0.1556

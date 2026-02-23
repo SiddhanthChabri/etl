@@ -247,6 +247,77 @@
             border-bottom: 1px solid #2a2f45;
         }
 
+        /* ── FORECAST TAB ── */
+        .forecast-search-row {
+            display: flex;
+            gap: 12px;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+        .forecast-search-row input {
+            flex: 1;
+            padding: 10px 14px;
+            background: #0f1117;
+            color: #fff;
+            border: 1px solid #2a2f45;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            min-width: 220px;
+        }
+        .forecast-search-row input:focus { outline: none; border-color: #4472C4; }
+        .forecast-btn {
+            padding: 10px 24px;
+            background: #4472C4;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .forecast-btn:hover    { background: #2d5aa0; }
+        .forecast-btn:disabled { background: #2a2f45; cursor: not-allowed; }
+        .forecast-error { color: #e74c3c; font-size: 0.85rem; margin-top: 8px; display: none; }
+        .method-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: #4472C4;
+            color: #fff;
+            margin-left: 8px;
+        }
+
+        /* ── ELASTICITY TAB ── */
+        .elasticity-search-row {
+            display: flex;
+            gap: 12px;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+        .elasticity-search-row input {
+            flex: 1;
+            padding: 10px 14px;
+            background: #0f1117;
+            color: #fff;
+            border: 1px solid #2a2f45;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            min-width: 220px;
+        }
+        .elasticity-search-row input:focus { outline: none; border-color: #4472C4; }
+        .elasticity-type-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 600px) {
             main   { padding: 16px; }
@@ -271,6 +342,9 @@
     <button onclick="showTab('cohort',   this)">📅 Cohort</button>
     <button onclick="showTab('basket',   this)">🛒 Market Basket</button>
     <button onclick="showTab('shap',     this)">🧠 SHAP</button>
+    <button onclick="showTab('forecast',    this)">📈 Forecast</button>
+    <button onclick="showTab('elasticity', this)">💹 Price Elasticity</button>
+    <button onclick="showTab('journey',   this)">🗺️ Journey</button>
 </nav>
 
 <main>
@@ -512,6 +586,215 @@
 
 </div><!-- end tab-shap -->
 
+
+<!-- ══════════════════════════════════════════════
+     TAB 8 — DEMAND FORECASTING
+══════════════════════════════════════════════ -->
+<div id="tab-forecast" class="tab-content">
+
+    <!-- KPI row -->
+    <div class="kpi-grid" id="forecast-kpis">
+        <div class="loading"><div class="spinner"></div> Loading...</div>
+    </div>
+
+    <!-- Category bar + Top-10 products bar -->
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="section-title">📦 Forecasted Demand by Category</div>
+            <canvas id="chart-forecast-category"></canvas>
+        </div>
+        <div class="chart-card">
+            <div class="section-title">🏆 Top 10 Products by Expected Demand</div>
+            <canvas id="chart-forecast-top"></canvas>
+        </div>
+    </div>
+
+    <!-- Top products table -->
+    <div class="table-card">
+        <div class="section-title">📋 Top 20 Products — Forecasted Demand</div>
+        <table>
+            <thead><tr>
+                <th>#</th>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Total Forecast (units)</th>
+                <th>Avg Daily (units)</th>
+            </tr></thead>
+            <tbody id="forecast-table-body">
+                <tr><td colspan="6" style="text-align:center">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Interactive product time-series lookup -->
+    <div class="chart-card" style="margin-bottom:24px">
+        <div class="section-title">🔍 Product Forecast Explorer</div>
+        <p style="color:#888;font-size:0.84rem;margin-bottom:4px">
+            Enter a Product ID to see its full historical sales and future forecast with confidence interval.
+        </p>
+        <div class="forecast-search-row">
+            <input id="forecast-pid-input"
+                   type="text"
+                   placeholder="Enter Product ID (e.g. 85123A)"
+                   onkeydown="if(event.key==='Enter') loadProductForecast()" />
+            <button id="forecast-search-btn" class="forecast-btn" onclick="loadProductForecast()">
+                Show Forecast ➜
+            </button>
+        </div>
+        <div id="forecast-error" class="forecast-error"></div>
+        <div id="forecast-ts-plot" style="width:100%; height:460px; margin-top:12px;">
+            <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#555;font-size:0.9rem">
+                Enter a Product ID above to see its forecast chart.
+            </div>
+        </div>
+    </div>
+
+</div><!-- end tab-forecast -->
+
+
+<!-- ══════════════════════════════════════════════
+     TAB 9 — PRICE ELASTICITY
+══════════════════════════════════════════════ -->
+<div id="tab-elasticity" class="tab-content">
+
+    <!-- KPIs -->
+    <div class="kpi-grid" id="elasticity-kpis">
+        <div class="loading"><div class="spinner"></div> Loading...</div>
+    </div>
+
+    <!-- Distribution donut + Category avg bar -->
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="section-title">📊 Elasticity Type Distribution</div>
+            <canvas id="chart-elasticity-dist"></canvas>
+        </div>
+        <div class="chart-card">
+            <div class="section-title">📦 Avg Elasticity by Category</div>
+            <canvas id="chart-elasticity-cat"></canvas>
+        </div>
+    </div>
+
+    <!-- Scatter: elasticity vs avg price (Plotly) -->
+    <div class="chart-card" style="margin-bottom:24px">
+        <div class="section-title">🔵 Elasticity vs Avg Price (significant results only)</div>
+        <div id="elasticity-scatter" style="width:100%;height:420px;">
+            <div class="loading"><div class="spinner"></div> Loading scatter...</div>
+        </div>
+    </div>
+
+    <!-- Two tables side by side: most elastic / most inelastic -->
+    <div class="chart-grid">
+        <div class="table-card" style="margin-bottom:0">
+            <div class="section-title">🔴 Most Elastic — Highest Price Sensitivity</div>
+            <table>
+                <thead><tr>
+                    <th>#</th><th>Product</th><th>Category</th>
+                    <th>Elasticity</th><th>R²</th><th>Sig?</th>
+                </tr></thead>
+                <tbody id="elastic-table-body">
+                    <tr><td colspan="6" style="text-align:center">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="table-card" style="margin-bottom:0">
+            <div class="section-title">🟢 Most Inelastic — Lowest Price Sensitivity</div>
+            <table>
+                <thead><tr>
+                    <th>#</th><th>Product</th><th>Category</th>
+                    <th>Elasticity</th><th>R²</th><th>Sig?</th>
+                </tr></thead>
+                <tbody id="inelastic-table-body">
+                    <tr><td colspan="6" style="text-align:center">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Product lookup -->
+    <div class="chart-card" style="margin-top:24px;margin-bottom:24px">
+        <div class="section-title">🔍 Product Elasticity Lookup</div>
+        <p style="color:#888;font-size:0.84rem;margin-bottom:4px">
+            Enter a Product ID to see its elasticity value, price range, and interpretation.
+        </p>
+        <div class="elasticity-search-row">
+            <input id="elasticity-pid-input"
+                   type="text"
+                   placeholder="Enter Product ID (e.g. 85123A)"
+                   onkeydown="if(event.key==='Enter') lookupElasticity()" />
+            <button class="forecast-btn" onclick="lookupElasticity()">Look Up ➜</button>
+        </div>
+        <div id="elasticity-lookup-result" style="margin-top:16px"></div>
+    </div>
+
+</div><!-- end tab-elasticity -->
+
+
+<!-- ══════════════════════════════════════════════
+     TAB 10 — CUSTOMER JOURNEY
+══════════════════════════════════════════════ -->
+<div id="tab-journey" class="tab-content">
+
+    <!-- KPIs -->
+    <div class="kpi-grid" id="journey-kpis">
+        <div class="loading"><div class="spinner"></div> Loading...</div>
+    </div>
+
+    <!-- Sankey diagram -->
+    <div class="chart-card" style="margin-bottom:24px">
+        <div class="section-title">🌊 Purchase Journey Flow — 1st → 2nd → 3rd Order</div>
+        <p style="color:#888;font-size:0.82rem;margin-bottom:12px">
+            Shows how customers move between Low / Medium / High value tiers across their first three purchases.
+            Width of each flow = number of customers taking that path.
+        </p>
+        <div id="journey-sankey" style="width:100%;height:480px;">
+            <div class="loading"><div class="spinner"></div> Building Sankey...</div>
+        </div>
+    </div>
+
+    <!-- Funnel + Sequences side by side -->
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="section-title">📉 Retention Funnel by Purchase Step</div>
+            <canvas id="chart-journey-funnel"></canvas>
+        </div>
+        <div class="chart-card">
+            <div class="section-title">🔢 Avg Order Value by Purchase Step</div>
+            <canvas id="chart-journey-aov"></canvas>
+        </div>
+    </div>
+
+    <!-- Top sequences table -->
+    <div class="table-card">
+        <div class="section-title">🏆 Most Common Purchase Paths</div>
+        <table>
+            <thead><tr>
+                <th>#</th>
+                <th>Journey Path</th>
+                <th>Steps</th>
+                <th>Customers</th>
+                <th>% of Total</th>
+            </tr></thead>
+            <tbody id="journey-seq-table">
+                <tr><td colspan="5" style="text-align:center">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Customer journey lookup -->
+    <div class="chart-card" style="margin-bottom:24px">
+        <div class="section-title">🔍 Individual Customer Journey</div>
+        <p style="color:#888;font-size:0.84rem;margin-bottom:4px">Enter a Customer ID to see their full purchase history and journey path.</p>
+        <div class="forecast-search-row">
+            <input id="journey-cid-input" type="text" placeholder="Enter Customer ID..."
+                   onkeydown="if(event.key==='Enter') lookupJourney()" />
+            <button class="forecast-btn" onclick="lookupJourney()">Show Journey ➜</button>
+        </div>
+        <div id="journey-lookup-result" style="margin-top:16px"></div>
+    </div>
+
+</div><!-- end tab-journey -->
+
 </main>
 
 <script>
@@ -593,12 +876,29 @@ function showTab(name, btn) {
     document.querySelectorAll("nav button").forEach(el => el.classList.remove("active"));
     document.getElementById("tab-" + name).classList.add("active");
     if (btn) btn.classList.add("active");
-    // Resize Plotly charts when SHAP tab is shown
+    // Resize Plotly charts when relevant tab is shown
     if (name === "shap") {
         ["shap-bar-plot","shap-summary-plot","shap-waterfall-plot"].forEach(id => {
             const el = document.getElementById(id);
             if (el && el._isPlotly) Plotly.Plots.resize(el);
         });
+    }
+    if (name === "forecast") {
+        const el = document.getElementById("forecast-ts-plot");
+        if (el && el._isPlotly) Plotly.Plots.resize(el);
+    }
+    if (name === "elasticity") {
+        const el = document.getElementById("elasticity-scatter");
+        if (el && el._isPlotly) Plotly.Plots.resize(el);
+    }
+    if (name === "journey") {
+        const el = document.getElementById("journey-sankey");
+        if (el && el._isPlotly) {
+            Plotly.Plots.resize(el);
+        } else {
+            // Not yet rendered (was hidden during boot) — render now
+            renderJourneySankey();
+        }
     }
 }
 
@@ -1047,6 +1347,688 @@ async function loadWaterfall() {
     btn.textContent = "Explain ➜";
 }
 
+// ── Price Elasticity ──────────────────────────────────────────────────────────
+
+const ELASTICITY_COLORS = {
+    "Highly Elastic"   : "#e74c3c",
+    "Elastic"          : "#ED7D31",
+    "Inelastic"        : "#4472C4",
+    "Highly Inelastic" : "#70AD47",
+    "Positive"         : "#FFC000",
+};
+
+function elasticityBadge(type) {
+    const color = ELASTICITY_COLORS[type] || "#888";
+    return `<span class="elasticity-type-badge" style="background:${color};color:#fff">${type||"—"}</span>`;
+}
+
+async function loadElasticity() {
+    try {
+        const [sumRes, elasticRes, inelasticRes, catRes] = await Promise.all([
+            fetch(`${API}/api/elasticity/summary`),
+            fetch(`${API}/api/elasticity/top/elastic?n=15&significant_only=true`),
+            fetch(`${API}/api/elasticity/top/inelastic?n=15&significant_only=true`),
+            fetch(`${API}/api/elasticity/categories`),
+        ]);
+
+        if (!sumRes.ok) throw new Error("Run price_elasticity.py first.");
+
+        const summary   = await sumRes.json();
+        const elastic   = await elasticRes.json();
+        const inelastic = await inelasticRes.json();
+        const catData   = await catRes.json();
+
+        // ── KPIs ──────────────────────────────────────────────────────────
+        const dist = summary.elasticity_distribution || {};
+        document.getElementById("elasticity-kpis").innerHTML = `
+            <div class="kpi-card">
+                <div class="label">Products Analysed</div>
+                <div class="value">${fmtI(summary.products_analysed)}</div>
+            </div>
+            <div class="kpi-card orange">
+                <div class="label">Statistically Significant</div>
+                <div class="value">${fmtI(summary.significant_results)}</div>
+                <div class="sub">${summary.significance_pct}% of total</div>
+            </div>
+            <div class="kpi-card red">
+                <div class="label">Highly Elastic</div>
+                <div class="value">${fmtI(dist["Highly Elastic"]||0)}</div>
+                <div class="sub">most price-sensitive</div>
+            </div>
+            <div class="kpi-card green">
+                <div class="label">Avg Elasticity</div>
+                <div class="value">${summary.avg_elasticity ?? "—"}</div>
+                <div class="sub">median: ${summary.median_elasticity ?? "—"}</div>
+            </div>
+        `;
+
+        // ── Donut: type distribution ───────────────────────────────────────
+        const types  = Object.keys(dist);
+        const counts = Object.values(dist);
+        const colors = types.map(t => ELASTICITY_COLORS[t] || "#888");
+        makeDonut("chart-elasticity-dist", types, counts, colors);
+
+        // ── Bar: avg elasticity by category (top 8 by abs elasticity) ─────
+        const topCats = catData
+            .filter(r => r.product_count >= 5)
+            .sort((a, b) => a.avg_elasticity - b.avg_elasticity)
+            .slice(0, 8);
+        makeBar(
+            "chart-elasticity-cat",
+            topCats.map(r => r.category || "Unknown"),
+            topCats.map(r => +(r.avg_elasticity || 0).toFixed(3)),
+            "Avg Elasticity",
+            topCats.map(r => (r.avg_elasticity || 0) < -1 ? "#e74c3c" : (r.avg_elasticity || 0) < -0.5 ? "#ED7D31" : "#4472C4")
+        );
+
+        // ── Scatter: elasticity vs avg_price ──────────────────────────────
+        // Fetch ALL products (no significance filter) so all 5 elasticity
+        // types appear. Cap y-axis to [-20, 5] to hide extreme outliers.
+        const scatterRes  = await fetch(`${API}/api/elasticity/products?significant_only=false&limit=2000`);
+        const scatterData = await scatterRes.json();
+        const pts = scatterData.data || [];
+
+        const typeGroups = {};
+        pts.forEach(p => {
+            const e = p.price_elasticity;
+            // Skip extreme outliers so chart is readable
+            if (e == null || e < -20 || e > 5) return;
+            const t = p.elasticity_type || "Unknown";
+            if (!typeGroups[t]) typeGroups[t] = { x:[], y:[], text:[] };
+            typeGroups[t].x.push(p.avg_price);
+            typeGroups[t].y.push(e);
+            typeGroups[t].text.push(
+                `<b>${p.product_name || p.product_id}</b><br>` +
+                `Elasticity: ${e}<br>R²: ${p.r_squared}<br>Avg Price: $${p.avg_price}`
+            );
+        });
+
+        // Subsample each type to max 200 pts so Plotly stays fast
+        const MAX_PTS = 200;
+        const scatterTraces = Object.entries(typeGroups).map(([type, vals]) => {
+            let { x, y, text } = vals;
+            if (x.length > MAX_PTS) {
+                const idx = Array.from({length: x.length}, (_, i) => i)
+                    .sort(() => Math.random() - 0.5).slice(0, MAX_PTS);
+                x    = idx.map(i => x[i]);
+                y    = idx.map(i => y[i]);
+                text = idx.map(i => text[i]);
+            }
+            return {
+                type: "scatter", mode: "markers",
+                name: type,
+                x, y, text,
+                hovertemplate: "%{text}<extra></extra>",
+                marker: { size: 6, color: ELASTICITY_COLORS[type] || "#888", opacity: 0.7 }
+            };
+        });
+
+        const scatterEl = document.getElementById("elasticity-scatter");
+        scatterEl.innerHTML = "";
+        Plotly.newPlot(scatterEl, scatterTraces, {
+            ...PLOTLY_LAYOUT,
+            margin: { l:60, r:30, t:50, b:60 },
+            height: 420,
+            xaxis: { ...PLOTLY_LAYOUT.xaxis, title: "Avg Unit Price ($)", type: "log" },
+            yaxis: { ...PLOTLY_LAYOUT.yaxis, title: "Price Elasticity",
+                     range: [-20, 5], zeroline: true, zerolinecolor: "#555" },
+            shapes: [
+                // Zero line
+                { type:"line", x0:0, x1:1, xref:"paper", y0:0,  y1:0,
+                  line:{ color:"#555", width:1, dash:"dash" } },
+                // Elastic/inelastic boundary at E = -1
+                { type:"line", x0:0, x1:1, xref:"paper", y0:-1, y1:-1,
+                  line:{ color:"#ED7D31", width:1.5, dash:"dot" } },
+                // Highly elastic boundary at E = -1.5
+                { type:"line", x0:0, x1:1, xref:"paper", y0:-1.5, y1:-1.5,
+                  line:{ color:"#e74c3c", width:1, dash:"dot" } },
+            ],
+            annotations: [
+                { x:1, xref:"paper", y:-1,   yref:"y", text:"E = -1 (elastic boundary)",
+                  showarrow:false, font:{ color:"#ED7D31", size:10 }, xanchor:"right" },
+                { x:1, xref:"paper", y:-1.5, yref:"y", text:"E = -1.5 (highly elastic)",
+                  showarrow:false, font:{ color:"#e74c3c", size:10 }, xanchor:"right" },
+            ],
+            legend: { x:0, y:1.12, orientation:"h" }
+        }, { responsive:true, displayModeBar:false });
+
+        // ── Tables ─────────────────────────────────────────────────────────
+        document.getElementById("elastic-table-body").innerHTML = elastic.map((r, i) => `
+            <tr>
+                <td>${i+1}</td>
+                <td style="font-size:0.8rem">${r.product_name||r.product_id||"—"}</td>
+                <td style="color:#888;font-size:0.78rem">${r.category||"—"}</td>
+                <td style="color:#e74c3c;font-weight:700">${r.price_elasticity}</td>
+                <td style="color:#aaa">${r.r_squared}</td>
+                <td>${r.is_significant ? '<span style="color:#70AD47">✓</span>' : '<span style="color:#888">—</span>'}</td>
+            </tr>`).join("");
+
+        document.getElementById("inelastic-table-body").innerHTML = inelastic.map((r, i) => `
+            <tr>
+                <td>${i+1}</td>
+                <td style="font-size:0.8rem">${r.product_name||r.product_id||"—"}</td>
+                <td style="color:#888;font-size:0.78rem">${r.category||"—"}</td>
+                <td style="color:#70AD47;font-weight:700">${r.price_elasticity}</td>
+                <td style="color:#aaa">${r.r_squared}</td>
+                <td>${r.is_significant ? '<span style="color:#70AD47">✓</span>' : '<span style="color:#888">—</span>'}</td>
+            </tr>`).join("");
+
+    } catch (e) {
+        const msg = e.message || String(e);
+        document.getElementById("elasticity-kpis").innerHTML = `
+            <div class="kpi-card red">
+                <div class="label">Not Available</div>
+                <div class="value" style="font-size:0.85rem;margin-top:8px">${msg}</div>
+            </div>`;
+        document.getElementById("elasticity-scatter").innerHTML =
+            `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#555;font-size:0.9rem">
+             Chart unavailable — ${msg}</div>`;
+        ["elastic-table-body","inelastic-table-body"].forEach(id => {
+            document.getElementById(id).innerHTML =
+                `<tr><td colspan="6" style="text-align:center;color:#888">${msg}</td></tr>`;
+        });
+    }
+}
+
+async function lookupElasticity() {
+    const pid    = document.getElementById("elasticity-pid-input").value.trim();
+    const result = document.getElementById("elasticity-lookup-result");
+    if (!pid) { result.innerHTML = `<span style="color:#e74c3c">Please enter a Product ID.</span>`; return; }
+
+    result.innerHTML = `<div class="loading"><div class="spinner"></div> Looking up...</div>`;
+    try {
+        const res = await fetch(`${API}/api/elasticity/product/${encodeURIComponent(pid)}`);
+        if (!res.ok) { const e = await res.json(); throw new Error(e.detail || `HTTP ${res.status}`); }
+        const d = await res.json();
+
+        const eColor = (d.price_elasticity||0) < -1 ? "#e74c3c" : (d.price_elasticity||0) < -0.5 ? "#ED7D31" : "#70AD47";
+        result.innerHTML = `
+            <div style="background:#0f1117;border-radius:10px;padding:20px;border:1px solid #2a2f45">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+                    <span style="font-size:1.1rem;font-weight:700;color:#fff">${d.product_name||d.product_id}</span>
+                    ${elasticityBadge(d.elasticity_type)}
+                    ${d.is_significant ? '<span style="color:#70AD47;font-size:0.8rem">✓ Statistically significant</span>' : '<span style="color:#888;font-size:0.8rem">Not significant (p≥0.05)</span>'}
+                </div>
+                <div class="kpi-grid" style="margin-bottom:12px">
+                    <div class="kpi-card" style="border-left-color:${eColor}">
+                        <div class="label">Price Elasticity</div>
+                        <div class="value" style="color:${eColor}">${d.price_elasticity}</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="label">R²</div>
+                        <div class="value">${d.r_squared}</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="label">p-value</div>
+                        <div class="value" style="font-size:1.1rem">${d.p_value}</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="label">Avg Price</div>
+                        <div class="value">$${fmt(d.avg_price)}</div>
+                        <div class="sub">$${fmt(d.min_price)} – $${fmt(d.max_price)}</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="label">Avg Daily Qty</div>
+                        <div class="value">${fmt(d.avg_daily_qty)}</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="label">Trading Days</div>
+                        <div class="value">${fmtI(d.trading_days)}</div>
+                    </div>
+                </div>
+                <div style="background:#161b2e;border-radius:8px;padding:14px;font-size:0.85rem;color:#ccc;line-height:1.6">
+                    💡 ${d.interpretation||"—"}
+                </div>
+            </div>`;
+    } catch (e) {
+        result.innerHTML = `<span style="color:#e74c3c">Error: ${e.message}</span>`;
+    }
+}
+
+// ── Demand Forecasting ────────────────────────────────────────────────────────
+async function loadForecast() {
+    try {
+        const [sumRes, topRes] = await Promise.all([
+            fetch(`${API}/api/forecast/summary`),
+            fetch(`${API}/api/forecast/top?n=20`)
+        ]);
+
+        if (!sumRes.ok) throw new Error("Run demand_forecasting.py first.");
+        const summary = await sumRes.json();
+        const top20   = await topRes.json();
+
+        // ── KPIs ──────────────────────────────────────────────────────────
+        document.getElementById("forecast-kpis").innerHTML = `
+            <div class="kpi-card">
+                <div class="label">Products Forecasted</div>
+                <div class="value">${fmtI(summary.products_forecast)}</div>
+                <div class="sub">top products</div>
+            </div>
+            <div class="kpi-card green">
+                <div class="label">Total Forecasted Qty</div>
+                <div class="value">${fmtI(Math.round(summary.total_forecasted_qty))}</div>
+                <div class="sub">next ${summary.horizon_days} days</div>
+            </div>
+            <div class="kpi-card orange">
+                <div class="label">Forecast Horizon</div>
+                <div class="value">${summary.horizon_days}</div>
+                <div class="sub">days ahead</div>
+            </div>
+            <div class="kpi-card yellow">
+                <div class="label">Method</div>
+                <div class="value" style="font-size:1.1rem;margin-top:8px">
+                    <span class="method-badge">${(summary.method||"N/A").toUpperCase()}</span>
+                </div>
+                <div class="sub">data through ${summary.data_through||"—"}</div>
+            </div>
+        `;
+
+        // ── Category bar chart ─────────────────────────────────────────────
+        if (summary.forecast_by_category) {
+            const catEntries = Object.entries(summary.forecast_by_category)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 8);
+            makeBar(
+                "chart-forecast-category",
+                catEntries.map(([k]) => k),
+                catEntries.map(([, v]) => Math.round(v)),
+                "Forecasted Units",
+                ["#4472C4","#70AD47","#ED7D31","#FFC000","#e74c3c","#5B9BD5","#9B1C1C","#FF7F00"]
+            );
+        }
+
+        // ── Top 10 products bar chart ──────────────────────────────────────
+        const top10 = top20.slice(0, 10);
+        makeBar(
+            "chart-forecast-top",
+            top10.map(r => (r.product_name || r.product_id || "").substring(0, 20)),
+            top10.map(r => Math.round(r.total_forecasted_qty || 0)),
+            "Forecasted Units",
+            "#70AD47"
+        );
+
+        // ── Table ──────────────────────────────────────────────────────────
+        document.getElementById("forecast-table-body").innerHTML = top20.map((r, i) => `
+            <tr>
+                <td>${i + 1}</td>
+                <td style="font-family:monospace;color:#4472C4">${r.product_id || "—"}</td>
+                <td>${r.product_name || "—"}</td>
+                <td>${r.category || "—"}</td>
+                <td style="font-weight:600;color:#70AD47">${fmtI(Math.round(r.total_forecasted_qty || 0))}</td>
+                <td>${fmt(r.avg_daily_forecast || 0)}</td>
+            </tr>`).join("");
+
+    } catch (e) {
+        document.getElementById("forecast-kpis").innerHTML = `
+            <div class="kpi-card red">
+                <div class="label">Not Available</div>
+                <div class="value" style="font-size:0.85rem;margin-top:8px">${e.message}</div>
+            </div>`;
+        document.getElementById("forecast-table-body").innerHTML =
+            `<tr><td colspan="6" style="text-align:center;color:#888">${e.message}</td></tr>`;
+    }
+}
+
+// ── Per-Product Time Series ───────────────────────────────────────────────────
+async function loadProductForecast() {
+    const pid    = document.getElementById("forecast-pid-input").value.trim();
+    const errDiv = document.getElementById("forecast-error");
+    const plotEl = document.getElementById("forecast-ts-plot");
+    const btn    = document.getElementById("forecast-search-btn");
+
+    errDiv.style.display = "none";
+    errDiv.textContent   = "";
+
+    if (!pid) {
+        errDiv.textContent   = "Please enter a Product ID.";
+        errDiv.style.display = "block";
+        return;
+    }
+
+    btn.disabled    = true;
+    btn.textContent = "Loading...";
+    plotEl.innerHTML = `<div class="loading"><div class="spinner"></div> Fetching forecast...</div>`;
+
+    try {
+        const res = await fetch(`${API}/api/forecast/product/${encodeURIComponent(pid)}?future_only=false`);
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.detail || `HTTP ${res.status}`);
+        }
+        const data = await res.json();
+        const ts   = data.timeseries || [];
+
+        if (!ts.length) throw new Error("No data returned for this product.");
+
+        const hist   = ts.filter(r => !r.is_forecast);
+        const future = ts.filter(r =>  r.is_forecast);
+
+        // Historical actual line (grey)
+        const traceHist = {
+            type: "scatter", mode: "lines",
+            name: "Historical (actual)",
+            x: hist.map(r => r.forecast_date),
+            y: hist.map(r => r.predicted_quantity),
+            line: { color: "#5B9BD5", width: 1.5 },
+            hovertemplate: "%{x}<br>Qty: %{y:.0f}<extra>Historical</extra>"
+        };
+
+        // Forecast line (orange)
+        const traceFore = {
+            type: "scatter", mode: "lines",
+            name: "Forecast",
+            x: future.map(r => r.forecast_date),
+            y: future.map(r => r.predicted_quantity),
+            line: { color: "#ED7D31", width: 2.5, dash: "dot" },
+            hovertemplate: "%{x}<br>Forecast: %{y:.0f}<extra>Forecast</extra>"
+        };
+
+        // Confidence band (shaded area)
+        const traceUpper = {
+            type: "scatter", mode: "lines",
+            name: "Upper bound",
+            x: future.map(r => r.forecast_date),
+            y: future.map(r => r.upper_bound),
+            line: { width: 0 },
+            showlegend: false,
+            hoverinfo: "skip"
+        };
+        const traceLower = {
+            type: "scatter", mode: "lines",
+            name: "Confidence interval",
+            x: future.map(r => r.forecast_date),
+            y: future.map(r => r.lower_bound),
+            fill: "tonexty",
+            fillcolor: "rgba(237,125,49,0.15)",
+            line: { width: 0 },
+            hoverinfo: "skip"
+        };
+
+        // Vertical line at forecast start
+        const splitDate = future.length ? future[0].forecast_date : null;
+        const shapes = splitDate ? [{
+            type: "line",
+            x0: splitDate, x1: splitDate,
+            y0: 0, y1: 1,
+            yref: "paper",
+            line: { color: "#555", width: 1.5, dash: "dash" }
+        }] : [];
+
+        const acc = data.accuracy || {};
+        const subtitle = acc.mape != null
+            ? `MAPE: ${acc.mape}%   MAE: ${acc.mae}   RMSE: ${acc.rmse}`
+            : "";
+
+        plotEl.innerHTML = "";
+        Plotly.newPlot(plotEl, [traceHist, traceUpper, traceLower, traceFore], {
+            ...PLOTLY_LAYOUT,
+            margin: { l: 60, r: 30, t: 70, b: 50 },
+            title: {
+                text: `${data.product_name || pid}  <span style="font-size:11px;color:#888">${subtitle}</span>`,
+                font: { color: "#fff", size: 13 }
+            },
+            height: 440,
+            legend: { x: 0, y: 1.1, orientation: "h" },
+            xaxis: { ...PLOTLY_LAYOUT.xaxis, title: "Date" },
+            yaxis: { ...PLOTLY_LAYOUT.yaxis, title: "Units" },
+            shapes
+        }, { responsive: true, displayModeBar: false });
+
+    } catch (e) {
+        plotEl.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:0.9rem">Error: ${e.message}</div>`;
+        errDiv.textContent   = `Error: ${e.message}`;
+        errDiv.style.display = "block";
+    }
+
+    btn.disabled    = false;
+    btn.textContent = "Show Forecast ➜";
+}
+
+// ── Customer Journey ──────────────────────────────────────────────────────────
+
+const TIER_COLORS_J = { Low:"#5B9BD5", Medium:"#ED7D31", High:"#70AD47", Churned:"#888" };
+
+// Stored sankey data for re-rendering when tab becomes visible
+let _jSankeyData = null;
+
+function _tierBadge(t) {
+    const parts = (t || "").split(" → ");
+    return parts.map(p => {
+        const c = TIER_COLORS_J[p] || "#888";
+        return `<span style="display:inline-block;padding:1px 8px;border-radius:10px;font-size:0.72rem;font-weight:700;background:${c};color:#fff;margin:1px">${p}</span>`;
+    }).join(" → ");
+}
+
+function renderJourneySankey() {
+    const sankey   = _jSankeyData;
+    const sankeyEl = document.getElementById("journey-sankey");
+    if (!sankey || !sankeyEl) return;
+
+    sankeyEl.innerHTML = "";
+    try {
+        Plotly.newPlot(sankeyEl, [{
+            type        : "sankey",
+            orientation : "h",
+            node: {
+                pad      : sankey.node.pad || 20,
+                thickness: sankey.node.thickness || 25,
+                line     : { color: "#0f1117", width: 0.5 },
+                label    : sankey.node.label,
+                color    : sankey.node.color,
+            },
+            link: {
+                source: sankey.link.source,
+                target: sankey.link.target,
+                value : sankey.link.value,
+                color : sankey.link.source.map(s => {
+                    const lbl = (sankey.node.label[s] || "").toLowerCase();
+                    if (lbl.startsWith("low"))    return "rgba(91,155,213,0.3)";
+                    if (lbl.startsWith("medium")) return "rgba(237,125,49,0.3)";
+                    if (lbl.startsWith("high"))   return "rgba(112,173,71,0.3)";
+                    return "rgba(120,120,120,0.2)";
+                }),
+            }
+        }], {
+            paper_bgcolor: "#1a1f35",
+            plot_bgcolor : "#1a1f35",
+            font         : { color: "#e0e0e0", size: 11 },
+            margin       : { l: 10, r: 10, t: 20, b: 10 },
+            height       : 460,
+        }, { responsive: true, displayModeBar: false });
+    } catch(err) {
+        sankeyEl.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:0.9rem">
+            Sankey error: ${err.message}</div>`;
+    }
+}
+
+async function loadJourney() {
+    // ── Fetch all data ─────────────────────────────────────────────────────
+    let summary, funnel, seqs, sankey;
+
+    try {
+        const [sumRes, funnelRes, seqRes, sankeyRes] = await Promise.all([
+            fetch(`${API}/api/journey/summary`),
+            fetch(`${API}/api/journey/funnel`),
+            fetch(`${API}/api/journey/sequences?limit=20`),
+            fetch(`${API}/api/journey/sankey-data`),
+        ]);
+        if (!sumRes.ok) throw new Error("Run customer_journey.py first.");
+        [summary, funnel, seqs, sankey] = await Promise.all([
+            sumRes.json(), funnelRes.json(), seqRes.json(), sankeyRes.json()
+        ]);
+    } catch (e) {
+        const msg = e.message || String(e);
+        document.getElementById("journey-kpis").innerHTML = `
+            <div class="kpi-card red">
+                <div class="label">Not Available</div>
+                <div class="value" style="font-size:0.85rem;margin-top:8px">${msg}</div>
+            </div>`;
+        document.getElementById("journey-sankey").innerHTML =
+            `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:0.9rem">
+             ⚠️ ${msg}</div>`;
+        document.getElementById("journey-seq-table").innerHTML =
+            `<tr><td colspan="5" style="text-align:center;color:#888">${msg}</td></tr>`;
+        return;
+    }
+
+    // ── KPIs ──────────────────────────────────────────────────────────────
+    try {
+        const thr = summary.tier_thresholds || {};
+        const fpt = summary.first_purchase_tiers || {};
+        document.getElementById("journey-kpis").innerHTML = `
+            <div class="kpi-card">
+                <div class="label">Total Customers</div>
+                <div class="value">${fmtI(summary.total_customers)}</div>
+                <div class="sub">${fmtI(summary.total_transactions)} orders</div>
+            </div>
+            <div class="kpi-card orange">
+                <div class="label">Avg Journey Length</div>
+                <div class="value">${summary.avg_journey_length}</div>
+                <div class="sub">purchases per customer</div>
+            </div>
+            <div class="kpi-card green">
+                <div class="label">Return Rate</div>
+                <div class="value">${summary.retention_after_1st_pct}%</div>
+                <div class="sub">came back for 2nd order</div>
+            </div>
+            <div class="kpi-card yellow">
+                <div class="label">Avg Days Between Orders</div>
+                <div class="value">${summary.avg_days_between}</div>
+                <div class="sub">median: ${summary.median_days_between} days</div>
+            </div>
+            <div class="kpi-card">
+                <div class="label">Tier Thresholds</div>
+                <div class="value" style="font-size:0.85rem;margin-top:6px;line-height:1.7">
+                    Low &lt; $${fmt(thr.low_max)}<br>
+                    High &gt; $${fmt(thr.high_min)}
+                </div>
+            </div>
+            <div class="kpi-card red">
+                <div class="label">1st Purchase Tier</div>
+                <div class="value" style="font-size:0.85rem;margin-top:6px;line-height:1.7">
+                    Low: ${fmtI(fpt.Low||0)} &nbsp; Med: ${fmtI(fpt.Medium||0)}<br>
+                    High: ${fmtI(fpt.High||0)}
+                </div>
+            </div>
+        `;
+    } catch(e) {
+        document.getElementById("journey-kpis").innerHTML =
+            `<div class="kpi-card red"><div class="label">KPI Error</div>
+             <div class="value" style="font-size:0.85rem">${e.message}</div></div>`;
+    }
+
+    // ── Sankey — store and render (deferred if tab hidden) ─────────────────
+    _jSankeyData = sankey;
+    // Only render now if the journey tab is currently active; otherwise
+    // renderJourneySankey() is called from showTab when user clicks the tab.
+    const tabEl = document.getElementById("tab-journey");
+    if (tabEl && tabEl.classList.contains("active")) {
+        renderJourneySankey();
+    } else {
+        document.getElementById("journey-sankey").innerHTML =
+            `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#555;font-size:0.9rem">
+             Click the Journey tab to load the Sankey diagram.</div>`;
+    }
+
+    // ── Funnel bar chart ───────────────────────────────────────────────────
+    try {
+        if (Array.isArray(funnel) && funnel.length) {
+            makeBar(
+                "chart-journey-funnel",
+                funnel.map(r => `Order #${r.purchase_step}`),
+                funnel.map(r => r.customers),
+                "Customers",
+                funnel.map(r => {
+                    const pct = r.retention_pct ?? 100;
+                    return pct > 60 ? "#70AD47" : pct > 30 ? "#ED7D31" : "#e74c3c";
+                })
+            );
+            makeBar(
+                "chart-journey-aov",
+                funnel.map(r => `Order #${r.purchase_step}`),
+                funnel.map(r => +(r.avg_order_value || 0).toFixed(2)),
+                "Avg Order Value ($)",
+                "#4472C4"
+            );
+        }
+    } catch(e) {
+        console.warn("Journey funnel chart error:", e.message);
+    }
+
+    // ── Sequences table ────────────────────────────────────────────────────
+    try {
+        const rows = Array.isArray(seqs) ? seqs : [];
+        document.getElementById("journey-seq-table").innerHTML = rows.length
+            ? rows.map((r, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${_tierBadge(r.sequence)}</td>
+                    <td style="text-align:center">${r.steps}</td>
+                    <td style="font-weight:600;color:#4472C4">${fmtI(r.count)}</td>
+                    <td>${r.pct}%</td>
+                </tr>`).join("")
+            : `<tr><td colspan="5" style="text-align:center;color:#888">No sequences found.</td></tr>`;
+    } catch(e) {
+        document.getElementById("journey-seq-table").innerHTML =
+            `<tr><td colspan="5" style="text-align:center;color:#888">Error: ${e.message}</td></tr>`;
+    }
+}
+
+async function lookupJourney() {
+    const cid    = document.getElementById("journey-cid-input").value.trim();
+    const result = document.getElementById("journey-lookup-result");
+    if (!cid) { result.innerHTML = `<span style="color:#e74c3c">Please enter a Customer ID.</span>`; return; }
+
+    result.innerHTML = `<div class="loading"><div class="spinner"></div> Loading...</div>`;
+    try {
+        const res = await fetch(`${API}/api/journey/customer/${encodeURIComponent(cid)}`);
+        if (!res.ok) { const e = await res.json(); throw new Error(e.detail || `HTTP ${res.status}`); }
+        const d = await res.json();
+
+        const pathBadges = (d.journey_path || "").split(" → ").map((p, i) => {
+            const c = TIER_COLORS_J[p] || "#888";
+            return `<span style="display:inline-block;padding:3px 12px;border-radius:10px;font-size:0.8rem;font-weight:700;background:${c};color:#fff">${i+1}.\u00a0${p}</span>`;
+        }).join(`<span style="color:#555;margin:0 4px">→</span>`);
+
+        const rows = (d.transactions || []).map((t, i) => `
+            <tr>
+                <td>${i+1}</td>
+                <td>${t.order_date}</td>
+                <td>$${fmt(t.order_total)}</td>
+                <td>${fmtI(t.unique_products)}</td>
+                <td><span style="display:inline-block;padding:2px 10px;border-radius:10px;font-size:0.75rem;font-weight:700;background:${TIER_COLORS_J[t.tier]||'#888'};color:#fff">${t.tier}</span></td>
+            </tr>`).join("");
+
+        result.innerHTML = `
+            <div style="background:#0f1117;border-radius:10px;padding:20px;border:1px solid #2a2f45">
+                <div style="margin-bottom:14px">
+                    <span style="font-size:1.05rem;font-weight:700;color:#fff">${d.customer_name}</span>
+                    <span style="color:#888;font-size:0.82rem;margin-left:10px">ID: ${d.customer_id}</span>
+                </div>
+                <div class="kpi-grid" style="margin-bottom:16px">
+                    <div class="kpi-card"><div class="label">Total Purchases</div><div class="value">${fmtI(d.total_purchases)}</div></div>
+                    <div class="kpi-card green"><div class="label">Total Spent</div><div class="value">$${fmt(d.total_spent)}</div></div>
+                </div>
+                <div style="margin-bottom:16px">
+                    <div style="color:#888;font-size:0.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Journey Path</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">${pathBadges}</div>
+                </div>
+                <table style="width:100%;border-collapse:collapse;font-size:0.83rem">
+                    <thead><tr>
+                        <th style="background:#2d3561;padding:8px 12px;text-align:left">#</th>
+                        <th style="background:#2d3561;padding:8px 12px;text-align:left">Date</th>
+                        <th style="background:#2d3561;padding:8px 12px;text-align:left">Order Total</th>
+                        <th style="background:#2d3561;padding:8px 12px;text-align:left">Products</th>
+                        <th style="background:#2d3561;padding:8px 12px;text-align:left">Tier</th>
+                    </tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>`;
+    } catch(e) {
+        result.innerHTML = `<span style="color:#e74c3c">Error: ${e.message}</span>`;
+    }
+}
+
 // ── Boot — load all tabs in parallel ─────────────────────────────────────────
 (async () => {
     await Promise.allSettled([
@@ -1056,7 +2038,10 @@ async function loadWaterfall() {
         loadCLV(),
         loadCohort(),
         loadBasket(),
-        loadSHAP()
+        loadSHAP(),
+        loadForecast(),
+        loadElasticity(),
+        loadJourney()
     ]);
 })();
 </script>
