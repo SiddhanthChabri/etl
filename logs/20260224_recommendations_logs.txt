@@ -1,0 +1,41 @@
+2026-02-24 15:37:33 - product_recommendations - INFO - === Product Recommendation Engine START ===
+2026-02-24 15:37:33 - product_recommendations - INFO - Loading customer-product purchases…
+2026-02-24 15:37:46 - product_recommendations - INFO - Loaded 682,951 customer-product pairs  (2989 customers, 3507 products)
+2026-02-24 15:37:46 - product_recommendations - INFO - Building sparse customer-product matrix…
+2026-02-24 15:37:46 - product_recommendations - INFO - Sparse matrix: (2989, 3507)  nnz=682,951  density=6.52%
+2026-02-24 15:37:46 - product_recommendations - INFO - Computing 3507×3507 cosine similarity…
+2026-02-24 15:37:48 - product_recommendations - INFO -   Avg non-zero similarity: 0.1319
+2026-02-24 15:37:48 - product_recommendations - INFO - Computing top similar products per item…
+2026-02-24 15:37:50 - product_recommendations - INFO - Scoring recommendations for all customers…
+2026-02-24 15:38:07 - product_recommendations - INFO - Generated 29,890 recommendations for 2989 customers
+2026-02-24 15:38:08 - product_recommendations - INFO - Saved CSV → product_recommendations.csv  (29,890 rows)
+2026-02-24 15:38:08 - product_recommendations - ERROR - Recommendation engine failed: int() argument must be a string, a bytes-like object or a number, not 'method'
+Traceback (most recent call last):
+  File "D:\Study Material\8th Sem\Major Project\etl\product_recommendations.py", line 365, in <module>
+    meta = engine_obj.run()
+  File "D:\Study Material\8th Sem\Major Project\etl\product_recommendations.py", line 294, in run
+    "recommendations": [
+  File "D:\Study Material\8th Sem\Major Project\etl\product_recommendations.py", line 296, in <listcomp>
+    "rank"        : int(r.rank),
+TypeError: int() argument must be a string, a bytes-like object or a number, not 'method'
+2026-02-24 15:38:22 - product_recommendations - INFO - === Product Recommendation Engine START ===
+2026-02-24 15:38:22 - product_recommendations - INFO - Loading customer-product purchases…
+2026-02-24 15:38:34 - product_recommendations - INFO - Loaded 682,951 customer-product pairs  (2989 customers, 3507 products)
+2026-02-24 15:38:34 - product_recommendations - INFO - Building sparse customer-product matrix…
+2026-02-24 15:38:35 - product_recommendations - INFO - Sparse matrix: (2989, 3507)  nnz=682,951  density=6.52%
+2026-02-24 15:38:35 - product_recommendations - INFO - Computing 3507×3507 cosine similarity…
+2026-02-24 15:38:36 - product_recommendations - INFO -   Avg non-zero similarity: 0.1319
+2026-02-24 15:38:36 - product_recommendations - INFO - Computing top similar products per item…
+2026-02-24 15:38:39 - product_recommendations - INFO - Scoring recommendations for all customers…
+2026-02-24 15:38:55 - product_recommendations - INFO - Generated 29,890 recommendations for 2989 customers
+2026-02-24 15:38:56 - product_recommendations - INFO - Saved CSV → product_recommendations.csv  (29,890 rows)
+2026-02-24 15:39:05 - product_recommendations - INFO - Saved metadata → models/recommendations_metadata.json
+2026-02-24 15:39:05 - product_recommendations - INFO - Customers served: 2989 (100.0% coverage)
+2026-02-24 15:39:05 - product_recommendations - INFO - Sparsity: 93.48%  Avg similarity: 0.1319  Avg recs/customer: 10.0
+2026-02-24 15:39:05 - product_recommendations - INFO - Top 5 most-recommended products:
+2026-02-24 15:39:05 - product_recommendations - INFO -   JUMBO BAG VINTAGE DOILY                             recommended to 1746 customers
+2026-02-24 15:39:05 - product_recommendations - INFO -   LUNCH BAG RED SPOTTY                                recommended to 1647 customers
+2026-02-24 15:39:05 - product_recommendations - INFO -   PARTY BUNTING                                       recommended to 1573 customers
+2026-02-24 15:39:05 - product_recommendations - INFO -   LUNCH BAG SUKI DESIGN                               recommended to 1558 customers
+2026-02-24 15:39:05 - product_recommendations - INFO -   None                                                recommended to 1554 customers
+2026-02-24 15:39:05 - product_recommendations - INFO - === Product Recommendation Engine DONE ===

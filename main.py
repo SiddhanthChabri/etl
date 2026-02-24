@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
-from routers import rfm, abc, clv, basket, etl, dashboard, churn, forecast, elasticity, journey
+from routers import rfm, abc, clv, basket, etl, dashboard, churn, forecast, elasticity, journey, inventory, geographic, anomaly, seasonality, segmentation, store_performance, recommendations
 import uvicorn
 from routers.explain import router as explain_router
 
@@ -53,6 +53,13 @@ A complete REST API for retail analytics powered by a PostgreSQL Data Warehouse.
         {"name": "Demand Forecasting",  "description": "Time-series demand forecasting per product & category"},
         {"name": "Price Elasticity",    "description": "Log-log OLS elasticity of demand per product & category"},
         {"name": "Customer Journey",    "description": "Purchase sequence analysis — tier transitions & Sankey flow"},
+        {"name": "Inventory Optimisation", "description": "EOQ, safety stock, reorder points & stockout risk per product"},
+        {"name": "Geographic Analysis",    "description": "Revenue, growth & top products by country/region"},
+        {"name": "Anomaly Detection",      "description": "Z-score & IQR detection of sales spikes and drops"},
+        {"name": "Seasonality Analysis",   "description": "Trend decomposition, day-of-week/month/quarter patterns, YoY growth"},
+        {"name": "Customer Segmentation",  "description": "K-Means clustering with PCA scatter, elbow curves & cluster profiles"},
+        {"name": "Store Performance",      "description": "Per-store KPIs, tier classification, YoY growth & top products"},
+        {"name": "Recommendations",        "description": "Item-item collaborative filtering — per-customer & similar-product recommendations"},
     ]
 )
 
@@ -82,6 +89,13 @@ app.include_router(dashboard.router, prefix="",            tags=["Dashboard"])
 app.include_router(forecast.router,   prefix="/api/forecast",    tags=["Demand Forecasting"])
 app.include_router(elasticity.router, prefix="/api/elasticity", tags=["Price Elasticity"])
 app.include_router(journey.router,    prefix="/api/journey",    tags=["Customer Journey"])
+app.include_router(inventory.router,  prefix="/api/inventory",  tags=["Inventory Optimisation"])
+app.include_router(geographic.router, prefix="/api/geo",         tags=["Geographic Analysis"])
+app.include_router(anomaly.router,      prefix="/api/anomaly",      tags=["Anomaly Detection"])
+app.include_router(seasonality.router,   prefix="/api/seasonality",   tags=["Seasonality Analysis"])
+app.include_router(segmentation.router,    prefix="/api/segmentation",  tags=["Customer Segmentation"])
+app.include_router(store_performance.router,  prefix="/api/store",           tags=["Store Performance"])
+app.include_router(recommendations.router,   prefix="/api/recommendations",  tags=["Recommendations"])
 app.include_router(explain_router)
 
 
@@ -191,6 +205,16 @@ def health():
             "forecast_model"  : exists("models/demand_forecast_metadata.json"),
             "elasticity_csv"  : exists("price_elasticity_results.csv"),
             "journey_csv"     : exists("journey_transitions.csv"),
+            "inventory_csv"   : exists("inventory_optimization_results.csv"),
+            "geographic_csv"  : exists("geographic_results.csv"),
+            "anomaly_csv"     : exists("anomaly_results.csv"),
+            "seasonality_csv"    : exists("seasonality_results.csv"),
+            "segmentation_csv"   : exists("customer_segments_km.csv"),
+            "segmentation_model" : exists("models/segmentation_metadata.json"),
+            "store_csv"          : exists("store_performance_results.csv"),
+            "store_model"        : exists("models/store_performance_metadata.json"),
+            "recommendations_csv"  : exists("product_recommendations.csv"),
+            "recommendations_model": exists("models/recommendations_metadata.json"),
         }
     }
 

@@ -52,6 +52,8 @@ def get_churn_summary():
         "model"              : meta["model_name"],
         "trained_at"         : meta["trained_at"],
         "metrics"            : meta["metrics"],
+        "confusion_matrix"   : meta.get("confusion_matrix"),
+        "class_report"       : meta.get("class_report"),
         "top_features"       : meta["top_features"][:5],
         "risk_distribution"  : dist,
         "total_customers"    : len(df),

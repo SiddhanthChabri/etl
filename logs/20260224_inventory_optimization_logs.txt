@@ -1,0 +1,41 @@
+2026-02-24 04:47:46 - inventory_optimization - INFO - ============================================================
+2026-02-24 04:47:46 - inventory_optimization - INFO - INVENTORY OPTIMISATION ANALYSIS
+2026-02-24 04:47:46 - inventory_optimization - INFO -   Lead time: 7d  |  Service level: 95%  |  Z=1.645
+2026-02-24 04:47:46 - inventory_optimization - INFO - ============================================================
+2026-02-24 04:47:46 - inventory_optimization - INFO - Fetching historical daily sales per product ...
+2026-02-24 04:48:19 - inventory_optimization - INFO - ============================================================
+2026-02-24 04:48:19 - inventory_optimization - INFO - INVENTORY OPTIMISATION ANALYSIS
+2026-02-24 04:48:19 - inventory_optimization - INFO -   Lead time: 7d  |  Service level: 95%  |  Z=1.645
+2026-02-24 04:48:19 - inventory_optimization - INFO - ============================================================
+2026-02-24 04:48:19 - inventory_optimization - INFO - Fetching historical daily sales per product ...
+2026-02-24 04:48:22 - inventory_optimization - INFO -   93,039 product-day records | 3,507 products
+2026-02-24 04:48:22 - inventory_optimization - INFO - Computing demand statistics per product ...
+2026-02-24 04:48:24 - inventory_optimization - INFO -   Merging demand forecast data ...
+2026-02-24 04:48:24 - inventory_optimization - INFO -   Forecast merged for 49 products.
+2026-02-24 04:48:25 - inventory_optimization - INFO - Saved results  -> inventory_optimization_results.csv  (3,507 products)
+2026-02-24 04:48:25 - inventory_optimization - INFO - Saved metadata -> models/inventory_metadata.json
+2026-02-24 04:48:25 - inventory_optimization - INFO - Inventory optimisation complete.
+2026-02-24 05:27:18 - inventory_optimization - INFO - ============================================================
+2026-02-24 05:27:18 - inventory_optimization - INFO - INVENTORY OPTIMISATION ANALYSIS
+2026-02-24 05:27:18 - inventory_optimization - INFO -   Lead time: 7d  |  Service level: 95%  |  Z=1.645
+2026-02-24 05:27:18 - inventory_optimization - INFO - ============================================================
+2026-02-24 05:27:18 - inventory_optimization - INFO - Fetching historical daily sales per product ...
+2026-02-24 05:27:31 - inventory_optimization - INFO -   699,115 product-day records | 3,507 products
+2026-02-24 05:27:31 - inventory_optimization - INFO - Computing demand statistics per product ...
+2026-02-24 05:27:33 - inventory_optimization - INFO -   Merging demand forecast data ...
+2026-02-24 05:27:33 - inventory_optimization - INFO -   Forecast merged for 49 products.
+2026-02-24 05:27:33 - inventory_optimization - INFO - Saved results  -> inventory_optimization_results.csv  (3,507 products)
+2026-02-24 05:27:33 - inventory_optimization - INFO - Saved metadata -> models/inventory_metadata.json
+2026-02-24 05:27:33 - inventory_optimization - INFO - Inventory optimisation complete.
+2026-02-24 13:27:39 - inventory_optimization - INFO - ============================================================
+2026-02-24 13:27:39 - inventory_optimization - INFO - INVENTORY OPTIMISATION ANALYSIS
+2026-02-24 13:27:39 - inventory_optimization - INFO -   Lead time: 7d  |  Service level: 95%  |  Z=1.645
+2026-02-24 13:27:39 - inventory_optimization - INFO - ============================================================
+2026-02-24 13:27:39 - inventory_optimization - INFO - Fetching historical daily sales per product ...
+2026-02-24 13:27:57 - inventory_optimization - INFO -   699,115 product-day records | 3,507 products
+2026-02-24 13:27:57 - inventory_optimization - INFO - Computing demand statistics per product ...
+2026-02-24 13:27:59 - inventory_optimization - INFO -   Merging demand forecast data ...
+2026-02-24 13:27:59 - inventory_optimization - INFO -   Forecast merged for 49 products.
+2026-02-24 13:27:59 - inventory_optimization - INFO - Saved results  -> inventory_optimization_results.csv  (3,507 products)
+2026-02-24 13:27:59 - inventory_optimization - INFO - Saved metadata -> models/inventory_metadata.json
+2026-02-24 13:27:59 - inventory_optimization - INFO - Inventory optimisation complete.

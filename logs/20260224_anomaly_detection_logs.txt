@@ -1,0 +1,18 @@
+2026-02-24 13:47:39 - anomaly_detection - INFO - ============================================================
+2026-02-24 13:47:39 - anomaly_detection - INFO - ANOMALY DETECTION ANALYSIS
+2026-02-24 13:47:39 - anomaly_detection - INFO -   Rolling window  : 30 days
+2026-02-24 13:47:39 - anomaly_detection - INFO -   Z thresholds    : Medium>2.0  High>3.0  Critical>4.0
+2026-02-24 13:47:39 - anomaly_detection - INFO - ============================================================
+2026-02-24 13:47:39 - anomaly_detection - INFO - Fetching overall daily sales ...
+2026-02-24 13:47:42 - anomaly_detection - INFO -   1,379 trading days loaded
+2026-02-24 13:47:42 - anomaly_detection - INFO - Fetching daily sales for top 50 products ...
+2026-02-24 13:47:44 - anomaly_detection - INFO -   39,143 product-day records for 50 products
+2026-02-24 13:47:44 - anomaly_detection - INFO - Detecting overall daily revenue anomalies ...
+2026-02-24 13:47:44 - anomaly_detection - INFO -   93 anomalous days detected out of 1379
+2026-02-24 13:47:44 - anomaly_detection - INFO - Detecting per-product revenue anomalies ...
+2026-02-24 13:47:44 - anomaly_detection - INFO -   3033 anomalous product-days detected
+2026-02-24 13:47:44 - anomaly_detection - INFO - Detecting per-product price anomalies ...
+2026-02-24 13:47:45 - anomaly_detection - INFO -   1268 anomalous price-days detected
+2026-02-24 13:47:45 - anomaly_detection - INFO - Saved 4,394 anomaly rows -> anomaly_results.csv
+2026-02-24 13:47:45 - anomaly_detection - INFO - Saved metadata -> models/anomaly_metadata.json
+2026-02-24 13:47:45 - anomaly_detection - INFO - Anomaly detection complete.

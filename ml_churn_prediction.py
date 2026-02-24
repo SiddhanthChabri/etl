@@ -11,7 +11,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import (classification_report, confusion_matrix,
-                             roc_auc_score, roc_curve, accuracy_score)
+                             roc_auc_score, roc_curve, accuracy_score,
+                             precision_score, recall_score, f1_score)
 from sklearn.pipeline import Pipeline
 from sklearn.inspection import permutation_importance
 import joblib
@@ -119,24 +120,28 @@ def train_models(X_train, X_test, y_train, y_test, feature_names):
     best_auc = 0
 
     logger.info("\n📊 Model Comparison:")
-    logger.info(f"  {'Model':<25} {'Accuracy':>10} {'AUC-ROC':>10} {'CV Score':>10}")
-    logger.info("  " + "-"*58)
+    logger.info(f"  {'Model':<25} {'Accuracy':>10} {'AUC-ROC':>10} {'CV Score':>10} {'F1':>8} {'Precision':>10} {'Recall':>8}")
+    logger.info("  " + "-"*85)
 
     for name, model in models.items():
         model.fit(X_train, y_train)
         y_pred  = model.predict(X_test)
         y_proba = model.predict_proba(X_test)[:, 1]
 
-        acc = accuracy_score(y_test, y_pred)
-        auc = roc_auc_score(y_test, y_proba)
-        cv  = cross_val_score(model, X_train, y_train,
-                              cv=StratifiedKFold(5), scoring="roc_auc").mean()
+        acc  = accuracy_score(y_test, y_pred)
+        auc  = roc_auc_score(y_test, y_proba)
+        cv   = cross_val_score(model, X_train, y_train,
+                               cv=StratifiedKFold(5), scoring="roc_auc").mean()
+        prec = precision_score(y_test, y_pred, zero_division=0)
+        rec  = recall_score(y_test, y_pred, zero_division=0)
+        f1   = f1_score(y_test, y_pred, zero_division=0)
 
         results[name] = {
-            "model": model, "accuracy": acc, "auc": auc,
-            "cv_score": cv, "y_pred": y_pred, "y_proba": y_proba
+            "model": model, "accuracy": acc, "auc": auc, "cv_score": cv,
+            "precision": prec, "recall": rec, "f1": f1,
+            "y_pred": y_pred, "y_proba": y_proba
         }
-        logger.info(f"  {name:<25} {acc:>10.4f} {auc:>10.4f} {cv:>10.4f}")
+        logger.info(f"  {name:<25} {acc:>10.4f} {auc:>10.4f} {cv:>10.4f} {f1:>8.4f} {prec:>10.4f} {rec:>8.4f}")
 
         if auc > best_auc:
             best_auc        = auc
@@ -148,13 +153,16 @@ def train_models(X_train, X_test, y_train, y_test, feature_names):
 
 # ── 4. EVALUATE BEST MODEL ───────────────────────────────────────────────
 def evaluate_model(results, best_name, y_test, feature_names, X_test):
-    best = results[best_name]
+    best  = results[best_name]
     model = best["model"]
 
     logger.info("\n📋 Classification Report:")
-    report = classification_report(y_test, best["y_pred"],
-                                   target_names=["Active","Churned"])
-    for line in report.split("\n"):
+    report_str  = classification_report(y_test, best["y_pred"],
+                                        target_names=["Active", "Churned"])
+    report_dict = classification_report(y_test, best["y_pred"],
+                                        target_names=["Active", "Churned"],
+                                        output_dict=True)
+    for line in report_str.split("\n"):
         if line.strip():
             logger.info(f"  {line}")
 
@@ -179,7 +187,7 @@ def evaluate_model(results, best_name, y_test, feature_names, X_test):
         bar = "█" * int(imp * 50)
         logger.info(f"  {feat:<30} {imp:.4f}  {bar}")
 
-    return cm, fi
+    return cm, fi, report_dict
 
 
 # ── 5. PREDICT CHURN PROBABILITIES ───────────────────────────────────────
@@ -218,7 +226,7 @@ def predict_all_customers(df, best_model, feature_names, recency_threshold):
 
 # ── 6. SAVE MODEL & METADATA ─────────────────────────────────────────────
 def save_model(best_model, best_name, feature_names, recency_threshold,
-               results, cm, fi):
+               results, cm, fi, report_dict):
     os.makedirs("models", exist_ok=True)
 
     # Save model
@@ -230,15 +238,43 @@ def save_model(best_model, best_name, feature_names, recency_threshold,
 
     # Save metadata
     best = results[best_name]
+
+    # Per-class metrics from classification_report (precision/recall/f1 per class)
+    active_row  = report_dict.get("Active",  {})
+    churned_row = report_dict.get("Churned", {})
+    weighted    = report_dict.get("weighted avg", {})
+
     metadata = {
         "model_name":        best_name,
         "trained_at":        datetime.now().isoformat(),
         "recency_threshold": recency_threshold,
         "features":          feature_names,
         "metrics": {
-            "accuracy":  round(best["accuracy"], 4),
-            "auc_roc":   round(best["auc"],      4),
-            "cv_score":  round(best["cv_score"],  4),
+            "accuracy"           : round(best["accuracy"],  4),
+            "auc_roc"            : round(best["auc"],       4),
+            "cv_score"           : round(best["cv_score"],  4),
+            # Churned-class metrics (most business-relevant)
+            "precision"          : round(best["precision"], 4),
+            "recall"             : round(best["recall"],    4),
+            "f1"                 : round(best["f1"],        4),
+            # Weighted averages across both classes
+            "precision_weighted" : round(weighted.get("precision", 0), 4),
+            "recall_weighted"    : round(weighted.get("recall",    0), 4),
+            "f1_weighted"        : round(weighted.get("f1-score",  0), 4),
+        },
+        "class_report": {
+            "Active": {
+                "precision": round(active_row.get("precision", 0), 4),
+                "recall"   : round(active_row.get("recall",    0), 4),
+                "f1"       : round(active_row.get("f1-score",  0), 4),
+                "support"  : int(active_row.get("support",     0)),
+            },
+            "Churned": {
+                "precision": round(churned_row.get("precision", 0), 4),
+                "recall"   : round(churned_row.get("recall",    0), 4),
+                "f1"       : round(churned_row.get("f1-score",  0), 4),
+                "support"  : int(churned_row.get("support",     0)),
+            },
         },
         "confusion_matrix": {
             "tn": int(cm[0][0]), "fp": int(cm[0][1]),
@@ -298,7 +334,7 @@ def run_churn_prediction():
 
     # Step 5: Evaluate
     logger.info("\n5️⃣  EVALUATING BEST MODEL")
-    cm, fi = evaluate_model(
+    cm, fi, report_dict = evaluate_model(
         results, best_name, y_test, feature_names, X_test
     )
 
@@ -310,14 +346,18 @@ def run_churn_prediction():
     # Step 7: Save
     logger.info("\n7️⃣  SAVING MODEL & RESULTS")
     save_model(best_model, best_name, feature_names,
-               recency_threshold, results, cm, fi)
+               recency_threshold, results, cm, fi, report_dict)
 
     logger.info("\n" + "="*70)
     logger.info("✅ CHURN PREDICTION COMPLETE")
     logger.info("="*70)
+    best_r = results[best_name]
     logger.info(f"  Best Model:  {best_name}")
-    logger.info(f"  AUC-ROC:     {results[best_name]['auc']:.4f}")
-    logger.info(f"  Accuracy:    {results[best_name]['accuracy']:.4f}")
+    logger.info(f"  AUC-ROC:     {best_r['auc']:.4f}")
+    logger.info(f"  Accuracy:    {best_r['accuracy']:.4f}")
+    logger.info(f"  Precision:   {best_r['precision']:.4f}  (churned class)")
+    logger.info(f"  Recall:      {best_r['recall']:.4f}  (churned class)")
+    logger.info(f"  F1 Score:    {best_r['f1']:.4f}  (churned class)")
     logger.info(f"\n  Next step → add churn router to FastAPI:")
     logger.info(f"  GET /api/churn/customer/{{id}}")
     logger.info(f"  GET /api/churn/risk/critical")

@@ -1,0 +1,75 @@
+2026-02-24 14:43:20 - customer_segmentation - INFO - === Customer Segmentation START ===
+2026-02-24 14:43:20 - customer_segmentation - INFO - Building customer feature matrix...
+2026-02-24 14:43:22 - customer_segmentation - INFO - Loaded 2989 customers with features.
+2026-02-24 14:43:22 - customer_segmentation - INFO -   2989/2989 customers have complete features.
+2026-02-24 14:43:22 - customer_segmentation - INFO - Finding optimal number of clusters (k=2..10)...
+2026-02-24 14:43:23 - customer_segmentation - ERROR - Segmentation failed: Number of labels is 1. Valid values are 2 to n_samples - 1 (inclusive)
+Traceback (most recent call last):
+  File "D:\Study Material\8th Sem\Major Project\etl\customer_segmentation.py", line 323, in <module>
+    meta = analyzer.run()
+  File "D:\Study Material\8th Sem\Major Project\etl\customer_segmentation.py", line 219, in run
+    elbow = _find_optimal_k(X_scaled)
+  File "D:\Study Material\8th Sem\Major Project\etl\customer_segmentation.py", line 151, in _find_optimal_k
+    sil = silhouette_score(X_scaled, labels, sample_size=min(1000, len(X_scaled)))
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sklearn\utils\_param_validation.py", line 216, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sklearn\metrics\cluster\_unsupervised.py", line 139, in silhouette_score
+    return np.mean(silhouette_samples(X, labels, metric=metric, **kwds))
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sklearn\utils\_param_validation.py", line 189, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sklearn\metrics\cluster\_unsupervised.py", line 297, in silhouette_samples
+    check_number_of_labels(len(le.classes_), n_samples)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sklearn\metrics\cluster\_unsupervised.py", line 36, in check_number_of_labels
+    raise ValueError(
+ValueError: Number of labels is 1. Valid values are 2 to n_samples - 1 (inclusive)
+2026-02-24 14:43:47 - customer_segmentation - INFO - Loaded 2989 customers with features.
+2026-02-24 14:44:17 - customer_segmentation - INFO - === Customer Segmentation START ===
+2026-02-24 14:44:17 - customer_segmentation - INFO - Building customer feature matrix...
+2026-02-24 14:44:21 - customer_segmentation - INFO - Loaded 2989 customers with features.
+2026-02-24 14:44:21 - customer_segmentation - INFO -   2989/2989 customers have complete features.
+2026-02-24 14:44:21 - customer_segmentation - INFO - Finding optimal number of clusters (k=2..10)...
+2026-02-24 14:44:25 - customer_segmentation - INFO - Elbow results — best k=2 (silhouette=0.9839)
+2026-02-24 14:44:25 - customer_segmentation - INFO - Fitting K-Means with k=2...
+2026-02-24 14:44:25 - customer_segmentation - INFO -   Silhouette score: 0.9839
+2026-02-24 14:44:25 - customer_segmentation - INFO - Computing PCA (2 components)...
+2026-02-24 14:44:25 - customer_segmentation - INFO - Building cluster profiles...
+2026-02-24 14:44:25 - customer_segmentation - INFO - Saved metadata -> models/segmentation_metadata.json
+2026-02-24 14:44:25 - customer_segmentation - INFO - Saved results -> customer_segments_km.csv  (2989 rows)
+2026-02-24 14:44:25 - customer_segmentation - INFO - Optimal k=2  Silhouette=0.9839
+2026-02-24 14:44:25 - customer_segmentation - INFO -   Cluster 0 | Active Buyers        | n= 2987 (99.9%) | Monetary=$8,255 | Freq=13.4
+2026-02-24 14:44:25 - customer_segmentation - INFO -   Cluster 1 | Elite Buyers         | n=    2 (0.1%) | Monetary=$96,723 | Freq=1.5
+2026-02-24 14:44:25 - customer_segmentation - INFO - === Customer Segmentation DONE ===
+2026-02-24 14:44:57 - customer_segmentation - INFO - === Customer Segmentation START ===
+2026-02-24 14:44:57 - customer_segmentation - INFO - Building customer feature matrix...
+2026-02-24 14:45:00 - customer_segmentation - INFO - Loaded 2989 customers with features.
+2026-02-24 14:45:00 - customer_segmentation - INFO -   2989/2989 customers have complete features.
+2026-02-24 14:45:00 - customer_segmentation - INFO - Finding optimal number of clusters (k=2..10)...
+2026-02-24 14:45:01 - customer_segmentation - INFO - Elbow results — best k=2 (silhouette=-1.0000)
+2026-02-24 14:45:01 - customer_segmentation - INFO - Fitting K-Means with k=2...
+2026-02-24 14:45:01 - customer_segmentation - INFO -   Silhouette score: 0.9839
+2026-02-24 14:45:01 - customer_segmentation - INFO - Computing PCA (2 components)...
+2026-02-24 14:45:01 - customer_segmentation - INFO - Building cluster profiles...
+2026-02-24 14:45:01 - customer_segmentation - INFO - Saved metadata -> models/segmentation_metadata.json
+2026-02-24 14:45:01 - customer_segmentation - INFO - Saved results -> customer_segments_km.csv  (2989 rows)
+2026-02-24 14:45:01 - customer_segmentation - INFO - Optimal k=2  Silhouette=0.9839
+2026-02-24 14:45:01 - customer_segmentation - INFO -   Cluster 0 | Active Buyers        | n= 2987 (99.9%) | Monetary=$8,255 | Freq=13.4
+2026-02-24 14:45:01 - customer_segmentation - INFO -   Cluster 1 | Elite Buyers         | n=    2 (0.1%) | Monetary=$96,723 | Freq=1.5
+2026-02-24 14:45:01 - customer_segmentation - INFO - === Customer Segmentation DONE ===
+2026-02-24 14:45:24 - customer_segmentation - INFO - Loaded 2989 customers with features.
+2026-02-24 14:45:55 - customer_segmentation - INFO - === Customer Segmentation START ===
+2026-02-24 14:45:55 - customer_segmentation - INFO - Building customer feature matrix...
+2026-02-24 14:46:01 - customer_segmentation - INFO - Loaded 2989 customers with features.
+2026-02-24 14:46:01 - customer_segmentation - INFO -   2989/2989 customers have complete features.
+2026-02-24 14:46:01 - customer_segmentation - INFO - Finding optimal number of clusters (k=2..10)...
+2026-02-24 14:46:07 - customer_segmentation - INFO - Elbow results — best k=2 (silhouette=0.5803)
+2026-02-24 14:46:07 - customer_segmentation - INFO - Fitting K-Means with k=2...
+2026-02-24 14:46:07 - customer_segmentation - INFO -   Silhouette score: 0.5803
+2026-02-24 14:46:07 - customer_segmentation - INFO - Computing PCA (2 components)...
+2026-02-24 14:46:07 - customer_segmentation - INFO - Building cluster profiles...
+2026-02-24 14:46:07 - customer_segmentation - INFO - Saved metadata -> models/segmentation_metadata.json
+2026-02-24 14:46:07 - customer_segmentation - INFO - Saved results -> customer_segments_km.csv  (2989 rows)
+2026-02-24 14:46:07 - customer_segmentation - INFO - Optimal k=2  Silhouette=0.5803
+2026-02-24 14:46:07 - customer_segmentation - INFO -   Cluster 0 | Elite Buyers         | n= 2521 (84.3%) | Monetary=$9,761 | Freq=15.5
+2026-02-24 14:46:07 - customer_segmentation - INFO -   Cluster 1 | Active Buyers        | n=  468 (15.7%) | Monetary=$521 | Freq=1.9
+2026-02-24 14:46:07 - customer_segmentation - INFO - === Customer Segmentation DONE ===
+2026-02-24 14:46:46 - customer_segmentation - INFO - Loaded 2989 customers with features.

@@ -1,0 +1,116 @@
+2026-02-24 14:30:44 - seasonality_analysis - INFO - === Seasonality Analysis START ===
+2026-02-24 14:30:44 - seasonality_analysis - INFO - Loading daily revenue from DWH...
+2026-02-24 14:30:44 - seasonality_analysis - ERROR - Seasonality analysis failed: (psycopg2.errors.UndefinedColumn) column fs.invoice_no does not exist
+LINE 10:                 COUNT(DISTINCT fs.invoice_no) AS transaction...
+                                        ^
+
+[SQL: 
+            SELECT
+                dt.date,
+                dt.day_of_week,
+                dt.day        AS day_of_month,
+                dt.month,
+                dt.quarter,
+                dt.year,
+                SUM(fs.sales_amount)         AS revenue,
+                COUNT(DISTINCT fs.invoice_no) AS transactions,
+                SUM(fs.quantity_sold)         AS units
+            FROM fact_sales fs
+            JOIN dim_time dt ON fs.time_key = dt.time_key
+            GROUP BY dt.date, dt.day_of_week, dt.day, dt.month, dt.quarter, dt.year
+            ORDER BY dt.date
+        ]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+Traceback (most recent call last):
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column fs.invoice_no does not exist
+LINE 10:                 COUNT(DISTINCT fs.invoice_no) AS transaction...
+                                        ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Study Material\8th Sem\Major Project\etl\seasonality_analysis.py", line 486, in <module>
+    meta = analyzer.run()
+  File "D:\Study Material\8th Sem\Major Project\etl\seasonality_analysis.py", line 380, in run
+    df = self._load_daily()
+  File "D:\Study Material\8th Sem\Major Project\etl\seasonality_analysis.py", line 97, in _load_daily
+    df = pd.read_sql(sql, conn)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\io\sql.py", line 734, in read_sql
+    return pandas_sql.read_query(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\io\sql.py", line 1836, in read_query
+    result = self.execute(sql, params)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\io\sql.py", line 1660, in execute
+    return self.con.execute(sql, *args)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column fs.invoice_no does not exist
+LINE 10:                 COUNT(DISTINCT fs.invoice_no) AS transaction...
+                                        ^
+
+[SQL: 
+            SELECT
+                dt.date,
+                dt.day_of_week,
+                dt.day        AS day_of_month,
+                dt.month,
+                dt.quarter,
+                dt.year,
+                SUM(fs.sales_amount)         AS revenue,
+                COUNT(DISTINCT fs.invoice_no) AS transactions,
+                SUM(fs.quantity_sold)         AS units
+            FROM fact_sales fs
+            JOIN dim_time dt ON fs.time_key = dt.time_key
+            GROUP BY dt.date, dt.day_of_week, dt.day, dt.month, dt.quarter, dt.year
+            ORDER BY dt.date
+        ]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-02-24 14:31:10 - seasonality_analysis - INFO - === Seasonality Analysis START ===
+2026-02-24 14:31:10 - seasonality_analysis - INFO - Loading daily revenue from DWH...
+2026-02-24 14:31:12 - seasonality_analysis - INFO - Loaded 2180 daily records (2010-01-12 - 2015-12-31)
+2026-02-24 14:31:12 - seasonality_analysis - INFO - Computing trend decomposition...
+2026-02-24 14:31:12 - seasonality_analysis - INFO - Computing seasonal patterns...
+2026-02-24 14:31:12 - seasonality_analysis - INFO - Computing year-over-year matrix...
+2026-02-24 14:31:12 - seasonality_analysis - ERROR - Seasonality analysis failed: "['date'] not in index"
+Traceback (most recent call last):
+  File "D:\Study Material\8th Sem\Major Project\etl\seasonality_analysis.py", line 486, in <module>
+    meta = analyzer.run()
+  File "D:\Study Material\8th Sem\Major Project\etl\seasonality_analysis.py", line 417, in run
+    df_chart = df.reset_index()[["date", "revenue", "trend", "seasonal_component", "residual", "trend_30d"]]
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\frame.py", line 4108, in __getitem__
+    indexer = self.columns._get_indexer_strict(key, "columns")[1]
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\indexes\base.py", line 6200, in _get_indexer_strict
+    self._raise_if_missing(keyarr, indexer, axis_name)
+  File "C:\Users\siddh\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\indexes\base.py", line 6252, in _raise_if_missing
+    raise KeyError(f"{not_found} not in index")
+KeyError: "['date'] not in index"
+2026-02-24 14:31:37 - seasonality_analysis - INFO - === Seasonality Analysis START ===
+2026-02-24 14:31:37 - seasonality_analysis - INFO - Loading daily revenue from DWH...
+2026-02-24 14:31:38 - seasonality_analysis - INFO - Loaded 2180 daily records (2010-01-12 - 2015-12-31)
+2026-02-24 14:31:38 - seasonality_analysis - INFO - Computing trend decomposition...
+2026-02-24 14:31:38 - seasonality_analysis - INFO - Computing seasonal patterns...
+2026-02-24 14:31:38 - seasonality_analysis - INFO - Computing year-over-year matrix...
+2026-02-24 14:31:38 - seasonality_analysis - INFO - Saved metadata -> models/seasonality_metadata.json
+2026-02-24 14:31:38 - seasonality_analysis - INFO - Saved results -> seasonality_results.csv  (2180 rows)
+2026-02-24 14:31:38 - seasonality_analysis - INFO - Trend direction : Upward
+2026-02-24 14:31:38 - seasonality_analysis - INFO - Best DOW        : Tuesday  avg $13,777
+2026-02-24 14:31:38 - seasonality_analysis - INFO - Best month      : Jun  avg $14,020
+2026-02-24 14:31:38 - seasonality_analysis - INFO - === Seasonality Analysis DONE ===

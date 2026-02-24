@@ -83,3 +83,131 @@
 Saved 33,462 rows -> demand_forecast_results.csv
 2026-02-24 03:20:16 - demand_forecasting - INFO - Saved metadata    -> models/demand_forecast_metadata.json
 2026-02-24 03:20:16 - demand_forecasting - INFO - Demand forecasting complete.
+2026-02-24 05:26:57 - demand_forecasting - INFO - Forecasting method: MOVING_AVG
+2026-02-24 05:26:57 - demand_forecasting - INFO - ============================================================
+2026-02-24 05:26:57 - demand_forecasting - INFO - DEMAND FORECASTING ENGINE
+2026-02-24 05:26:57 - demand_forecasting - INFO -   Method  : MOVING_AVG
+2026-02-24 05:26:57 - demand_forecasting - INFO -   Horizon : 30 days
+2026-02-24 05:26:57 - demand_forecasting - INFO -   Top N   : 50 products
+2026-02-24 05:26:57 - demand_forecasting - INFO - ============================================================
+2026-02-24 05:26:57 - demand_forecasting - INFO - Fetching historical daily sales from data warehouse...
+2026-02-24 05:27:08 - demand_forecasting - INFO -   Loaded 699,121 daily records for 3,507 unique products
+2026-02-24 05:27:08 - demand_forecasting - INFO -   Selected top 50 products by total volume
+2026-02-24 05:27:08 - demand_forecasting - INFO -   [01/50] 23843 — PAPER CRAFT , LITTLE BIRDIE
+2026-02-24 05:27:08 - demand_forecasting - INFO -   [02/50] 85123A — CREAM HANGING HEART T-LIGHT HOLDER
+2026-02-24 05:27:08 - demand_forecasting - INFO -   [03/50] 85099B — JUMBO BAG RED RETROSPOT
+2026-02-24 05:27:08 - demand_forecasting - INFO -   [04/50] 84879 — damaged
+2026-02-24 05:27:08 - demand_forecasting - INFO -   [05/50] 22197 — POPCORN HOLDER
+2026-02-24 05:27:09 - demand_forecasting - INFO -   [06/50] 22423 — damages
+2026-02-24 05:27:09 - demand_forecasting - INFO -   [07/50] 84077 — WORLD WAR 2 GLIDERS ASSTD DESIGNS
+2026-02-24 05:27:09 - demand_forecasting - INFO -   [08/50] 21212 — PACK OF 72 RETROSPOT CAKE CASES
+2026-02-24 05:27:09 - demand_forecasting - INFO -   [09/50] 20725 — LUNCH BAG RED SPOTTY
+2026-02-24 05:27:09 - demand_forecasting - INFO -   [10/50] 47566 — PARTY BUNTING
+2026-02-24 05:27:09 - demand_forecasting - INFO -   [11/50] 23203 — JUMBO BAG VINTAGE DOILY 
+2026-02-24 05:27:09 - demand_forecasting - INFO -   [12/50] 22086 — PAPER CHAIN KIT 50'S CHRISTMAS 
+2026-02-24 05:27:09 - demand_forecasting - INFO -   [13/50] 22178 — VICTORIAN GLASS HANGING T-LIGHT
+2026-02-24 05:27:09 - demand_forecasting - INFO -   [14/50] 22469 — Unknown
+2026-02-24 05:27:09 - demand_forecasting - INFO -   [15/50] 22386 — JUMBO BAG PINK POLKADOT
+2026-02-24 05:27:09 - demand_forecasting - INFO -   [16/50] 21915 — John Lewis
+2026-02-24 05:27:09 - demand_forecasting - INFO -   [17/50] 22961 — JAM MAKING SET PRINTED
+2026-02-24 05:27:09 - demand_forecasting - INFO -   [18/50] 20727 — LUNCH BAG  BLACK SKULL.
+2026-02-24 05:27:09 - demand_forecasting - INFO -   [19/50] 23084 — website fixed
+2026-02-24 05:27:10 - demand_forecasting - INFO -   [20/50] 22383 — LUNCH BAG SUKI DESIGN 
+2026-02-24 05:27:10 - demand_forecasting - INFO -   [21/50] 23209 — LUNCH BAG VINTAGE DOILY 
+2026-02-24 05:27:10 - demand_forecasting - INFO -   [22/50] 22457 — NATURAL SLATE HEART CHALKBOARD 
+2026-02-24 05:27:10 - demand_forecasting - INFO -   [23/50] 22382 — LUNCH BAG SPACEBOY DESIGN 
+2026-02-24 05:27:10 - demand_forecasting - INFO -   [24/50] 84946 — ANTIQUE SILVER T-LIGHT GLASS
+2026-02-24 05:27:10 - demand_forecasting - INFO -   [25/50] 20728 — LUNCH BAG CARS BLUE
+2026-02-24 05:27:10 - demand_forecasting - INFO -   [26/50] 21790 — VINTAGE SNAP CARDS
+2026-02-24 05:27:10 - demand_forecasting - INFO -   [27/50] POST — Unknown
+2026-02-24 05:27:10 - demand_forecasting - INFO -   [28/50] 22727 — ALARM CLOCK BAKELIKE RED 
+2026-02-24 05:27:10 - demand_forecasting - INFO -   [29/50] 22470 — Unknown
+2026-02-24 05:27:10 - demand_forecasting - INFO -   [30/50] 21181 — dotcom
+2026-02-24 05:27:10 - demand_forecasting - INFO -   [31/50] 22720 — Unknown
+2026-02-24 05:27:11 - demand_forecasting - INFO -   [32/50] 82482 — WOODEN PICTURE FRAME WHITE FINISH
+2026-02-24 05:27:11 - demand_forecasting - INFO -   [33/50] 23298 — BUNTING , SPOTTY 
+2026-02-24 05:27:11 - demand_forecasting - INFO -   [34/50] 22384 — LUNCH BAG PINK POLKADOT
+2026-02-24 05:27:11 - demand_forecasting - INFO -   [35/50] 21977 — PACK OF 60 PINK PAISLEY CAKE CASES
+2026-02-24 05:27:11 - demand_forecasting - INFO -   [36/50] 22629 — SPACEBOY LUNCH BOX 
+2026-02-24 05:27:11 - demand_forecasting - INFO -   [37/50] 22993 — SET OF 4 PANTRY JELLY MOULDS
+2026-02-24 05:27:11 - demand_forecasting - INFO -   [38/50] 20726 — LUNCH BAG WOODLAND
+2026-02-24 05:27:11 - demand_forecasting - INFO -   [39/50] 21175 — GIN AND TONIC DIET METAL SIGN
+2026-02-24 05:27:11 - demand_forecasting - INFO -   [40/50] 22492 — MINI PAINT SET VINTAGE 
+2026-02-24 05:27:11 - demand_forecasting - INFO -   [41/50] 22411 — JUMBO SHOPPER VINTAGE RED PAISLEY
+2026-02-24 05:27:11 - demand_forecasting - INFO -   [42/50] 85099F — Unknown
+2026-02-24 05:27:11 - demand_forecasting - INFO -   [43/50] 20724 — RED RETROSPOT CHARLOTTE BAG
+2026-02-24 05:27:12 - demand_forecasting - INFO -   [44/50] 22726 — Unknown
+2026-02-24 05:27:12 - demand_forecasting - INFO -   [45/50] 22616 — PACK OF 12 LONDON TISSUES 
+2026-02-24 05:27:12 - demand_forecasting - INFO -   [46/50] 84991 — 60 TEATIME FAIRY CAKE CASES
+2026-02-24 05:27:12 - demand_forecasting - INFO -   [47/50] 21931 — JUMBO STORAGE BAG SUKI
+2026-02-24 05:27:12 - demand_forecasting - INFO -   [48/50] 22910 — PAPER CHAIN KIT VINTAGE CHRISTMAS
+2026-02-24 05:27:12 - demand_forecasting - INFO -   [49/50] 23206 — LUNCH BAG APPLE DESIGN
+2026-02-24 05:27:12 - demand_forecasting - INFO -   [50/50] 23202 — JUMBO BAG VINTAGE LEAF
+2026-02-24 05:27:13 - demand_forecasting - INFO - 
+Saved 106,626 rows -> demand_forecast_results.csv
+2026-02-24 05:27:13 - demand_forecasting - INFO - Saved metadata    -> models/demand_forecast_metadata.json
+2026-02-24 05:27:13 - demand_forecasting - INFO - Demand forecasting complete.
+2026-02-24 13:13:08 - demand_forecasting - INFO - Forecasting method: MOVING_AVG
+2026-02-24 13:13:08 - demand_forecasting - INFO - ============================================================
+2026-02-24 13:13:08 - demand_forecasting - INFO - DEMAND FORECASTING ENGINE
+2026-02-24 13:13:08 - demand_forecasting - INFO -   Method  : MOVING_AVG
+2026-02-24 13:13:08 - demand_forecasting - INFO -   Horizon : 30 days
+2026-02-24 13:13:08 - demand_forecasting - INFO -   Top N   : 50 products
+2026-02-24 13:13:08 - demand_forecasting - INFO - ============================================================
+2026-02-24 13:13:08 - demand_forecasting - INFO - Fetching historical daily sales from data warehouse...
+2026-02-24 13:13:35 - demand_forecasting - INFO -   Loaded 699,121 daily records for 3,507 unique products
+2026-02-24 13:13:36 - demand_forecasting - INFO -   Selected top 50 products by total volume
+2026-02-24 13:13:36 - demand_forecasting - INFO -   [01/50] 23843 — PAPER CRAFT , LITTLE BIRDIE
+2026-02-24 13:13:36 - demand_forecasting - INFO -   [02/50] 85123A — CREAM HANGING HEART T-LIGHT HOLDER
+2026-02-24 13:13:36 - demand_forecasting - INFO -   [03/50] 85099B — JUMBO BAG RED RETROSPOT
+2026-02-24 13:13:36 - demand_forecasting - INFO -   [04/50] 84879 — damaged
+2026-02-24 13:13:36 - demand_forecasting - INFO -   [05/50] 22197 — POPCORN HOLDER
+2026-02-24 13:13:36 - demand_forecasting - INFO -   [06/50] 22423 — damages
+2026-02-24 13:13:36 - demand_forecasting - INFO -   [07/50] 84077 — WORLD WAR 2 GLIDERS ASSTD DESIGNS
+2026-02-24 13:13:37 - demand_forecasting - INFO -   [08/50] 21212 — PACK OF 72 RETROSPOT CAKE CASES
+2026-02-24 13:13:37 - demand_forecasting - INFO -   [09/50] 20725 — LUNCH BAG RED SPOTTY
+2026-02-24 13:13:37 - demand_forecasting - INFO -   [10/50] 47566 — PARTY BUNTING
+2026-02-24 13:13:37 - demand_forecasting - INFO -   [11/50] 23203 — JUMBO BAG VINTAGE DOILY 
+2026-02-24 13:13:37 - demand_forecasting - INFO -   [12/50] 22086 — PAPER CHAIN KIT 50'S CHRISTMAS 
+2026-02-24 13:13:38 - demand_forecasting - INFO -   [13/50] 22178 — VICTORIAN GLASS HANGING T-LIGHT
+2026-02-24 13:13:38 - demand_forecasting - INFO -   [14/50] 22469 — Unknown
+2026-02-24 13:13:38 - demand_forecasting - INFO -   [15/50] 22386 — JUMBO BAG PINK POLKADOT
+2026-02-24 13:13:38 - demand_forecasting - INFO -   [16/50] 21915 — John Lewis
+2026-02-24 13:13:38 - demand_forecasting - INFO -   [17/50] 22961 — JAM MAKING SET PRINTED
+2026-02-24 13:13:38 - demand_forecasting - INFO -   [18/50] 20727 — LUNCH BAG  BLACK SKULL.
+2026-02-24 13:13:38 - demand_forecasting - INFO -   [19/50] 23084 — website fixed
+2026-02-24 13:13:39 - demand_forecasting - INFO -   [20/50] 22383 — LUNCH BAG SUKI DESIGN 
+2026-02-24 13:13:39 - demand_forecasting - INFO -   [21/50] 23209 — LUNCH BAG VINTAGE DOILY 
+2026-02-24 13:13:39 - demand_forecasting - INFO -   [22/50] 22457 — NATURAL SLATE HEART CHALKBOARD 
+2026-02-24 13:13:39 - demand_forecasting - INFO -   [23/50] 22382 — LUNCH BAG SPACEBOY DESIGN 
+2026-02-24 13:13:39 - demand_forecasting - INFO -   [24/50] 84946 — ANTIQUE SILVER T-LIGHT GLASS
+2026-02-24 13:13:39 - demand_forecasting - INFO -   [25/50] 20728 — LUNCH BAG CARS BLUE
+2026-02-24 13:13:40 - demand_forecasting - INFO -   [26/50] 21790 — VINTAGE SNAP CARDS
+2026-02-24 13:13:40 - demand_forecasting - INFO -   [27/50] POST — Unknown
+2026-02-24 13:13:40 - demand_forecasting - INFO -   [28/50] 22727 — ALARM CLOCK BAKELIKE RED 
+2026-02-24 13:13:40 - demand_forecasting - INFO -   [29/50] 22470 — Unknown
+2026-02-24 13:13:40 - demand_forecasting - INFO -   [30/50] 21181 — dotcom
+2026-02-24 13:13:40 - demand_forecasting - INFO -   [31/50] 22720 — Unknown
+2026-02-24 13:13:41 - demand_forecasting - INFO -   [32/50] 82482 — WOODEN PICTURE FRAME WHITE FINISH
+2026-02-24 13:13:41 - demand_forecasting - INFO -   [33/50] 23298 — BUNTING , SPOTTY 
+2026-02-24 13:13:41 - demand_forecasting - INFO -   [34/50] 22384 — LUNCH BAG PINK POLKADOT
+2026-02-24 13:13:41 - demand_forecasting - INFO -   [35/50] 21977 — PACK OF 60 PINK PAISLEY CAKE CASES
+2026-02-24 13:13:41 - demand_forecasting - INFO -   [36/50] 22629 — SPACEBOY LUNCH BOX 
+2026-02-24 13:13:41 - demand_forecasting - INFO -   [37/50] 22993 — SET OF 4 PANTRY JELLY MOULDS
+2026-02-24 13:13:41 - demand_forecasting - INFO -   [38/50] 20726 — LUNCH BAG WOODLAND
+2026-02-24 13:13:42 - demand_forecasting - INFO -   [39/50] 21175 — GIN AND TONIC DIET METAL SIGN
+2026-02-24 13:13:42 - demand_forecasting - INFO -   [40/50] 22492 — MINI PAINT SET VINTAGE 
+2026-02-24 13:13:42 - demand_forecasting - INFO -   [41/50] 22411 — JUMBO SHOPPER VINTAGE RED PAISLEY
+2026-02-24 13:13:42 - demand_forecasting - INFO -   [42/50] 85099F — Unknown
+2026-02-24 13:13:42 - demand_forecasting - INFO -   [43/50] 20724 — RED RETROSPOT CHARLOTTE BAG
+2026-02-24 13:13:42 - demand_forecasting - INFO -   [44/50] 22726 — Unknown
+2026-02-24 13:13:42 - demand_forecasting - INFO -   [45/50] 22616 — PACK OF 12 LONDON TISSUES 
+2026-02-24 13:13:43 - demand_forecasting - INFO -   [46/50] 84991 — 60 TEATIME FAIRY CAKE CASES
+2026-02-24 13:13:43 - demand_forecasting - INFO -   [47/50] 21931 — JUMBO STORAGE BAG SUKI
+2026-02-24 13:13:43 - demand_forecasting - INFO -   [48/50] 22910 — PAPER CHAIN KIT VINTAGE CHRISTMAS
+2026-02-24 13:13:43 - demand_forecasting - INFO -   [49/50] 23206 — LUNCH BAG APPLE DESIGN
+2026-02-24 13:13:43 - demand_forecasting - INFO -   [50/50] 23202 — JUMBO BAG VINTAGE LEAF
+2026-02-24 13:13:45 - demand_forecasting - INFO - 
+Saved 106,626 rows -> demand_forecast_results.csv
+2026-02-24 13:13:45 - demand_forecasting - INFO - Saved metadata    -> models/demand_forecast_metadata.json
+2026-02-24 13:13:45 - demand_forecasting - INFO - Demand forecasting complete.

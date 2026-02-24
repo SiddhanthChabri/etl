@@ -9,3 +9,25 @@
 2026-02-24 04:06:23 - customer_journey - INFO - Saved funnel      -> journey_funnel.csv
 2026-02-24 04:06:23 - customer_journey - INFO - Saved metadata    -> models/journey_metadata.json
 2026-02-24 04:06:23 - customer_journey - INFO - Customer journey analysis complete.
+2026-02-24 05:25:48 - customer_journey - INFO - ============================================================
+2026-02-24 05:25:48 - customer_journey - INFO - CUSTOMER JOURNEY ANALYSIS
+2026-02-24 05:25:48 - customer_journey - INFO - ============================================================
+2026-02-24 05:25:48 - customer_journey - INFO - Fetching customer transactions from data warehouse...
+2026-02-24 05:25:54 - customer_journey - INFO -   39,962 transactions | 2,989 customers
+2026-02-24 05:25:54 - customer_journey - INFO -   Tier thresholds — Low < 262.33, Medium 262.33–599.67, High > 599.67
+2026-02-24 05:26:02 - customer_journey - INFO - Saved transitions -> journey_transitions.csv
+2026-02-24 05:26:02 - customer_journey - INFO - Saved sequences   -> journey_sequences.csv
+2026-02-24 05:26:02 - customer_journey - INFO - Saved funnel      -> journey_funnel.csv
+2026-02-24 05:26:02 - customer_journey - INFO - Saved metadata    -> models/journey_metadata.json
+2026-02-24 05:26:02 - customer_journey - INFO - Customer journey analysis complete.
+2026-02-24 13:13:08 - customer_journey - INFO - ============================================================
+2026-02-24 13:13:08 - customer_journey - INFO - CUSTOMER JOURNEY ANALYSIS
+2026-02-24 13:13:08 - customer_journey - INFO - ============================================================
+2026-02-24 13:13:08 - customer_journey - INFO - Fetching customer transactions from data warehouse...
+2026-02-24 13:13:19 - customer_journey - INFO -   39,962 transactions | 2,989 customers
+2026-02-24 13:13:19 - customer_journey - INFO -   Tier thresholds — Low < 262.33, Medium 262.33–599.67, High > 599.67
+2026-02-24 13:13:33 - customer_journey - INFO - Saved transitions -> journey_transitions.csv
+2026-02-24 13:13:33 - customer_journey - INFO - Saved sequences   -> journey_sequences.csv
+2026-02-24 13:13:33 - customer_journey - INFO - Saved funnel      -> journey_funnel.csv
+2026-02-24 13:13:33 - customer_journey - INFO - Saved metadata    -> models/journey_metadata.json
+2026-02-24 13:13:33 - customer_journey - INFO - Customer journey analysis complete.

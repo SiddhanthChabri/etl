@@ -1,37 +1,37 @@
 sequence,steps,count,pct
-High → High,2,936,31.31
-Low → Low,2,722,24.16
-Medium → Medium,2,643,21.51
-High → High → High,3,490,16.39
-High → Medium,2,396,13.25
-Medium → High,2,382,12.78
-Medium → Low,2,378,12.65
-Low → Medium,2,348,11.64
-Low → Low → Low,3,321,10.74
-Medium → Medium → Medium,3,202,6.76
-High → Low,2,178,5.96
-Low → High,2,178,5.96
-High → High → Medium,3,127,4.25
-Medium → High → High,3,125,4.18
-High → Medium → High,3,116,3.88
-High → Medium → Medium,3,104,3.48
-Low → Medium → Low,3,102,3.41
-Low → Low → Medium,3,102,3.41
-Medium → Medium → High,3,102,3.41
-Medium → Low → Low,3,100,3.35
-Medium → Medium → Low,3,95,3.18
-Medium → High → Medium,3,91,3.04
-Low → Medium → Medium,3,91,3.04
-Medium → Low → Medium,3,85,2.84
-High → High → Low,3,56,1.87
-High → Low → High,3,48,1.61
-Low → High → High,3,48,1.61
-Low → High → Low,3,40,1.34
-High → Low → Medium,3,38,1.27
-High → Medium → Low,3,37,1.24
-Low → Low → High,3,34,1.14
-Medium → Low → High,3,34,1.14
-Low → Medium → High,3,33,1.1
-Medium → High → Low,3,31,1.04
-Low → High → Medium,3,25,0.84
-High → Low → Low,3,25,0.84
+High → High,2,4567,152.79
+Medium → Medium,2,4521,151.25
+Low → Low,2,4319,144.5
+Medium → High,2,4267,142.76
+High → Medium,2,3925,131.31
+Low → Medium,2,3910,130.81
+Medium → Low,2,3899,130.44
+Low → High,2,3897,130.38
+High → Low,2,3668,122.72
+High → High → High,3,1638,54.8
+Medium → Medium → Medium,3,1586,53.06
+Low → Low → Low,3,1534,51.32
+Medium → High → High,3,1430,47.84
+Medium → Medium → High,3,1395,46.67
+High → Medium → High,3,1352,45.23
+High → High → Medium,3,1328,44.43
+Low → High → High,3,1304,43.63
+Medium → High → Medium,3,1265,42.32
+Medium → Medium → Low,3,1263,42.25
+Low → Low → Medium,3,1250,41.82
+High → High → Low,3,1239,41.45
+Low → Medium → High,3,1235,41.32
+Low → Low → High,3,1232,41.22
+Medium → High → Low,3,1222,40.88
+Medium → Low → High,3,1221,40.85
+High → Medium → Medium,3,1220,40.82
+High → Low → High,3,1211,40.52
+Medium → Low → Medium,3,1208,40.41
+Low → Medium → Medium,3,1190,39.81
+Medium → Low → Low,3,1177,39.38
+Low → Medium → Low,3,1171,39.18
+Low → High → Medium,3,1168,39.08
+Low → High → Low,3,1120,37.47
+High → Low → Medium,3,1111,37.17
+High → Medium → Low,3,1091,36.5
+High → Low → Low,3,1050,35.13

@@ -6,152 +6,306 @@
     <title>Retail Analytics Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.27.0/plotly.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* ── CSS VARIABLES ── */
+        :root {
+            --bg-base:      #080c14;
+            --bg-card:      #0f1520;
+            --bg-card2:     #111827;
+            --bg-nav:       #0a0f1a;
+            --border:       rgba(255,255,255,0.07);
+            --border-hover: rgba(255,255,255,0.14);
+            --accent:       #6366f1;
+            --accent2:      #06b6d4;
+            --accent3:      #10b981;
+            --accent4:      #f59e0b;
+            --accent5:      #ef4444;
+            --text-primary: #f1f5f9;
+            --text-secondary:#94a3b8;
+            --text-muted:   #4b5563;
+            --glow:         rgba(99,102,241,0.15);
+            --radius:       14px;
+            --radius-sm:    8px;
+        }
+
+        /* ── RESET & BASE ── */
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #0f1117;
-            color: #e0e0e0;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: var(--bg-base);
+            color: var(--text-primary);
             min-height: 100vh;
+            font-size: 14px;
+            line-height: 1.5;
         }
+
+        /* ── CUSTOM SCROLLBAR ── */
+        ::-webkit-scrollbar { width:6px; height:6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: #2d3748; border-radius:3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
         /* ── HEADER ── */
         header {
-            background: linear-gradient(135deg, #1a1f35 0%, #2d3561 100%);
-            padding: 20px 32px;
+            background: linear-gradient(135deg, #0a0f1e 0%, #0f172a 60%, #0a1628 100%);
+            padding: 0 36px;
+            height: 64px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 2px solid #4472C4;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
         }
-        header h1 { font-size: 1.6rem; color: #fff; letter-spacing: 1px; }
-        header h1 span { color: #4472C4; }
-        #last-updated { font-size: 0.78rem; color: #888; }
+        .header-left { display:flex; align-items:center; gap:14px; }
+        .header-logo {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 10px;
+            display: flex; align-items:center; justify-content:center;
+            font-size: 18px;
+            box-shadow: 0 0 20px rgba(99,102,241,0.4);
+        }
+        header h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+        header h1 span { color: var(--accent); }
+        .header-right { display:flex; align-items:center; gap:20px; }
+        .header-stat {
+            text-align: right;
+            display: flex; flex-direction:column;
+        }
+        .header-stat-value { font-size:0.9rem; font-weight:700; color:var(--text-primary); }
+        .header-stat-label { font-size:0.68rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; }
+        #last-updated { font-size:0.73rem; color:var(--text-muted); }
+        .header-divider { width:1px; height:28px; background:var(--border); }
 
         /* ── NAV TABS ── */
         nav {
-            background: #161b2e;
+            background: var(--bg-nav);
             display: flex;
-            gap: 4px;
-            padding: 12px 32px;
-            border-bottom: 1px solid #2a2f45;
-            flex-wrap: wrap;
+            gap: 2px;
+            padding: 10px 36px;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            scrollbar-width: thin;
         }
+        nav::-webkit-scrollbar { height: 3px; }
         nav button {
-            padding: 8px 20px;
+            padding: 7px 16px;
             border: none;
-            border-radius: 6px;
-            background: #1e2540;
-            color: #aaa;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-secondary);
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.18s ease;
+            white-space: nowrap;
+            letter-spacing: 0.1px;
         }
-        nav button:hover  { background: #2d3561; color: #fff; }
-        nav button.active { background: #4472C4; color: #fff; }
+        nav button:hover  {
+            background: rgba(255,255,255,0.06);
+            color: var(--text-primary);
+        }
+        nav button.active {
+            background: linear-gradient(135deg, var(--accent), #7c3aed);
+            color: #fff;
+            box-shadow: 0 0 16px rgba(99,102,241,0.35);
+        }
 
         /* ── MAIN LAYOUT ── */
-        main { padding: 24px 32px; }
+        main { padding: 28px 36px; max-width: 1600px; }
 
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+        /* ── GENERIC CARD ── */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 22px;
+            border: 1px solid var(--border);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px;
+        }
+        .card:hover { border-color: var(--border-hover); }
+        .card h3 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 16px;
+        }
 
         /* ── KPI CARDS ── */
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 28px;
+            grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
         }
         .kpi-card {
-            background: #1a1f35;
-            border-radius: 12px;
-            padding: 20px;
-            border-left: 4px solid #4472C4;
-            transition: transform 0.2s;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            cursor: default;
         }
-        .kpi-card:hover { transform: translateY(-3px); }
-        .kpi-card .label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-        .kpi-card .value { font-size: 1.9rem; font-weight: 700; color: #fff; margin-top: 6px; }
-        .kpi-card .sub   { font-size: 0.75rem; color: #70AD47; margin-top: 4px; }
-        .kpi-card.green  { border-left-color: #70AD47; }
-        .kpi-card.orange { border-left-color: #ED7D31; }
-        .kpi-card.red    { border-left-color: #e74c3c; }
-        .kpi-card.yellow { border-left-color: #FFC000; }
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+        .kpi-card::after {
+            content: '';
+            position: absolute;
+            top: -40px; right: -20px;
+            width: 80px; height: 80px;
+            background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px var(--border-hover);
+            border-color: var(--border-hover);
+        }
+        .kpi-card.green::before  { background: linear-gradient(90deg, var(--accent3), #34d399); }
+        .kpi-card.green::after   { background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%); }
+        .kpi-card.orange::before { background: linear-gradient(90deg, var(--accent4), #fbbf24); }
+        .kpi-card.orange::after  { background: radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%); }
+        .kpi-card.red::before    { background: linear-gradient(90deg, var(--accent5), #f87171); }
+        .kpi-card.red::after     { background: radial-gradient(circle, rgba(239,68,68,0.12) 0%, transparent 70%); }
+        .kpi-card.yellow::before { background: linear-gradient(90deg, #eab308, #facc15); }
+        .kpi-card.cyan::before   { background: linear-gradient(90deg, var(--accent2), #67e8f9); }
+        .kpi-card .kpi-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+        .kpi-card .kpi-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-top: 6px;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+        }
+        .kpi-card .label  { font-size:0.7rem; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.7px; }
+        .kpi-card .value  { font-size:1.75rem; font-weight:800; color:var(--text-primary); margin-top:6px; line-height:1.1; letter-spacing:-0.5px; }
+        .kpi-card .sub    { font-size:0.72rem; color:var(--accent3); margin-top:5px; font-weight:500; }
 
         /* ── SECTION TITLE ── */
         .section-title {
-            font-size: 1rem;
+            font-size: 0.8rem;
             font-weight: 700;
-            color: #fff;
+            color: var(--text-secondary);
             margin-bottom: 14px;
-            padding-bottom: 6px;
-            border-bottom: 1px solid #2a2f45;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
         }
 
         /* ── CHART GRID ── */
         .chart-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-            gap: 20px;
-            margin-bottom: 28px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
         .chart-card {
-            background: #1a1f35;
-            border-radius: 12px;
-            padding: 20px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 22px;
+            border: 1px solid var(--border);
+            transition: border-color 0.2s;
+        }
+        .chart-card:hover { border-color: var(--border-hover); }
+        .chart-card h3 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 16px;
         }
         .chart-card canvas { max-height: 300px; }
 
         /* ── TABLE ── */
         .table-card {
-            background: #1a1f35;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 22px;
+            margin-bottom: 20px;
             overflow-x: auto;
+            border: 1px solid var(--border);
         }
-        table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+        table { width:100%; border-collapse:collapse; font-size:0.83rem; }
         th {
-            background: #2d3561;
-            color: #fff;
+            background: rgba(255,255,255,0.04);
+            color: var(--text-secondary);
             padding: 10px 14px;
             text-align: left;
             font-weight: 600;
-            font-size: 0.78rem;
+            font-size: 0.72rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
+            border-bottom: 1px solid var(--border);
         }
-        td { padding: 9px 14px; border-bottom: 1px solid #22283d; color: #ccc; }
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            color: var(--text-primary);
+        }
         tr:last-child td { border-bottom: none; }
-        tr:hover td { background: #22283d; }
+        tr:hover td { background: rgba(255,255,255,0.03); }
 
         /* ── BADGES ── */
         .badge {
             display: inline-block;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.68rem;
             font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
-        .badge-champions { background: #70AD47; color: #fff; }
-        .badge-loyal     { background: #4472C4; color: #fff; }
-        .badge-potential { background: #ED7D31; color: #fff; }
-        .badge-recent    { background: #FFC000; color: #222; }
-        .badge-promising { background: #5B9BD5; color: #fff; }
-        .badge-attention { background: #FF7F00; color: #fff; }
-        .badge-sleep     { background: #e74c3c; color: #fff; }
-        .badge-risk      { background: #9B1C1C; color: #fff; }
-        .badge-a         { background: #70AD47; color: #fff; }
-        .badge-b         { background: #4472C4; color: #fff; }
-        .badge-c         { background: #e74c3c; color: #fff; }
-        .badge-veryhigh  { background: #70AD47; color: #fff; }
-        .badge-high      { background: #4472C4; color: #fff; }
-        .badge-medium    { background: #ED7D31; color: #fff; }
-        .badge-low       { background: #e74c3c; color: #fff; }
+        .badge-champions { background: rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); }
+        .badge-loyal     { background: rgba(99,102,241,0.15); color:#818cf8; border:1px solid rgba(99,102,241,0.3); }
+        .badge-potential { background: rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3); }
+        .badge-recent    { background: rgba(6,182,212,0.15);  color:#22d3ee; border:1px solid rgba(6,182,212,0.3); }
+        .badge-promising { background: rgba(59,130,246,0.15); color:#60a5fa; border:1px solid rgba(59,130,246,0.3); }
+        .badge-attention { background: rgba(249,115,22,0.15); color:#fb923c; border:1px solid rgba(249,115,22,0.3); }
+        .badge-sleep     { background: rgba(239,68,68,0.12);  color:#f87171; border:1px solid rgba(239,68,68,0.25); }
+        .badge-risk      { background: rgba(185,28,28,0.2);   color:#fca5a5; border:1px solid rgba(185,28,28,0.3); }
+        .badge-a         { background: rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); }
+        .badge-b         { background: rgba(99,102,241,0.15); color:#818cf8; border:1px solid rgba(99,102,241,0.3); }
+        .badge-c         { background: rgba(239,68,68,0.12);  color:#f87171; border:1px solid rgba(239,68,68,0.25); }
+        .badge-veryhigh  { background: rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); }
+        .badge-high      { background: rgba(99,102,241,0.15); color:#818cf8; border:1px solid rgba(99,102,241,0.3); }
+        .badge-medium    { background: rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3); }
+        .badge-low       { background: rgba(239,68,68,0.12);  color:#f87171; border:1px solid rgba(239,68,68,0.25); }
 
         /* ── LOADING ── */
         .loading {
@@ -159,179 +313,350 @@
             align-items: center;
             justify-content: center;
             height: 200px;
-            color: #4472C4;
-            font-size: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            gap: 12px;
         }
         .spinner {
-            width: 32px; height: 32px;
-            border: 3px solid #2d3561;
-            border-top-color: #4472C4;
+            width: 28px; height: 28px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-right: 12px;
+            animation: spin 0.75s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── INPUTS & BUTTONS ── */
+        input[type="text"], input[type="number"], select, textarea {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: var(--radius-sm);
+            padding: 9px 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+        }
+        select option { background: var(--bg-card2); color: var(--text-primary); }
+
+        button.btn-primary, .shap-btn, .forecast-btn {
+            padding: 9px 22px;
+            background: linear-gradient(135deg, var(--accent), #7c3aed);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            box-shadow: 0 0 16px rgba(99,102,241,0.25);
+        }
+        button.btn-primary:hover, .shap-btn:hover, .forecast-btn:hover {
+            box-shadow: 0 0 24px rgba(99,102,241,0.45);
+            transform: translateY(-1px);
+        }
+        button.btn-primary:disabled, .shap-btn:disabled, .forecast-btn:disabled {
+            background: rgba(255,255,255,0.06);
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
 
         /* ── COHORT HEATMAP ── */
         .heatmap-table td {
             text-align: center;
-            font-size: 0.75rem;
+            font-size: 0.73rem;
             font-weight: 600;
             min-width: 60px;
         }
 
         /* ── SHAP TAB ── */
         .shap-card {
-            background: #1a1f35;
-            border-radius: 12px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
             padding: 24px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
         }
-        .shap-card h3 {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 8px;
-        }
-        .shap-card p {
-            color: #888;
-            font-size: 0.84rem;
-            line-height: 1.5;
-            margin-bottom: 4px;
-        }
-        .shap-input-row {
-            display: flex;
-            gap: 12px;
-            margin: 16px 0;
-            flex-wrap: wrap;
-        }
-        .shap-input-row input {
-            flex: 1;
-            padding: 10px 14px;
-            background: #0f1117;
-            color: #fff;
-            border: 1px solid #2a2f45;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            min-width: 200px;
-        }
-        .shap-input-row input:focus {
-            outline: none;
-            border-color: #4472C4;
-        }
-        .shap-btn {
-            padding: 10px 24px;
-            background: #4472C4;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-        .shap-btn:hover    { background: #2d5aa0; }
-        .shap-btn:disabled { background: #2a2f45; cursor: not-allowed; }
-        .shap-error {
-            color: #e74c3c;
-            font-size: 0.85rem;
-            margin-top: 10px;
-            display: none;
-        }
-        .shap-breakdown-header {
-            font-size: 0.9rem;
-            color: #aaa;
-            margin-bottom: 12px;
-            font-weight: 600;
-            padding: 10px 0 6px;
-            border-bottom: 1px solid #2a2f45;
-        }
+        .shap-card h3 { font-size:0.85rem; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:10px; }
+        .shap-card p  { color:var(--text-secondary); font-size:0.84rem; line-height:1.6; margin-bottom:4px; }
+        .shap-input-row { display:flex; gap:12px; margin:16px 0; flex-wrap:wrap; }
+        .shap-input-row input { flex:1; min-width:200px; }
+        .shap-error { color:var(--accent5); font-size:0.82rem; margin-top:8px; display:none; }
+        .shap-breakdown-header { font-size:0.8rem; color:var(--text-secondary); margin-bottom:10px; font-weight:600; padding:10px 0 6px; border-bottom:1px solid var(--border); }
 
         /* ── FORECAST TAB ── */
-        .forecast-search-row {
-            display: flex;
-            gap: 12px;
-            margin: 16px 0;
-            flex-wrap: wrap;
-        }
-        .forecast-search-row input {
-            flex: 1;
-            padding: 10px 14px;
-            background: #0f1117;
-            color: #fff;
-            border: 1px solid #2a2f45;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            min-width: 220px;
-        }
-        .forecast-search-row input:focus { outline: none; border-color: #4472C4; }
-        .forecast-btn {
-            padding: 10px 24px;
-            background: #4472C4;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-        .forecast-btn:hover    { background: #2d5aa0; }
-        .forecast-btn:disabled { background: #2a2f45; cursor: not-allowed; }
-        .forecast-error { color: #e74c3c; font-size: 0.85rem; margin-top: 8px; display: none; }
+        .forecast-search-row { display:flex; gap:12px; margin:16px 0; flex-wrap:wrap; }
+        .forecast-search-row input { flex:1; min-width:220px; }
+        .forecast-error { color:var(--accent5); font-size:0.82rem; margin-top:8px; display:none; }
         .method-badge {
-            display: inline-block;
-            padding: 3px 12px;
-            border-radius: 12px;
-            font-size: 0.72rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            background: #4472C4;
-            color: #fff;
-            margin-left: 8px;
+            display: inline-block; padding: 3px 10px;
+            border-radius: 20px; font-size:0.68rem; font-weight:700;
+            text-transform:uppercase; letter-spacing:0.4px;
+            background: rgba(99,102,241,0.15); color:#818cf8;
+            border: 1px solid rgba(99,102,241,0.3); margin-left:8px;
         }
 
         /* ── ELASTICITY TAB ── */
-        .elasticity-search-row {
-            display: flex;
-            gap: 12px;
-            margin: 16px 0;
-            flex-wrap: wrap;
-        }
-        .elasticity-search-row input {
-            flex: 1;
-            padding: 10px 14px;
-            background: #0f1117;
-            color: #fff;
-            border: 1px solid #2a2f45;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            min-width: 220px;
-        }
-        .elasticity-search-row input:focus { outline: none; border-color: #4472C4; }
+        .elasticity-search-row { display:flex; gap:12px; margin:16px 0; flex-wrap:wrap; }
+        .elasticity-search-row input { flex:1; min-width:220px; }
         .elasticity-type-badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 0.72rem;
+            display:inline-block; padding:3px 10px; border-radius:20px;
+            font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;
+        }
+
+        /* ── SECTION HEADINGS IN TABS ── */
+        .tab-content h2 {
+            font-size: 1.15rem;
             font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+        .tab-content h3 {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
             text-transform: uppercase;
+            letter-spacing: 0.6px;
         }
 
         /* ── RESPONSIVE ── */
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             main   { padding: 16px; }
-            nav    { padding: 10px 16px; }
-            header { padding: 14px 16px; }
+            nav    { padding: 8px 16px; }
+            header { padding: 0 16px; height:56px; }
             .chart-grid { grid-template-columns: 1fr; }
+            .kpi-grid { grid-template-columns: repeat(2,1fr); }
+            .header-stat { display:none; }
         }
+
+        /* ── SKELETON SHIMMER LOADERS ── */
+        @keyframes shimmer {
+            0%   { background-position: -1200px 0; }
+            100% { background-position:  1200px 0; }
+        }
+        .skeleton-box {
+            background: linear-gradient(90deg,
+                rgba(255,255,255,0.03) 0%,
+                rgba(255,255,255,0.08) 50%,
+                rgba(255,255,255,0.03) 100%);
+            background-size: 1200px 100%;
+            animation: shimmer 1.8s ease-in-out infinite;
+            border-radius: var(--radius);
+        }
+        .skeleton-kpi {
+            height: 96px;
+            border: 1px solid var(--border);
+        }
+        .skeleton-row {
+            height: 20px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        /* ── TAB PAGE HEADER ── */
+        .tab-header {
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .tab-header-left {}
+        .tab-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .tab-header p {
+            color: var(--text-secondary);
+            font-size: 0.84rem;
+            margin: 0;
+            max-width: 520px;
+            line-height: 1.6;
+        }
+        .tab-header-badge {
+            padding: 5px 14px;
+            background: rgba(99,102,241,0.1);
+            border: 1px solid rgba(99,102,241,0.25);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent);
+            white-space: nowrap;
+            align-self: center;
+        }
+
+        /* ── KPI CARD ICON ── */
+        .kpi-icon {
+            position: absolute;
+            top: 12px; right: 14px;
+            font-size: 1.8rem;
+            opacity: 0.12;
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
+            transition: opacity 0.2s;
+        }
+        .kpi-card:hover .kpi-icon { opacity: 0.22; }
+
+        /* ── RANK BADGE ── */
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px; height: 26px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 7px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .rank-badge.gold   { background: rgba(245,158,11,0.15); color: #fbbf24; }
+        .rank-badge.silver { background: rgba(148,163,184,0.12); color: #94a3b8; }
+        .rank-badge.bronze { background: rgba(180,83,9,0.12); color: #d97706; }
+
+        /* ── SEVERITY BADGES ── */
+        .badge-critical  { background: rgba(239,68,68,0.18); color: #f87171;
+                           border: 1px solid rgba(239,68,68,0.35);
+                           animation: pulse-crit 2.5s ease-in-out infinite; }
+        .badge-high-sev  { background: rgba(249,115,22,0.15); color: #fb923c;
+                           border: 1px solid rgba(249,115,22,0.3); }
+        .badge-medium-sev{ background: rgba(245,158,11,0.15); color: #fbbf24;
+                           border: 1px solid rgba(245,158,11,0.3); }
+        .badge-purple    { background: rgba(167,139,250,0.15); color: #a78bfa;
+                           border: 1px solid rgba(167,139,250,0.3); }
+        .badge-blue      { background: rgba(96,165,250,0.15);  color: #60a5fa;
+                           border: 1px solid rgba(96,165,250,0.3); }
+        @keyframes pulse-crit {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.25); }
+            50%       { box-shadow: 0 0 0 5px rgba(239,68,68,0); }
+        }
+
+        /* ── TREND INDICATORS ── */
+        .trend-up   { color: var(--accent3); font-weight: 700; font-size: 0.8rem; }
+        .trend-down { color: var(--accent5); font-weight: 700; font-size: 0.8rem; }
+        .trend-flat { color: var(--text-muted); font-weight: 600; font-size: 0.8rem; }
+
+        /* ── MINI STAT ROW INSIDE KPI CARD ── */
+        .kpi-stat-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .kpi-stat-pill {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 3px 9px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .kpi-stat-pill strong { color: var(--text-primary); font-weight: 700; }
+
+        /* ── SECTION DIVIDER ── */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 28px 0 18px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .section-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ── STICKY CHART HEADER ── */
+        .chart-card h3, .chart-card .section-title {
+            position: sticky;
+            left: 0;
+        }
+
+        /* ── SCROLLABLE TABLE WRAPPER ── */
+        .table-wrapper { overflow-x: auto; }
+
+        /* ── GEO / ANOMALY: upgrade inline-styled elements ── */
+        .tab-section-grid-12 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .tab-section-grid-13 {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        /* ── ANOMALY FILTER BAR ── */
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            padding: 14px;
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+        .filter-bar select {
+            min-width: 140px;
+        }
+
+        /* ── NUMBER COUNT-UP TRANSITION ── */
+        [data-countup] { display: inline-block; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>📊 <span>Retail</span> Analytics Dashboard</h1>
-    <span id="last-updated">Loading...</span>
+    <div class="header-left">
+        <div class="header-logo">📊</div>
+        <h1><span>Retail</span> Analytics</h1>
+    </div>
+    <div class="header-right">
+        <div class="header-stat">
+            <span class="header-stat-value" id="hdr-revenue">—</span>
+            <span class="header-stat-label">Total Revenue</span>
+        </div>
+        <div class="header-divider"></div>
+        <div class="header-stat">
+            <span class="header-stat-value" id="hdr-customers">—</span>
+            <span class="header-stat-label">Customers</span>
+        </div>
+        <div class="header-divider"></div>
+        <div class="header-stat">
+            <span class="header-stat-value" id="hdr-products">—</span>
+            <span class="header-stat-label">Products</span>
+        </div>
+        <div class="header-divider"></div>
+        <span id="last-updated">Loading...</span>
+    </div>
 </header>
 
 <nav>
@@ -345,6 +670,13 @@
     <button onclick="showTab('forecast',    this)">📈 Forecast</button>
     <button onclick="showTab('elasticity', this)">💹 Price Elasticity</button>
     <button onclick="showTab('journey',   this)">🗺️ Journey</button>
+    <button onclick="showTab('inventory', this)">📦 Inventory</button>
+    <button onclick="showTab('geo',       this)">🌍 Geographic</button>
+    <button onclick="showTab('anomaly',   this)">🚨 Anomalies</button>
+    <button onclick="showTab('seasonality',  this)">📆 Seasonality</button>
+    <button onclick="showTab('segmentation', this)">🎯 Segments</button>
+    <button onclick="showTab('stores',       this)">🏪 Stores</button>
+    <button onclick="showTab('recommendations', this)">🔮 Recommendations</button>
 </nav>
 
 <main>
@@ -353,8 +685,20 @@
      TAB 1 — OVERVIEW
 ══════════════════════════════════════════════ -->
 <div id="tab-overview" class="tab-content active">
+    <div class="tab-header">
+        <div class="tab-header-left">
+            <h2>Overview</h2>
+            <p>High-level KPIs across all analytics modules — revenue, customer segments, product classes, and lifetime value at a glance.</p>
+        </div>
+        <span class="tab-header-badge">Live Data</span>
+    </div>
     <div class="kpi-grid" id="overview-kpis">
-        <div class="loading"><div class="spinner"></div> Loading KPIs...</div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
     </div>
     <div class="chart-grid">
         <div class="chart-card">
@@ -382,8 +726,18 @@
      TAB 2 — RFM
 ══════════════════════════════════════════════ -->
 <div id="tab-rfm" class="tab-content">
+    <div class="tab-header">
+        <div class="tab-header-left">
+            <h2>RFM Analysis</h2>
+            <p>Segment customers by Recency, Frequency, and Monetary value to identify champions, at-risk, and dormant cohorts.</p>
+        </div>
+        <span class="tab-header-badge">Customer Segmentation</span>
+    </div>
     <div class="kpi-grid" id="rfm-kpis">
-        <div class="loading"><div class="spinner"></div> Loading...</div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
     </div>
     <div class="chart-grid">
         <div class="chart-card">
@@ -414,8 +768,18 @@
      TAB 3 — ABC
 ══════════════════════════════════════════════ -->
 <div id="tab-abc" class="tab-content">
+    <div class="tab-header">
+        <div class="tab-header-left">
+            <h2>ABC Analysis</h2>
+            <p>Classify products by revenue contribution — Class A (top 80%), B (next 15%), C (bottom 5%) — to guide inventory and marketing focus.</p>
+        </div>
+        <span class="tab-header-badge">Product Classification</span>
+    </div>
     <div class="kpi-grid" id="abc-kpis">
-        <div class="loading"><div class="spinner"></div> Loading...</div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
     </div>
     <div class="chart-grid">
         <div class="chart-card">
@@ -445,8 +809,18 @@
      TAB 4 — CLV
 ══════════════════════════════════════════════ -->
 <div id="tab-clv" class="tab-content">
+    <div class="tab-header">
+        <div class="tab-header-left">
+            <h2>Customer Lifetime Value</h2>
+            <p>Predict and segment customers by their total projected value — driving retention, personalisation, and acquisition spend allocation.</p>
+        </div>
+        <span class="tab-header-badge">CLV Segmentation</span>
+    </div>
     <div class="kpi-grid" id="clv-kpis">
-        <div class="loading"><div class="spinner"></div> Loading...</div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
     </div>
     <div class="chart-grid">
         <div class="chart-card">
@@ -477,14 +851,12 @@
      TAB 5 — COHORT
 ══════════════════════════════════════════════ -->
 <div id="tab-cohort" class="tab-content">
-    <div class="kpi-grid">
-        <div class="kpi-card green">
-            <div class="label">What is Cohort Analysis?</div>
-            <div class="value" style="font-size:1rem;margin-top:8px;line-height:1.6">
-                Groups customers by their first purchase month and tracks
-                how many return in subsequent months.
-            </div>
+    <div class="tab-header">
+        <div class="tab-header-left">
+            <h2>Cohort Retention</h2>
+            <p>Groups customers by their first purchase month and tracks how many return in subsequent months — revealing long-term loyalty trends.</p>
         </div>
+        <span class="tab-header-badge">Retention Heatmap</span>
     </div>
     <div class="table-card">
         <div class="section-title">📅 Retention Heatmap (% of cohort returning)</div>
@@ -498,8 +870,17 @@
      TAB 6 — MARKET BASKET
 ══════════════════════════════════════════════ -->
 <div id="tab-basket" class="tab-content">
+    <div class="tab-header">
+        <div class="tab-header-left">
+            <h2>Market Basket Analysis</h2>
+            <p>Discover products frequently purchased together using association rule mining — support, confidence, and lift metrics per pair.</p>
+        </div>
+        <span class="tab-header-badge">Association Rules</span>
+    </div>
     <div class="kpi-grid" id="basket-kpis">
-        <div class="loading"><div class="spinner"></div> Loading...</div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
     </div>
     <div class="table-card">
         <div class="section-title">🛒 Top Association Rules (by Lift)</div>
@@ -524,6 +905,63 @@
      TAB 7 — SHAP
 ══════════════════════════════════════════════ -->
 <div id="tab-shap" class="tab-content">
+    <div class="tab-header">
+        <div class="tab-header-left">
+            <h2>🤖 Churn Model &amp; SHAP Explainability</h2>
+            <p>Model evaluation metrics, confusion matrix, and SHAP-based feature explanations.</p>
+        </div>
+        <span class="tab-header-badge" id="churn-model-badge">—</span>
+    </div>
+
+    <!-- ── Model Evaluation Metrics ─────────────────────────────────────── -->
+    <div class="chart-card" style="margin-bottom:1.5rem">
+        <div class="section-title">📊 Model Evaluation — Test Set</div>
+
+        <!-- KPI row -->
+        <div class="kpi-grid" id="churn-metrics-kpis" style="margin-bottom:1.4rem"></div>
+
+        <!-- Confusion matrix + per-class table side by side -->
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:1.5rem;align-items:start;flex-wrap:wrap">
+
+            <!-- Confusion matrix 2×2 -->
+            <div>
+                <div style="font-size:.78rem;color:#94a3b8;margin-bottom:.5rem;text-align:center;letter-spacing:.05em">CONFUSION MATRIX</div>
+                <table id="churn-cm-table" style="border-collapse:collapse;min-width:260px;font-size:.88rem">
+                    <thead>
+                        <tr>
+                            <th style="padding:.4rem .8rem;color:#64748b;font-weight:500"></th>
+                            <th style="padding:.4rem .8rem;color:#94a3b8;font-weight:600;text-align:center">Predicted Active</th>
+                            <th style="padding:.4rem .8rem;color:#94a3b8;font-weight:600;text-align:center">Predicted Churned</th>
+                        </tr>
+                    </thead>
+                    <tbody id="churn-cm-tbody">
+                        <tr><td colspan="3" style="color:#64748b;padding:.8rem;text-align:center">Loading…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Per-class precision / recall / F1 table -->
+            <div>
+                <div style="font-size:.78rem;color:#94a3b8;margin-bottom:.5rem;letter-spacing:.05em">PER-CLASS METRICS</div>
+                <table class="data-table" style="width:100%">
+                    <thead><tr>
+                        <th>Class</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>F1</th>
+                        <th>Support</th>
+                    </tr></thead>
+                    <tbody id="churn-class-tbody">
+                        <tr><td colspan="5" style="color:#64748b;text-align:center">Loading…</td></tr>
+                    </tbody>
+                </table>
+                <p style="font-size:.76rem;color:#64748b;margin-top:.6rem">
+                    <strong style="color:#94a3b8">Recall</strong> = of all actual churners, how many did we catch &nbsp;·&nbsp;
+                    <strong style="color:#94a3b8">Precision</strong> = of all predicted churners, how many actually churned
+                </p>
+            </div>
+        </div>
+    </div>
 
     <!-- Global Bar Plot -->
     <div class="shap-card">
@@ -591,10 +1029,20 @@
      TAB 8 — DEMAND FORECASTING
 ══════════════════════════════════════════════ -->
 <div id="tab-forecast" class="tab-content">
+    <div class="tab-header">
+        <div class="tab-header-left">
+            <h2>Demand Forecasting</h2>
+            <p>Time-series forecasts per product and category using Prophet & ETS — plan procurement and staffing with data-driven demand signals.</p>
+        </div>
+        <span class="tab-header-badge">Time-Series</span>
+    </div>
 
     <!-- KPI row -->
     <div class="kpi-grid" id="forecast-kpis">
-        <div class="loading"><div class="spinner"></div> Loading...</div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
     </div>
 
     <!-- Category bar + Top-10 products bar -->
@@ -657,10 +1105,20 @@
      TAB 9 — PRICE ELASTICITY
 ══════════════════════════════════════════════ -->
 <div id="tab-elasticity" class="tab-content">
+    <div class="tab-header">
+        <div class="tab-header-left">
+            <h2>Price Elasticity</h2>
+            <p>Log-log OLS regression measuring demand sensitivity to price changes per product — identify elastic (price-sensitive) vs inelastic products.</p>
+        </div>
+        <span class="tab-header-badge">OLS Regression</span>
+    </div>
 
     <!-- KPIs -->
     <div class="kpi-grid" id="elasticity-kpis">
-        <div class="loading"><div class="spinner"></div> Loading...</div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
     </div>
 
     <!-- Distribution donut + Category avg bar -->
@@ -734,10 +1192,20 @@
      TAB 10 — CUSTOMER JOURNEY
 ══════════════════════════════════════════════ -->
 <div id="tab-journey" class="tab-content">
+    <div class="tab-header">
+        <div class="tab-header-left">
+            <h2>Customer Journey</h2>
+            <p>Analyse how customers progress through value tiers across their first three purchases — identifying upgrade and drop-off patterns.</p>
+        </div>
+        <span class="tab-header-badge">Sankey Flow</span>
+    </div>
 
     <!-- KPIs -->
     <div class="kpi-grid" id="journey-kpis">
-        <div class="loading"><div class="spinner"></div> Loading...</div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
     </div>
 
     <!-- Sankey diagram -->
@@ -795,6 +1263,640 @@
 
 </div><!-- end tab-journey -->
 
+
+<!-- ══════════════════════════════════════════════
+     TAB 11 — INVENTORY OPTIMISATION
+══════════════════════════════════════════════ -->
+<div id="tab-inventory" class="tab-content">
+    <div class="tab-header">
+        <div class="tab-header-left">
+            <h2>Inventory Optimisation</h2>
+            <p>EOQ, safety stock, reorder points, and stockout risk per product — data-driven restocking to minimise holding and shortage costs.</p>
+        </div>
+        <span class="tab-header-badge">Supply Chain</span>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid" id="inventory-kpis">
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+    </div>
+
+    <!-- Risk donut + Category cost bar -->
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="section-title">⚠️ Stockout Risk Distribution</div>
+            <canvas id="chart-inv-risk"></canvas>
+        </div>
+        <div class="chart-card">
+            <div class="section-title">📦 Avg EOQ by Category</div>
+            <canvas id="chart-inv-eoq"></canvas>
+        </div>
+    </div>
+
+    <!-- Alerts table -->
+    <div class="table-card">
+        <div class="section-title">🚨 Critical & High Risk Products — Priority Reorder Alerts</div>
+        <table>
+            <thead><tr>
+                <th>#</th>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Risk</th>
+                <th>CV (volatility)</th>
+                <th>Avg Daily Demand</th>
+                <th>Safety Stock</th>
+                <th>Reorder Point</th>
+                <th>EOQ</th>
+            </tr></thead>
+            <tbody id="inv-alerts-body">
+                <tr><td colspan="9" style="text-align:center">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Top products table -->
+    <div class="table-card">
+        <div class="section-title">📋 Top 30 Products by Annual Demand</div>
+        <table>
+            <thead><tr>
+                <th>#</th>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Avg Daily Demand</th>
+                <th>Safety Stock</th>
+                <th>Reorder Point</th>
+                <th>EOQ</th>
+                <th>Annual Cost ($)</th>
+                <th>Risk</th>
+            </tr></thead>
+            <tbody id="inv-table-body">
+                <tr><td colspan="9" style="text-align:center">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Product lookup -->
+    <div class="chart-card" style="margin-bottom:24px">
+        <div class="section-title">🔍 Product Inventory Lookup</div>
+        <p style="color:#888;font-size:0.84rem;margin-bottom:4px">
+            Enter a Product ID to see full inventory parameters: EOQ, safety stock, reorder point, and cost breakdown.
+        </p>
+        <div class="forecast-search-row">
+            <input id="inv-pid-input" type="text" placeholder="Enter Product ID (e.g. 85123A)"
+                   onkeydown="if(event.key==='Enter') lookupInventory()" />
+            <button class="forecast-btn" onclick="lookupInventory()">Look Up ➜</button>
+        </div>
+        <div id="inv-lookup-result" style="margin-top:16px"></div>
+    </div>
+
+</div><!-- end tab-inventory -->
+
+<!-- ── GEOGRAPHIC TAB ───────────────────────────────────────────────────── -->
+<div id="tab-geo" class="tab-content">
+  <div class="tab-header">
+    <div class="tab-header-left">
+      <h2>Geographic Analysis</h2>
+      <p>Revenue, transaction counts, customer distribution, and YoY growth broken down by country and region across all years.</p>
+    </div>
+    <span class="tab-header-badge">33 Regions</span>
+  </div>
+
+  <!-- KPI row -->
+  <div class="kpi-grid" id="geo-kpis">
+    <div class="kpi-card">
+      <div class="kpi-icon">🌐</div>
+      <div class="label">Regions</div>
+      <div class="value" id="geo-regions">—</div>
+    </div>
+    <div class="kpi-card orange">
+      <div class="kpi-icon">💰</div>
+      <div class="label">Total Revenue</div>
+      <div class="value" id="geo-revenue">—</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-icon">🧾</div>
+      <div class="label">Transactions</div>
+      <div class="value" id="geo-transactions">—</div>
+    </div>
+    <div class="kpi-card yellow">
+      <div class="kpi-icon">🏆</div>
+      <div class="label">Top Region</div>
+      <div class="value" id="geo-top-region" style="font-size:1.1rem">—</div>
+    </div>
+    <div class="kpi-card cyan">
+      <div class="kpi-icon">📊</div>
+      <div class="label">Top Region Share</div>
+      <div class="value" id="geo-top-share">—</div>
+    </div>
+  </div>
+
+  <!-- Charts row -->
+  <div class="tab-section-grid-12">
+    <div class="chart-card">
+      <div class="section-title">Revenue by Region (ex. UK)</div>
+      <canvas id="geo-bar" height="260"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="section-title">Revenue Share — Top 8 Regions</div>
+      <canvas id="geo-donut" height="260"></canvas>
+    </div>
+  </div>
+
+  <!-- YoY trend chart -->
+  <div class="chart-card" style="margin-bottom:20px">
+    <div class="section-title">Year-over-Year Revenue — Top 6 Regions</div>
+    <canvas id="geo-yoy" height="130"></canvas>
+  </div>
+
+  <!-- Region table -->
+  <div class="table-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div class="section-title" style="margin-bottom:0">All Regions</div>
+      <label style="font-size:.82rem;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;gap:6px">
+        <input type="checkbox" id="geo-excl-uk" onchange="renderGeoTable()"> Exclude UK
+      </label>
+    </div>
+    <div class="table-wrapper">
+      <table id="geo-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Region</th>
+            <th style="text-align:right">Revenue</th>
+            <th style="text-align:right">Share %</th>
+            <th style="text-align:right">Transactions</th>
+            <th style="text-align:right">Customers</th>
+            <th style="text-align:right">Avg Order</th>
+            <th style="text-align:right">Rev/Customer</th>
+            <th style="text-align:right">YoY Growth</th>
+          </tr>
+        </thead>
+        <tbody id="geo-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Region lookup -->
+  <div class="chart-card" style="margin-top:20px">
+    <div class="section-title">Region Deep Dive</div>
+    <div style="display:flex;gap:10px;margin:14px 0">
+      <input id="geo-lookup-input" type="text" placeholder="e.g. France"
+             style="flex:1" onkeydown="if(event.key==='Enter') lookupGeo()" />
+      <button class="btn-primary" onclick="lookupGeo()">Search</button>
+    </div>
+    <div id="geo-lookup-result"></div>
+  </div>
+</div><!-- end tab-geo -->
+
+<!-- ── ANOMALY DETECTION TAB ────────────────────────────────────────────── -->
+<div id="tab-anomaly" class="tab-content">
+  <div class="tab-header">
+    <div class="tab-header-left">
+      <h2>Sales Anomaly Detection</h2>
+      <p>Rolling Z-score and IQR-based detection of revenue and price spikes/drops across daily overall and per-product dimensions.</p>
+    </div>
+    <span class="tab-header-badge">Z-Score + IQR</span>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid" id="anomaly-kpis">
+    <div class="kpi-card">
+      <div class="kpi-icon">📅</div>
+      <div class="label">Trading Days</div>
+      <div class="value" id="an-days">—</div>
+    </div>
+    <div class="kpi-card orange">
+      <div class="kpi-icon">🔍</div>
+      <div class="label">Anomalies Found</div>
+      <div class="value" id="an-total">—</div>
+    </div>
+    <div class="kpi-card yellow">
+      <div class="kpi-icon">📊</div>
+      <div class="label">Anomaly Rate</div>
+      <div class="value" id="an-rate">—</div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-icon">🚨</div>
+      <div class="label">Critical</div>
+      <div class="value" id="an-critical">—</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">⚠️</div>
+      <div class="label">High</div>
+      <div class="value" id="an-high">—</div>
+    </div>
+  </div>
+
+  <!-- Daily revenue chart with anomaly flags -->
+  <div class="chart-card" style="margin-bottom:20px">
+    <div class="section-title">Daily Revenue — Anomalies Highlighted</div>
+    <canvas id="an-timeline" height="130"></canvas>
+  </div>
+
+  <!-- Severity donut + Monthly bar side by side -->
+  <div class="tab-section-grid-13">
+    <div class="chart-card">
+      <div class="section-title">Severity Breakdown</div>
+      <canvas id="an-severity" height="220"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="section-title">Anomalies per Month</div>
+      <canvas id="an-monthly" height="220"></canvas>
+    </div>
+  </div>
+
+  <!-- Top anomalies table -->
+  <div class="table-card" style="margin-bottom:20px">
+    <div class="section-title">Top Anomalous Days — by Z-Score Magnitude</div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Date</th>
+            <th style="text-align:right">Revenue</th>
+            <th style="text-align:right">Rolling Avg</th>
+            <th style="text-align:right">Z-Score</th>
+            <th style="text-align:center">Severity</th>
+            <th style="text-align:center">Type</th>
+          </tr>
+        </thead>
+        <tbody id="an-top-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Alert browser -->
+  <div class="table-card">
+    <div class="section-title" style="margin-bottom:14px">Browse All Alerts</div>
+    <div class="filter-bar">
+      <select id="an-filter-severity">
+        <option value="">All Severities</option>
+        <option>Critical</option><option>High</option><option>Medium</option>
+      </select>
+      <select id="an-filter-direction">
+        <option value="">Spikes &amp; Drops</option>
+        <option>Spike</option><option>Drop</option>
+      </select>
+      <button class="btn-primary" onclick="loadAnomalyAlerts()">Apply Filter</button>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Scope</th>
+            <th>Product</th>
+            <th style="text-align:right">Value</th>
+            <th style="text-align:right">Z-Score</th>
+            <th style="text-align:center">Severity</th>
+            <th style="text-align:center">Type</th>
+          </tr>
+        </thead>
+        <tbody id="an-alerts-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- end tab-anomaly -->
+
+<!-- ══════════════════════════════════════════════
+     TAB 14 — SEASONALITY & TREND ANALYSIS
+══════════════════════════════════════════════ -->
+<div id="tab-seasonality" class="tab-content">
+  <div class="tab-header">
+    <div class="tab-header-left">
+      <h2>Seasonality &amp; Trend Analysis</h2>
+      <p>Classical trend decomposition and seasonal patterns across day-of-week, month, quarter, and year — revealing hidden cycles in 6 years of retail data.</p>
+    </div>
+    <span class="tab-header-badge">Trend Decomposition</span>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid" id="season-kpis">
+    <div class="skeleton-box skeleton-kpi"></div>
+    <div class="skeleton-box skeleton-kpi"></div>
+    <div class="skeleton-box skeleton-kpi"></div>
+    <div class="skeleton-box skeleton-kpi"></div>
+    <div class="skeleton-box skeleton-kpi"></div>
+  </div>
+
+  <!-- Revenue trend decomposition chart -->
+  <div class="chart-card" style="margin-bottom:20px">
+    <div class="section-title">Long-Term Revenue Trend (365-day Rolling Mean)</div>
+    <p style="color:var(--text-secondary);font-size:0.82rem;margin-bottom:12px">
+      Actual daily revenue (light) overlaid with the smoothed long-term trend (solid) and 30-day short-term trend (dashed).
+    </p>
+    <canvas id="season-trend-chart" height="130"></canvas>
+  </div>
+
+  <!-- DoW + Month side by side -->
+  <div class="tab-section-grid-12">
+    <div class="chart-card">
+      <div class="section-title">Average Revenue by Day of Week</div>
+      <canvas id="season-dow-chart"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="section-title">Average Revenue by Month</div>
+      <canvas id="season-month-chart"></canvas>
+    </div>
+  </div>
+
+  <!-- Quarter + Weekend split -->
+  <div class="tab-section-grid-12">
+    <div class="chart-card">
+      <div class="section-title">Revenue by Quarter</div>
+      <canvas id="season-quarter-chart"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="section-title">Weekend vs Weekday Revenue</div>
+      <canvas id="season-weekend-chart"></canvas>
+    </div>
+  </div>
+
+  <!-- YoY monthly heatmap (Plotly) -->
+  <div class="chart-card" style="margin-bottom:20px">
+    <div class="section-title">Year-over-Year Monthly Revenue</div>
+    <div id="season-yoy-chart" style="width:100%;height:380px;">
+      <div class="loading"><div class="spinner"></div> Loading YoY chart...</div>
+    </div>
+  </div>
+
+  <!-- Week-of-year heatmap (Plotly) -->
+  <div class="chart-card" style="margin-bottom:20px">
+    <div class="section-title">Weekly Revenue Heatmap (Year × Week)</div>
+    <p style="color:var(--text-secondary);font-size:0.82rem;margin-bottom:12px">
+      Each cell is total revenue for that week of the year. Darker = higher revenue.
+    </p>
+    <div id="season-heatmap-chart" style="width:100%;height:260px;">
+      <div class="loading"><div class="spinner"></div> Loading heatmap...</div>
+    </div>
+  </div>
+
+  <!-- Peak / Trough tables -->
+  <div class="tab-section-grid-12">
+    <div class="table-card" style="margin-bottom:0">
+      <div class="section-title">Top 10 Peak Revenue Days</div>
+      <table>
+        <thead><tr>
+          <th>#</th><th>Date</th><th>Day</th>
+          <th style="text-align:right">Revenue</th><th style="text-align:right">Transactions</th>
+        </tr></thead>
+        <tbody id="season-peaks-tbody"></tbody>
+      </table>
+    </div>
+    <div class="table-card" style="margin-bottom:0">
+      <div class="section-title">Top 10 Lowest Revenue Days</div>
+      <table>
+        <thead><tr>
+          <th>#</th><th>Date</th><th>Day</th>
+          <th style="text-align:right">Revenue</th><th style="text-align:right">Transactions</th>
+        </tr></thead>
+        <tbody id="season-troughs-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- end tab-seasonality -->
+
+<!-- ═══════════════════════════════ SEGMENTATION TAB ═══════════════════════ -->
+<div id="tab-segmentation" class="tab-content">
+  <div class="tab-header">
+    <h2>Customer Segmentation</h2>
+    <p>K-Means clustering · PCA scatter · Cluster profiles · Elbow analysis</p>
+    <span class="tab-header-badge" id="seg-k-badge">k=—</span>
+  </div>
+
+  <!-- KPI row -->
+  <div class="kpi-grid" id="seg-kpis"></div>
+
+  <!-- PCA scatter + cluster bar side-by-side -->
+  <div class="tab-section-grid-12" style="margin-top:1.5rem">
+    <div class="chart-card">
+      <h3>PCA Scatter — Customer Clusters</h3>
+      <div id="seg-scatter" style="height:380px"></div>
+    </div>
+    <div class="chart-card">
+      <h3>Cluster Size Distribution</h3>
+      <canvas id="seg-size-chart" height="200"></canvas>
+    </div>
+  </div>
+
+  <!-- Feature importance + Elbow curve -->
+  <div class="tab-section-grid-12" style="margin-top:1.5rem">
+    <div class="chart-card">
+      <h3>Feature Importance (PCA Loadings)</h3>
+      <canvas id="seg-feat-chart" height="220"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Elbow &amp; Silhouette Curves</h3>
+      <canvas id="seg-elbow-chart" height="220"></canvas>
+    </div>
+  </div>
+
+  <!-- Cluster profiles table -->
+  <div class="chart-card" style="margin-top:1.5rem">
+    <h3>Cluster Profiles</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr>
+          <th>Cluster</th><th>Label</th><th>Customers</th><th>%</th>
+          <th style="text-align:right">Avg Monetary</th>
+          <th style="text-align:right">Avg Frequency</th>
+          <th style="text-align:right">Avg Recency (d)</th>
+          <th style="text-align:right">Avg AOV</th>
+          <th style="text-align:right">Product Variety</th>
+          <th style="text-align:right">Purchase Span (d)</th>
+        </tr></thead>
+        <tbody id="seg-profiles-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Top customers per cluster -->
+  <div class="chart-card" style="margin-top:1.5rem">
+    <h3>Customer List <span style="font-size:0.8rem;color:var(--text-muted)">— filter by cluster</span></h3>
+    <div class="filter-bar" style="margin-bottom:0.75rem">
+      <select id="seg-cluster-filter" onchange="filterSegCustomers()" style="background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border);padding:0.35rem 0.75rem;border-radius:6px">
+        <option value="">All Clusters</option>
+      </select>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr>
+          <th>#</th><th>Customer ID</th><th>Name</th><th>Label</th>
+          <th style="text-align:right">Monetary</th>
+          <th style="text-align:right">Frequency</th>
+          <th style="text-align:right">Recency (d)</th>
+          <th style="text-align:right">AOV</th>
+          <th>State</th><th>Age Group</th>
+        </tr></thead>
+        <tbody id="seg-customers-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- end tab-segmentation -->
+
+<!-- ═══════════════════════════════ STORE PERFORMANCE TAB ══════════════════ -->
+<div id="tab-stores" class="tab-content">
+  <div class="tab-header">
+    <h2>Store Performance</h2>
+    <p>Revenue ranking · Tier classification · YoY growth · Top products per store</p>
+    <span class="tab-header-badge" id="store-count-badge">— stores</span>
+  </div>
+
+  <!-- KPI row -->
+  <div class="kpi-grid" id="store-kpis"></div>
+
+  <!-- Revenue bar + market share donut -->
+  <div class="tab-section-grid-12" style="margin-top:1.5rem">
+    <div class="chart-card">
+      <h3>Revenue by Store (Top 15)</h3>
+      <div id="store-rev-chart" style="height:380px"></div>
+    </div>
+    <div class="chart-card">
+      <h3>Market Share (Top 5 + Others)</h3>
+      <canvas id="store-donut-chart" height="200"></canvas>
+    </div>
+  </div>
+
+  <!-- YoY growth chart + quarterly pattern -->
+  <div class="tab-section-grid-12" style="margin-top:1.5rem">
+    <div class="chart-card">
+      <h3>Year-over-Year Revenue — Top 5 Stores</h3>
+      <canvas id="store-yoy-chart" height="220"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Revenue by Quarter (Global)</h3>
+      <canvas id="store-quarter-chart" height="220"></canvas>
+    </div>
+  </div>
+
+  <!-- Top products for selected store -->
+  <div class="tab-section-grid-12" style="margin-top:1.5rem">
+    <div class="chart-card" style="grid-column:1/-1">
+      <h3>Top Products — <span id="store-product-title">Select a store below</span></h3>
+      <div class="filter-bar" style="margin-bottom:0.75rem">
+        <select id="store-product-selector" onchange="loadStoreProducts()"
+          style="background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border);padding:0.35rem 0.75rem;border-radius:6px">
+          <option value="">— select store —</option>
+        </select>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr>
+            <th>#</th><th>Product</th>
+            <th style="text-align:right">Revenue</th>
+            <th style="text-align:right">Units Sold</th>
+            <th style="text-align:right">Transactions</th>
+          </tr></thead>
+          <tbody id="store-products-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Store league table -->
+  <div class="chart-card" style="margin-top:1.5rem">
+    <h3>Store League Table</h3>
+    <div class="filter-bar" style="margin-bottom:0.75rem">
+      <select id="store-tier-filter" onchange="filterStoreTable()"
+        style="background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border);padding:0.35rem 0.75rem;border-radius:6px">
+        <option value="">All Tiers</option>
+        <option value="A">Tier A</option>
+        <option value="B">Tier B</option>
+        <option value="C">Tier C</option>
+      </select>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr>
+          <th>#</th><th>Store</th><th>Country</th><th>Tier</th>
+          <th style="text-align:right">Revenue</th>
+          <th style="text-align:right">Market Share</th>
+          <th style="text-align:right">Transactions</th>
+          <th style="text-align:right">AOV</th>
+          <th style="text-align:right">Customers</th>
+          <th style="text-align:right">Best Month</th>
+        </tr></thead>
+        <tbody id="store-league-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- end tab-stores -->
+
+<!-- ══════════════════════════════════════════════════════════════ RECOMMENDATIONS -->
+<div id="tab-recommendations" class="tab-content">
+  <div class="tab-header">
+    <h2>🔮 Product Recommendations</h2>
+    <span class="tab-header-badge" id="rec-coverage-badge">—</span>
+    <p>Item-item collaborative filtering built from 682k purchase pairs across 3,507 products and 2,989 customers.</p>
+  </div>
+
+  <!-- KPI row -->
+  <div class="kpi-grid" id="rec-kpis" style="margin-bottom:1.5rem"></div>
+
+  <!-- Top charts row -->
+  <div class="chart-grid" style="grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.5rem">
+    <div class="chart-card">
+      <div class="section-title">Most Recommended Products</div>
+      <canvas id="rec-top-chart" height="260"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="section-title">Popular Products (Cold-Start)</div>
+      <canvas id="rec-popular-chart" height="260"></canvas>
+    </div>
+  </div>
+
+  <!-- Customer lookup -->
+  <div class="chart-card" style="margin-bottom:1.5rem">
+    <div class="section-title">Customer Recommendation Lookup</div>
+    <div style="display:flex;gap:.75rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap">
+      <input id="rec-cust-input" type="text" placeholder="Enter Customer ID…"
+             style="padding:.45rem .85rem;border-radius:6px;border:1px solid #2a3040;background:#0a1020;color:#e2e8f0;min-width:200px"
+             onkeydown="if(event.key==='Enter') lookupCustomerRec()">
+      <button onclick="lookupCustomerRec()"
+              style="padding:.45rem 1.1rem;border-radius:6px;background:#6366f1;color:#fff;border:none;cursor:pointer;font-weight:600">
+        Look Up
+      </button>
+      <span id="rec-cust-label" style="color:#94a3b8;font-size:.85rem"></span>
+    </div>
+    <table class="data-table" style="width:100%">
+      <thead><tr>
+        <th>Rank</th><th>Product ID</th><th>Product Name</th><th>Score</th>
+      </tr></thead>
+      <tbody id="rec-cust-tbody">
+        <tr><td colspan="4" style="text-align:center;color:#64748b">Enter a customer ID above to view their personalised recommendations.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Product similarity lookup -->
+  <div class="chart-card" style="margin-bottom:1.5rem">
+    <div class="section-title">Similar Products Lookup</div>
+    <div style="display:flex;gap:.75rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap">
+      <input id="rec-prod-input" type="text" placeholder="Enter Product ID…"
+             style="padding:.45rem .85rem;border-radius:6px;border:1px solid #2a3040;background:#0a1020;color:#e2e8f0;min-width:200px"
+             onkeydown="if(event.key==='Enter') lookupSimilarProducts()">
+      <button onclick="lookupSimilarProducts()"
+              style="padding:.45rem 1.1rem;border-radius:6px;background:#10b981;color:#fff;border:none;cursor:pointer;font-weight:600">
+        Find Similar
+      </button>
+      <span id="rec-prod-label" style="color:#94a3b8;font-size:.85rem"></span>
+    </div>
+    <table class="data-table" style="width:100%">
+      <thead><tr>
+        <th>Rank</th><th>Product ID</th><th>Product Name</th><th>Similarity</th>
+      </tr></thead>
+      <tbody id="rec-prod-tbody">
+        <tr><td colspan="4" style="text-align:center;color:#64748b">Enter a product ID above to view similar products.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- end tab-recommendations -->
+
 </main>
 
 <script>
@@ -829,9 +1931,78 @@ const segBadge = seg => {
 };
 
 // ── Chart.js defaults ─────────────────────────────────────────────────────────
-Chart.defaults.color       = "#aaa";
-Chart.defaults.borderColor = "#2a2f45";
-const PALETTE = ["#4472C4","#70AD47","#ED7D31","#FFC000","#e74c3c","#5B9BD5","#9B1C1C","#FF7F00"];
+Chart.defaults.color              = "#64748b";
+Chart.defaults.borderColor        = "rgba(255,255,255,0.05)";
+Chart.defaults.font.family        = "'Inter','Segoe UI',sans-serif";
+Chart.defaults.font.size          = 12;
+Chart.defaults.animation.duration = 700;
+Chart.defaults.animation.easing   = "easeOutQuart";
+Chart.defaults.plugins.tooltip.backgroundColor = "#0c1322";
+Chart.defaults.plugins.tooltip.borderColor     = "rgba(99,102,241,0.35)";
+Chart.defaults.plugins.tooltip.borderWidth     = 1;
+Chart.defaults.plugins.tooltip.padding         = { x:12, y:10 };
+Chart.defaults.plugins.tooltip.cornerRadius    = 8;
+Chart.defaults.plugins.tooltip.titleColor      = "#f1f5f9";
+Chart.defaults.plugins.tooltip.bodyColor       = "#94a3b8";
+Chart.defaults.plugins.tooltip.titleFont       = { weight:'700', family:"'Inter',sans-serif", size:12 };
+Chart.defaults.plugins.tooltip.bodyFont        = { family:"'Inter',sans-serif", size:11 };
+Chart.defaults.plugins.tooltip.caretSize       = 5;
+Chart.defaults.plugins.legend.labels.boxWidth  = 10;
+Chart.defaults.plugins.legend.labels.borderRadius = 3;
+Chart.defaults.plugins.legend.labels.padding   = 14;
+
+const PALETTE = [
+    "#6366f1","#06b6d4","#10b981","#f59e0b","#ef4444",
+    "#8b5cf6","#ec4899","#14b8a6","#f97316","#3b82f6"
+];
+
+// ── Count-up animation ────────────────────────────────────────────────────────
+function countUp(el, target, prefix='', suffix='', decimals=0) {
+    if (!el || target == null || isNaN(parseFloat(target))) return;
+    const endVal  = parseFloat(target);
+    const dur     = 900;
+    const start   = performance.now();
+    function tick(now) {
+        const t  = Math.min((now - start) / dur, 1);
+        const e  = 1 - Math.pow(1 - t, 3);           // ease-out cubic
+        const v  = endVal * e;
+        el.textContent = prefix + v.toLocaleString("en-US", {
+            minimumFractionDigits : decimals,
+            maximumFractionDigits : decimals
+        }) + suffix;
+        if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+}
+
+// ── Skeleton KPI placeholder ──────────────────────────────────────────────────
+function skeletonKPIs(n=4) {
+    return Array(n).fill(0).map(() =>
+        `<div class="skeleton-box skeleton-kpi"></div>`).join('');
+}
+
+// ── Rank badge helper ─────────────────────────────────────────────────────────
+function rankBadge(i) {
+    const cls = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+    return `<span class="rank-badge ${cls}">${i+1}</span>`;
+}
+
+// ── Severity badge helper ─────────────────────────────────────────────────────
+function severityBadge(sev) {
+    if (!sev) return '—';
+    const s = sev.toLowerCase();
+    const cls = s === 'critical' ? 'badge-critical'
+              : s === 'high'     ? 'badge-high-sev'
+              : 'badge-medium-sev';
+    return `<span class="badge ${cls}">${sev}</span>`;
+}
+
+// ── Direction badge ───────────────────────────────────────────────────────────
+function dirBadge(dir) {
+    if (!dir) return '—';
+    const isSpike = dir.toLowerCase() === 'spike';
+    return `<span class="trend-${isSpike ? 'up' : 'down'}">${isSpike ? '▲ Spike' : '▼ Drop'}</span>`;
+}
 
 function makeDonut(id, labels, data, colors) {
     const ctx = document.getElementById(id);
@@ -839,9 +2010,23 @@ function makeDonut(id, labels, data, colors) {
     if (ctx._chart) ctx._chart.destroy();
     ctx._chart = new Chart(ctx, {
         type: "doughnut",
-        data: { labels, datasets:[{ data, backgroundColor: colors||PALETTE,
-                                    borderWidth:2, borderColor:"#0f1117" }] },
-        options: { plugins:{ legend:{ position:"right" } }, cutout:"60%" }
+        data: { labels, datasets:[{
+            data,
+            backgroundColor : colors || PALETTE,
+            borderWidth     : 2,
+            borderColor     : "#080c14",
+            hoverBorderWidth: 3,
+            hoverOffset     : 6
+        }] },
+        options: {
+            cutout  : "65%",
+            plugins : {
+                legend: {
+                    position : "right",
+                    labels   : { usePointStyle:true, pointStyle:'circle' }
+                }
+            }
+        }
     });
 }
 
@@ -849,25 +2034,40 @@ function makeBar(id, labels, data, label, color) {
     const ctx = document.getElementById(id);
     if (!ctx) return;
     if (ctx._chart) ctx._chart.destroy();
-    const bgColor = Array.isArray(color) ? color : (color || "#4472C4");
+    const bgColor = Array.isArray(color) ? color : (color || "#6366f1");
     ctx._chart = new Chart(ctx, {
         type: "bar",
-        data: { labels, datasets:[{ label, data, backgroundColor:bgColor, borderRadius:6 }] },
+        data: { labels, datasets:[{
+            label,
+            data,
+            backgroundColor : bgColor,
+            borderRadius    : 6,
+            borderSkipped   : false
+        }] },
         options: {
-            plugins: { legend:{ display:false } },
-            scales:  { y:{ grid:{ color:"#2a2f45" } }, x:{ grid:{ display:false } } }
+            plugins: { legend: { display: false } },
+            scales : {
+                y: {
+                    grid  : { color: "rgba(255,255,255,0.04)" },
+                    ticks : { color: "#475569" }
+                },
+                x: {
+                    grid  : { display: false },
+                    ticks : { color: "#475569", maxRotation: 35, minRotation: 0 }
+                }
+            }
         }
     });
 }
 
 // ── Plotly base layout (dark theme) ──────────────────────────────────────────
 const PLOTLY_LAYOUT = {
-    paper_bgcolor: "#1a1f35",
-    plot_bgcolor : "#1a1f35",
-    font         : { color:"#e0e0e0", size:12 },
+    paper_bgcolor: "#0f1520",
+    plot_bgcolor : "#0f1520",
+    font         : { color:"#94a3b8", size:12, family:"'Inter','Segoe UI',sans-serif" },
     margin       : { l:180, r:40, t:60, b:60 },
-    xaxis        : { gridcolor:"#2a2f45", zerolinecolor:"#555" },
-    yaxis        : { gridcolor:"#2a2f45" }
+    xaxis        : { gridcolor:"rgba(255,255,255,0.05)", zerolinecolor:"rgba(255,255,255,0.1)" },
+    yaxis        : { gridcolor:"rgba(255,255,255,0.05)" }
 };
 
 // ── Tab switching ─────────────────────────────────────────────────────────────
@@ -900,6 +2100,23 @@ function showTab(name, btn) {
             renderJourneySankey();
         }
     }
+    if (name === "seasonality") {
+        ["season-yoy-chart", "season-heatmap-chart"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el && el._isPlotly) Plotly.Plots.resize(el);
+        });
+    }
+    if (name === "segmentation") {
+        const el = document.getElementById("seg-scatter");
+        if (el && el._isPlotly) Plotly.Plots.resize(el);
+    }
+    if (name === "stores") {
+        const el = document.getElementById("store-rev-chart");
+        if (el && el._isPlotly) Plotly.Plots.resize(el);
+    }
+    if (name === "recommendations") {
+        // No Plotly charts — Chart.js canvases auto-resize
+    }
 }
 
 // ── Overview ──────────────────────────────────────────────────────────────────
@@ -910,37 +2127,50 @@ async function loadOverview() {
 
     document.getElementById("overview-kpis").innerHTML = `
         <div class="kpi-card">
+            <div class="kpi-icon">👥</div>
             <div class="label">Total Customers</div>
-            <div class="value">${fmtI(rfm.total_customers)}</div>
+            <div class="value" id="kpi-ov-customers">—</div>
         </div>
         <div class="kpi-card green">
+            <div class="kpi-icon">📦</div>
             <div class="label">Total Products</div>
-            <div class="value">${fmtI(abc.total_products)}</div>
+            <div class="value" id="kpi-ov-products">—</div>
         </div>
         <div class="kpi-card orange">
+            <div class="kpi-icon">💰</div>
             <div class="label">Total Revenue</div>
-            <div class="value">$${fmt(abc.total_revenue)}</div>
+            <div class="value" id="kpi-ov-revenue">—</div>
         </div>
         <div class="kpi-card yellow">
+            <div class="kpi-icon">💎</div>
             <div class="label">Avg CLV</div>
-            <div class="value">$${fmt(clv.avg_clv)}</div>
+            <div class="value" id="kpi-ov-avgclv">—</div>
         </div>
         <div class="kpi-card red">
+            <div class="kpi-icon">🏆</div>
             <div class="label">Total CLV</div>
-            <div class="value">$${fmt(clv.total_clv)}</div>
+            <div class="value" id="kpi-ov-totalclv">—</div>
         </div>
-        <div class="kpi-card">
-            <div class="label">Avg Monetary / Customer</div>
-            <div class="value">$${fmt(rfm.avg_monetary)}</div>
+        <div class="kpi-card cyan">
+            <div class="kpi-icon">💳</div>
+            <div class="label">Avg Spend / Customer</div>
+            <div class="value" id="kpi-ov-avgmon">—</div>
         </div>
     `;
+    // Animate count-up for numeric KPIs
+    countUp(document.getElementById("kpi-ov-customers"), rfm.total_customers, '', '', 0);
+    countUp(document.getElementById("kpi-ov-products"),  abc.total_products,  '', '', 0);
+    countUp(document.getElementById("kpi-ov-revenue"),   abc.total_revenue,   '$', '', 0);
+    countUp(document.getElementById("kpi-ov-avgclv"),    clv.avg_clv,         '$', '', 2);
+    countUp(document.getElementById("kpi-ov-totalclv"),  clv.total_clv,       '$', '', 0);
+    countUp(document.getElementById("kpi-ov-avgmon"),    rfm.avg_monetary,    '$', '', 2);
 
     if (abc.class_distribution) {
         const c = abc.class_distribution;
         makeDonut("chart-abc-revenue",
             ["Class A","Class B","Class C"],
             [c.A||0, c.B||0, c.C||0],
-            ["#70AD47","#4472C4","#e74c3c"]);
+            ["#10b981","#6366f1","#ef4444"]);
     }
     if (rfm.segments) {
         makeDonut("chart-rfm-segments",
@@ -951,17 +2181,22 @@ async function loadOverview() {
             ["Very High Value","High Value","Medium Value","Low Value"],
             [clv.segments["Very High Value"]||0, clv.segments["High Value"]||0,
              clv.segments["Medium Value"]||0,    clv.segments["Low Value"]||0],
-            ["#70AD47","#4472C4","#ED7D31","#e74c3c"]);
+            ["#10b981","#6366f1","#f59e0b","#ef4444"]);
     }
     if (abc.class_distribution) {
         const c = abc.class_distribution;
         makeDonut("chart-abc-products",
             ["Class A","Class B","Class C"],
             [c.A||0, c.B||0, c.C||0],
-            ["#70AD47","#4472C4","#e74c3c"]);
+            ["#10b981","#6366f1","#ef4444"]);
     }
     document.getElementById("last-updated").textContent =
-        "Last updated: " + new Date().toLocaleString();
+        "Updated " + new Date().toLocaleTimeString();
+
+    // Populate header stats
+    if (abc.total_revenue)  document.getElementById("hdr-revenue").textContent   = "$" + fmt(abc.total_revenue);
+    if (rfm.total_customers) document.getElementById("hdr-customers").textContent = fmtI(rfm.total_customers);
+    if (abc.total_products)  document.getElementById("hdr-products").textContent  = fmtI(abc.total_products);
 }
 
 // ── RFM ───────────────────────────────────────────────────────────────────────
@@ -979,22 +2214,49 @@ async function loadRFM() {
     const avgFreq   = (summary.reduce((a,s) => a+(s.avg_frequency||0),0) / summary.length).toFixed(1);
 
     document.getElementById("rfm-kpis").innerHTML = `
-        <div class="kpi-card"><div class="label">Total Customers</div><div class="value">${fmtI(total)}</div></div>
-        <div class="kpi-card green"><div class="label">Champions</div><div class="value">${fmtI(champions.customer_count||0)}</div><div class="sub">Highest value</div></div>
-        <div class="kpi-card orange"><div class="label">Avg Recency</div><div class="value">${fmtI(avgRec)}</div><div class="sub">days</div></div>
-        <div class="kpi-card yellow"><div class="label">Avg Frequency</div><div class="value">${avgFreq}</div><div class="sub">orders</div></div>
+        <div class="kpi-card">
+            <div class="kpi-icon">👥</div>
+            <div class="label">Total Customers</div>
+            <div class="value" id="kpi-rfm-total">—</div>
+        </div>
+        <div class="kpi-card green">
+            <div class="kpi-icon">🏆</div>
+            <div class="label">Champions</div>
+            <div class="value" id="kpi-rfm-champ">—</div>
+            <div class="sub">Highest-value segment</div>
+        </div>
+        <div class="kpi-card orange">
+            <div class="kpi-icon">📅</div>
+            <div class="label">Avg Recency</div>
+            <div class="value" id="kpi-rfm-rec">—</div>
+            <div class="sub">days since last purchase</div>
+        </div>
+        <div class="kpi-card yellow">
+            <div class="kpi-icon">🔁</div>
+            <div class="label">Avg Frequency</div>
+            <div class="value" id="kpi-rfm-freq">—</div>
+            <div class="sub">orders per customer</div>
+        </div>
     `;
+    countUp(document.getElementById("kpi-rfm-total"), total, '', '', 0);
+    countUp(document.getElementById("kpi-rfm-champ"), champions.customer_count||0, '', '', 0);
+    countUp(document.getElementById("kpi-rfm-rec"),   avgRec, '', '', 0);
+    countUp(document.getElementById("kpi-rfm-freq"),  parseFloat(avgFreq), '', '', 1);
 
     makeBar("chart-rfm-revenue", summary.map(s=>s.segment),
-        summary.map(s=>+(s.total_revenue||0).toFixed(2)), "Total Revenue", "#4472C4");
+        summary.map(s=>+(s.total_revenue||0).toFixed(2)), "Total Revenue", "#6366f1");
     makeBar("chart-rfm-freq", summary.map(s=>s.segment),
-        summary.map(s=>+(s.avg_frequency||0).toFixed(1)), "Avg Frequency", "#70AD47");
+        summary.map(s=>+(s.avg_frequency||0).toFixed(1)), "Avg Frequency", "#10b981");
 
     document.getElementById("rfm-table-body").innerHTML = top.map((r,i) => `
         <tr>
-            <td>${i+1}</td><td>${r.customer_name||"—"}</td><td>${r.state||"—"}</td>
-            <td>${fmtI(r.recency)}</td><td>${fmtI(r.frequency)}</td>
-            <td>$${fmt(r.monetary)}</td><td>${segBadge(r.segment)}</td>
+            <td>${rankBadge(i)}</td>
+            <td style="font-weight:500">${r.customer_name||"—"}</td>
+            <td><span style="color:var(--text-secondary)">${r.state||"—"}</span></td>
+            <td>${fmtI(r.recency)}</td>
+            <td>${fmtI(r.frequency)}</td>
+            <td style="font-weight:600;color:var(--accent3)">$${fmt(r.monetary)}</td>
+            <td>${segBadge(r.segment)}</td>
         </tr>`).join("");
 }
 
@@ -1012,23 +2274,48 @@ async function loadABC() {
     const totalRev  = summary.reduce((a,s) => a+(s.total_revenue||0), 0);
 
     document.getElementById("abc-kpis").innerHTML = `
-        <div class="kpi-card green"><div class="label">Class A Products</div><div class="value">${fmtI(classA.product_count||0)}</div><div class="sub">${classA.product_pct||0}% of products</div></div>
-        <div class="kpi-card green"><div class="label">Class A Revenue</div><div class="value">$${fmt(classA.total_revenue||0)}</div><div class="sub">${classA.revenue_pct||0}% of revenue</div></div>
-        <div class="kpi-card"><div class="label">Total Products</div><div class="value">${fmtI(totalProd)}</div></div>
-        <div class="kpi-card orange"><div class="label">Total Revenue</div><div class="value">$${fmt(totalRev)}</div></div>
+        <div class="kpi-card green">
+            <div class="kpi-icon">⭐</div>
+            <div class="label">Class A Products</div>
+            <div class="value" id="kpi-abc-a-prod">—</div>
+            <div class="sub">${classA.product_pct||0}% of products</div>
+        </div>
+        <div class="kpi-card green">
+            <div class="kpi-icon">💰</div>
+            <div class="label">Class A Revenue</div>
+            <div class="value" id="kpi-abc-a-rev">—</div>
+            <div class="sub">${classA.revenue_pct||0}% of total revenue</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon">📦</div>
+            <div class="label">Total Products</div>
+            <div class="value" id="kpi-abc-prod">—</div>
+        </div>
+        <div class="kpi-card orange">
+            <div class="kpi-icon">📈</div>
+            <div class="label">Total Revenue</div>
+            <div class="value" id="kpi-abc-rev">—</div>
+        </div>
     `;
+    countUp(document.getElementById("kpi-abc-a-prod"), classA.product_count||0, '', '', 0);
+    countUp(document.getElementById("kpi-abc-a-rev"),  classA.total_revenue||0, '$', '', 0);
+    countUp(document.getElementById("kpi-abc-prod"),   totalProd, '', '', 0);
+    countUp(document.getElementById("kpi-abc-rev"),    totalRev,  '$', '', 0);
 
     makeBar("chart-abc-rev2", summary.map(s=>`Class ${s.abc_class}`),
         summary.map(s=>+(s.total_revenue||0).toFixed(2)), "Revenue",
-        ["#70AD47","#4472C4","#e74c3c"]);
+        ["#10b981","#6366f1","#ef4444"]);
     makeBar("chart-abc-count", summary.map(s=>`Class ${s.abc_class}`),
         summary.map(s=>s.product_count||0), "Products",
-        ["#70AD47","#4472C4","#e74c3c"]);
+        ["#10b981","#6366f1","#ef4444"]);
 
     document.getElementById("abc-table-body").innerHTML = top.map((r,i) => `
         <tr>
-            <td>${i+1}</td><td>${r.product_name||"—"}</td><td>${r.category||"—"}</td>
-            <td>$${fmt(r.total_revenue)}</td><td>${fmtI(r.transaction_count)}</td>
+            <td>${rankBadge(i)}</td>
+            <td style="font-weight:500">${r.product_name||"—"}</td>
+            <td><span style="color:var(--text-secondary)">${r.category||"—"}</span></td>
+            <td style="font-weight:600;color:var(--accent3)">$${fmt(r.total_revenue)}</td>
+            <td>${fmtI(r.transaction_count)}</td>
             <td>${segBadge(r.abc_class)}</td>
         </tr>`).join("");
 }
@@ -1047,27 +2334,52 @@ async function loadCLV() {
     const avgPurch  = (summary.reduce((a,s) => a+(s.avg_purchases||0),0) / summary.length).toFixed(1);
 
     document.getElementById("clv-kpis").innerHTML = `
-        <div class="kpi-card"><div class="label">Total Customers</div><div class="value">${fmtI(totalCust)}</div></div>
-        <div class="kpi-card green"><div class="label">Total CLV</div><div class="value">$${fmt(totalCLV)}</div></div>
-        <div class="kpi-card yellow"><div class="label">Avg CLV</div><div class="value">$${fmt(totalCLV/totalCust||0)}</div></div>
-        <div class="kpi-card orange"><div class="label">Avg Purchases</div><div class="value">${avgPurch}</div></div>
+        <div class="kpi-card">
+            <div class="kpi-icon">👥</div>
+            <div class="label">Total Customers</div>
+            <div class="value" id="kpi-clv-cust">—</div>
+        </div>
+        <div class="kpi-card green">
+            <div class="kpi-icon">💎</div>
+            <div class="label">Total CLV</div>
+            <div class="value" id="kpi-clv-total">—</div>
+        </div>
+        <div class="kpi-card yellow">
+            <div class="kpi-icon">📊</div>
+            <div class="label">Avg CLV</div>
+            <div class="value" id="kpi-clv-avg">—</div>
+        </div>
+        <div class="kpi-card orange">
+            <div class="kpi-icon">🔁</div>
+            <div class="label">Avg Purchases</div>
+            <div class="value" id="kpi-clv-purch">—</div>
+            <div class="sub">per customer</div>
+        </div>
     `;
+    countUp(document.getElementById("kpi-clv-cust"),  totalCust, '', '', 0);
+    countUp(document.getElementById("kpi-clv-total"), totalCLV,  '$', '', 0);
+    countUp(document.getElementById("kpi-clv-avg"),   totalCLV/(totalCust||1), '$', '', 2);
+    countUp(document.getElementById("kpi-clv-purch"), parseFloat(avgPurch), '', '', 1);
 
     const segOrder = ["Very High Value","High Value","Medium Value","Low Value"];
     const ordered  = segOrder.map(s =>
         summary.find(x => x.clv_segment === s) || { clv_segment:s, customer_count:0, avg_clv:0 });
 
     makeDonut("chart-clv-dist", ordered.map(s=>s.clv_segment),
-        ordered.map(s=>s.customer_count||0), ["#70AD47","#4472C4","#ED7D31","#e74c3c"]);
+        ordered.map(s=>s.customer_count||0), ["#10b981","#6366f1","#f59e0b","#ef4444"]);
     makeBar("chart-clv-avg", ordered.map(s=>s.clv_segment),
         ordered.map(s=>+(s.avg_clv||0).toFixed(2)), "Avg CLV",
-        ["#70AD47","#4472C4","#ED7D31","#e74c3c"]);
+        ["#10b981","#6366f1","#f59e0b","#ef4444"]);
 
     document.getElementById("clv-table-body").innerHTML = top.map((r,i) => `
         <tr>
-            <td>${i+1}</td><td>${r.customer_name||"—"}</td><td>${r.state||"—"}</td>
-            <td>${fmtI(r.purchase_count)}</td><td>$${fmt(r.total_revenue)}</td>
-            <td>$${fmt(r.clv_discounted)}</td><td>${segBadge(r.clv_segment)}</td>
+            <td>${rankBadge(i)}</td>
+            <td style="font-weight:500">${r.customer_name||"—"}</td>
+            <td><span style="color:var(--text-secondary)">${r.state||"—"}</span></td>
+            <td>${fmtI(r.purchase_count)}</td>
+            <td>$${fmt(r.total_revenue)}</td>
+            <td style="font-weight:600;color:var(--accent3)">$${fmt(r.clv_discounted)}</td>
+            <td>${segBadge(r.clv_segment)}</td>
         </tr>`).join("");
 }
 
@@ -1132,18 +2444,22 @@ async function loadBasket() {
 
         document.getElementById("basket-kpis").innerHTML = `
             <div class="kpi-card">
+                <div class="kpi-icon">📋</div>
                 <div class="label">Total Rules</div>
                 <div class="value">${fmtI(total)}</div>
             </div>
             <div class="kpi-card green">
+                <div class="kpi-icon">✅</div>
                 <div class="label">Avg Confidence</div>
                 <div class="value">${avgConf}</div>
             </div>
             <div class="kpi-card orange">
+                <div class="kpi-icon">🔗</div>
                 <div class="label">Avg Lift</div>
                 <div class="value">${avgLift}</div>
             </div>
             <div class="kpi-card yellow">
+                <div class="kpi-icon">🏆</div>
                 <div class="label">Max Lift</div>
                 <div class="value">${maxLift}</div>
             </div>
@@ -1158,8 +2474,8 @@ async function loadBasket() {
             const txn  = r.transaction_count ? fmtI(r.transaction_count) : "—";
             return `
             <tr>
-                <td>${i + 1}</td>
-                <td style="color:#e0e0e0;font-weight:500">${ant}</td>
+                <td>${rankBadge(i)}</td>
+                <td style="font-weight:500">${ant}</td>
                 <td style="color:#e0e0e0;font-weight:500">${con}</td>
                 <td>${sup.toFixed(4)}</td>
                 <td>${conf.toFixed(4)}</td>
@@ -1180,6 +2496,86 @@ async function loadBasket() {
 
 // ── SHAP Plotly Charts ────────────────────────────────────────────────────────
 async function loadSHAP() {
+
+    // ── Model evaluation metrics ───────────────────────────────────────────
+    try {
+        const res  = await fetch(`${API}/api/churn/summary`);
+        const data = await res.json();
+        const m    = data.metrics || {};
+        const cm   = data.confusion_matrix || {};  // served via /api/churn/summary → meta
+
+        // badge
+        document.getElementById("churn-model-badge").textContent =
+            (data.model || "—") + " · AUC " + (m.auc_roc ?? "—");
+
+        // KPI cards
+        const kpis = [
+            { icon:"🎯", label:"Accuracy",          val: m.accuracy   != null ? (m.accuracy   * 100).toFixed(1) + "%" : "—", cls:"" },
+            { icon:"📈", label:"AUC-ROC",            val: m.auc_roc    != null ? m.auc_roc.toFixed(4)                  : "—", cls:"" },
+            { icon:"🔁", label:"CV Score (5-fold)",  val: m.cv_score   != null ? m.cv_score.toFixed(4)                 : "—", cls:"" },
+            { icon:"🎯", label:"Precision (Churned)",val: m.precision  != null ? (m.precision  * 100).toFixed(1) + "%" : "—", cls:"green" },
+            { icon:"🔍", label:"Recall (Churned)",   val: m.recall     != null ? (m.recall     * 100).toFixed(1) + "%" : "—", cls:"orange" },
+            { icon:"⚖️", label:"F1 (Churned)",       val: m.f1         != null ? m.f1.toFixed(4)                       : "—", cls:"" },
+        ];
+        document.getElementById("churn-metrics-kpis").innerHTML = kpis.map(k => `
+            <div class="kpi-card ${k.cls}">
+                <div class="kpi-icon">${k.icon}</div>
+                <div class="label">${k.label}</div>
+                <div class="value">${k.val}</div>
+            </div>`).join("");
+
+        // Confusion matrix (from summary response)
+        const c = data.confusion_matrix || {};
+        if (c && c.tn != null) {
+            document.getElementById("churn-cm-tbody").innerHTML = `
+                <tr>
+                    <td style="padding:.5rem .8rem;color:#94a3b8;font-weight:600">Actual Active</td>
+                    <td style="padding:.5rem .8rem;text-align:center;background:rgba(16,185,129,.15);color:#10b981;font-weight:700;border-radius:4px">${c.tn.toLocaleString()}<br><span style="font-size:.7rem;font-weight:400;color:#64748b">True Negative</span></td>
+                    <td style="padding:.5rem .8rem;text-align:center;background:rgba(239,68,68,.12);color:#ef4444;font-weight:700;border-radius:4px">${c.fp.toLocaleString()}<br><span style="font-size:.7rem;font-weight:400;color:#64748b">False Positive</span></td>
+                </tr>
+                <tr>
+                    <td style="padding:.5rem .8rem;color:#94a3b8;font-weight:600">Actual Churned</td>
+                    <td style="padding:.5rem .8rem;text-align:center;background:rgba(239,68,68,.12);color:#ef4444;font-weight:700;border-radius:4px">${c.fn.toLocaleString()}<br><span style="font-size:.7rem;font-weight:400;color:#64748b">False Negative</span></td>
+                    <td style="padding:.5rem .8rem;text-align:center;background:rgba(16,185,129,.15);color:#10b981;font-weight:700;border-radius:4px">${c.tp.toLocaleString()}<br><span style="font-size:.7rem;font-weight:400;color:#64748b">True Positive</span></td>
+                </tr>`;
+        }
+
+        // Per-class table (from summary response)
+        try {
+            const cr = data.class_report || {};
+            const rows = ["Active", "Churned"].map(cls => {
+                const r = cr[cls] || {};
+                const p = r.precision != null ? (r.precision * 100).toFixed(1) + "%" : "—";
+                const rc= r.recall    != null ? (r.recall    * 100).toFixed(1) + "%" : "—";
+                const f = r.f1        != null ? r.f1.toFixed(4) : "—";
+                const s = r.support   != null ? r.support.toLocaleString() : "—";
+                const color = cls === "Churned" ? "#f59e0b" : "#10b981";
+                return `<tr>
+                    <td><span style="color:${color};font-weight:600">${cls}</span></td>
+                    <td style="text-align:center">${p}</td>
+                    <td style="text-align:center">${rc}</td>
+                    <td style="text-align:center">${f}</td>
+                    <td style="text-align:center;color:#64748b">${s}</td>
+                </tr>`;
+            });
+            // Also add weighted avg row
+            const wa_p = m.precision_weighted != null ? (m.precision_weighted * 100).toFixed(1) + "%" : "—";
+            const wa_r = m.recall_weighted    != null ? (m.recall_weighted    * 100).toFixed(1) + "%" : "—";
+            const wa_f = m.f1_weighted        != null ? m.f1_weighted.toFixed(4) : "—";
+            rows.push(`<tr style="border-top:1px solid #2a3040">
+                <td style="color:#64748b;font-style:italic">weighted avg</td>
+                <td style="text-align:center;color:#64748b">${wa_p}</td>
+                <td style="text-align:center;color:#64748b">${wa_r}</td>
+                <td style="text-align:center;color:#64748b">${wa_f}</td>
+                <td style="text-align:center;color:#64748b">—</td>
+            </tr>`);
+            document.getElementById("churn-class-tbody").innerHTML = rows.join("");
+        } catch(_) {}
+
+    } catch(e) {
+        document.getElementById("churn-metrics-kpis").innerHTML =
+            `<p style="color:#ef4444">Failed to load churn metrics: ${e.message}</p>`;
+    }
 
     // ── Bar chart ──────────────────────────────────────────────────────────
     try {
@@ -1382,20 +2778,24 @@ async function loadElasticity() {
         const dist = summary.elasticity_distribution || {};
         document.getElementById("elasticity-kpis").innerHTML = `
             <div class="kpi-card">
+                <div class="kpi-icon">📦</div>
                 <div class="label">Products Analysed</div>
                 <div class="value">${fmtI(summary.products_analysed)}</div>
             </div>
             <div class="kpi-card orange">
+                <div class="kpi-icon">📊</div>
                 <div class="label">Statistically Significant</div>
                 <div class="value">${fmtI(summary.significant_results)}</div>
                 <div class="sub">${summary.significance_pct}% of total</div>
             </div>
             <div class="kpi-card red">
+                <div class="kpi-icon">💹</div>
                 <div class="label">Highly Elastic</div>
                 <div class="value">${fmtI(dist["Highly Elastic"]||0)}</div>
                 <div class="sub">most price-sensitive</div>
             </div>
             <div class="kpi-card green">
+                <div class="kpi-icon">📉</div>
                 <div class="label">Avg Elasticity</div>
                 <div class="value">${summary.avg_elasticity ?? "—"}</div>
                 <div class="sub">median: ${summary.median_elasticity ?? "—"}</div>
@@ -1600,21 +3000,25 @@ async function loadForecast() {
         // ── KPIs ──────────────────────────────────────────────────────────
         document.getElementById("forecast-kpis").innerHTML = `
             <div class="kpi-card">
+                <div class="kpi-icon">📦</div>
                 <div class="label">Products Forecasted</div>
                 <div class="value">${fmtI(summary.products_forecast)}</div>
                 <div class="sub">top products</div>
             </div>
             <div class="kpi-card green">
+                <div class="kpi-icon">📊</div>
                 <div class="label">Total Forecasted Qty</div>
                 <div class="value">${fmtI(Math.round(summary.total_forecasted_qty))}</div>
                 <div class="sub">next ${summary.horizon_days} days</div>
             </div>
             <div class="kpi-card orange">
+                <div class="kpi-icon">📅</div>
                 <div class="label">Forecast Horizon</div>
                 <div class="value">${summary.horizon_days}</div>
                 <div class="sub">days ahead</div>
             </div>
             <div class="kpi-card yellow">
+                <div class="kpi-icon">🤖</div>
                 <div class="label">Method</div>
                 <div class="value" style="font-size:1.1rem;margin-top:8px">
                     <span class="method-badge">${(summary.method||"N/A").toUpperCase()}</span>
@@ -1877,21 +3281,25 @@ async function loadJourney() {
         const fpt = summary.first_purchase_tiers || {};
         document.getElementById("journey-kpis").innerHTML = `
             <div class="kpi-card">
+                <div class="kpi-icon">👥</div>
                 <div class="label">Total Customers</div>
                 <div class="value">${fmtI(summary.total_customers)}</div>
                 <div class="sub">${fmtI(summary.total_transactions)} orders</div>
             </div>
             <div class="kpi-card orange">
+                <div class="kpi-icon">🛒</div>
                 <div class="label">Avg Journey Length</div>
                 <div class="value">${summary.avg_journey_length}</div>
                 <div class="sub">purchases per customer</div>
             </div>
             <div class="kpi-card green">
+                <div class="kpi-icon">🔁</div>
                 <div class="label">Return Rate</div>
                 <div class="value">${summary.retention_after_1st_pct}%</div>
                 <div class="sub">came back for 2nd order</div>
             </div>
             <div class="kpi-card yellow">
+                <div class="kpi-icon">📅</div>
                 <div class="label">Avg Days Between Orders</div>
                 <div class="value">${summary.avg_days_between}</div>
                 <div class="sub">median: ${summary.median_days_between} days</div>
@@ -2029,6 +3437,1296 @@ async function lookupJourney() {
     }
 }
 
+// ── Inventory Optimisation ────────────────────────────────────────────────────
+
+const RISK_COLORS_INV = {
+    "Critical": "#e74c3c",
+    "High"    : "#ED7D31",
+    "Medium"  : "#FFC000",
+    "Low"     : "#70AD47",
+};
+
+function riskBadgeInv(risk) {
+    const c = RISK_COLORS_INV[risk] || "#888";
+    return `<span class="badge" style="background:${c};color:#fff">${risk || "—"}</span>`;
+}
+
+async function loadInventory() {
+    try {
+        const [sumRes, alertsRes, topRes] = await Promise.all([
+            fetch(`${API}/api/inventory/summary`),
+            fetch(`${API}/api/inventory/alerts?risk_level=High&limit=20`),
+            fetch(`${API}/api/inventory/products?limit=30&sort_by=annual_demand&ascending=false`),
+        ]);
+
+        if (!sumRes.ok) throw new Error("Run inventory_optimization.py first.");
+
+        const summary = await sumRes.json();
+        const alerts  = await alertsRes.json();
+        const top     = await topRes.json();
+
+        // ── KPIs ──────────────────────────────────────────────────────────
+        const dist = summary.risk_distribution || {};
+        document.getElementById("inventory-kpis").innerHTML = `
+            <div class="kpi-card">
+                <div class="kpi-icon">📦</div>
+                <div class="label">Products Analysed</div>
+                <div class="value">${fmtI(summary.products_analysed)}</div>
+                <div class="sub">${summary.lead_time_days}d lead · ${summary.service_level_pct}% SL</div>
+            </div>
+            <div class="kpi-card red">
+                <div class="kpi-icon">🚨</div>
+                <div class="label">Critical Risk</div>
+                <div class="value">${fmtI(dist.Critical || 0)}</div>
+                <div class="sub">highest demand volatility</div>
+            </div>
+            <div class="kpi-card orange">
+                <div class="kpi-icon">🔄</div>
+                <div class="label">Avg EOQ</div>
+                <div class="value">${fmtI(Math.round(summary.avg_eoq || 0))}</div>
+                <div class="sub">units per order</div>
+            </div>
+            <div class="kpi-card yellow">
+                <div class="kpi-icon">🛡️</div>
+                <div class="label">Avg Safety Stock</div>
+                <div class="value">${fmtI(Math.round(summary.avg_safety_stock || 0))}</div>
+                <div class="sub">reorder pt: ${fmtI(Math.round(summary.avg_reorder_point || 0))}</div>
+            </div>
+            <div class="kpi-card green">
+                <div class="kpi-icon">💰</div>
+                <div class="label">Total Annual Inv. Cost</div>
+                <div class="value" style="font-size:1.3rem">$${fmt(summary.total_annual_inventory_cost)}</div>
+                <div class="sub">holding + ordering</div>
+            </div>
+        `;
+
+        // ── Donut: risk distribution ───────────────────────────────────────
+        const rOrder  = ["Critical", "High", "Medium", "Low"];
+        const rLabels = rOrder.filter(r => dist[r]);
+        makeDonut(
+            "chart-inv-risk",
+            rLabels,
+            rLabels.map(r => dist[r] || 0),
+            rLabels.map(r => RISK_COLORS_INV[r])
+        );
+
+        // ── Bar: avg EOQ by category ───────────────────────────────────────
+        try {
+            const catRes  = await fetch(`${API}/api/inventory/categories`);
+            const catData = await catRes.json();
+            const topCats = catData.slice(0, 8);
+            makeBar(
+                "chart-inv-eoq",
+                topCats.map(r => r.category || "Unknown"),
+                topCats.map(r => Math.round(r.avg_eoq || 0)),
+                "Avg EOQ (units)",
+                ["#4472C4","#70AD47","#ED7D31","#FFC000","#e74c3c","#5B9BD5","#9B1C1C","#FF7F00"]
+            );
+        } catch(e) { console.warn("Inventory category chart error:", e.message); }
+
+        // ── Alerts table ───────────────────────────────────────────────────
+        const alertRows = alerts.data || [];
+        document.getElementById("inv-alerts-body").innerHTML = alertRows.length
+            ? alertRows.map((r, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td style="font-size:0.8rem;max-width:160px;overflow:hidden;text-overflow:ellipsis">${r.product_name || r.product_id || "—"}</td>
+                    <td style="color:#888;font-size:0.78rem">${r.category || "—"}</td>
+                    <td>${riskBadgeInv(r.stockout_risk)}</td>
+                    <td style="color:${RISK_COLORS_INV[r.stockout_risk]||'#ccc'};font-weight:700">${r.cv}</td>
+                    <td>${r.avg_daily_demand}</td>
+                    <td style="color:#FFC000">${fmtI(Math.round(r.safety_stock || 0))}</td>
+                    <td style="color:#ED7D31;font-weight:600">${fmtI(Math.round(r.reorder_point || 0))}</td>
+                    <td style="color:#70AD47;font-weight:600">${fmtI(Math.round(r.eoq || 0))}</td>
+                </tr>`).join("")
+            : `<tr><td colspan="9" style="text-align:center;color:#888">No alerts found.</td></tr>`;
+
+        // ── Top products table ─────────────────────────────────────────────
+        const topRows = top.data || [];
+        document.getElementById("inv-table-body").innerHTML = topRows.map((r, i) => `
+            <tr>
+                <td>${i + 1}</td>
+                <td style="font-family:monospace;color:#4472C4;font-size:0.82rem">${r.product_id || "—"}</td>
+                <td style="font-size:0.8rem;max-width:150px;overflow:hidden;text-overflow:ellipsis">${r.product_name || "—"}</td>
+                <td>${r.avg_daily_demand}</td>
+                <td style="color:#FFC000">${fmtI(Math.round(r.safety_stock || 0))}</td>
+                <td style="color:#ED7D31;font-weight:600">${fmtI(Math.round(r.reorder_point || 0))}</td>
+                <td style="color:#70AD47;font-weight:600">${fmtI(Math.round(r.eoq || 0))}</td>
+                <td>$${fmt(r.total_annual_cost || 0)}</td>
+                <td>${riskBadgeInv(r.stockout_risk)}</td>
+            </tr>`).join("");
+
+    } catch (e) {
+        const msg = e.message || String(e);
+        document.getElementById("inventory-kpis").innerHTML = `
+            <div class="kpi-card red">
+                <div class="label">Not Available</div>
+                <div class="value" style="font-size:0.85rem;margin-top:8px">${msg}</div>
+            </div>`;
+        ["inv-alerts-body","inv-table-body"].forEach(id => {
+            document.getElementById(id).innerHTML =
+                `<tr><td colspan="9" style="text-align:center;color:#888">${msg}</td></tr>`;
+        });
+    }
+}
+
+async function lookupInventory() {
+    const pid    = document.getElementById("inv-pid-input").value.trim();
+    const result = document.getElementById("inv-lookup-result");
+    if (!pid) { result.innerHTML = `<span style="color:#e74c3c">Please enter a Product ID.</span>`; return; }
+
+    result.innerHTML = `<div class="loading"><div class="spinner"></div> Looking up...</div>`;
+    try {
+        const res = await fetch(`${API}/api/inventory/product/${encodeURIComponent(pid)}`);
+        if (!res.ok) { const e = await res.json(); throw new Error(e.detail || `HTTP ${res.status}`); }
+        const d = await res.json();
+
+        const rColor = RISK_COLORS_INV[d.stockout_risk] || "#888";
+        const hasFc  = d.avg_daily_forecast != null;
+
+        result.innerHTML = `
+            <div style="background:#0f1117;border-radius:10px;padding:20px;border:1px solid #2a2f45">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+                    <span style="font-size:1.05rem;font-weight:700;color:#fff">${d.product_name || d.product_id}</span>
+                    ${riskBadgeInv(d.stockout_risk)}
+                    <span style="color:#888;font-size:0.78rem">${d.category || ""}</span>
+                </div>
+                <div class="kpi-grid" style="margin-bottom:16px">
+                    <div class="kpi-card"><div class="label">Avg Daily Demand</div><div class="value">${d.avg_daily_demand}</div><div class="sub">CV: ${d.cv} (${d.stockout_risk} volatility)</div></div>
+                    <div class="kpi-card yellow"><div class="label">Safety Stock</div><div class="value">${fmtI(Math.round(d.safety_stock))}</div><div class="sub">units (95% service level)</div></div>
+                    <div class="kpi-card orange"><div class="label">Reorder Point</div><div class="value">${fmtI(Math.round(d.reorder_point))}</div><div class="sub">trigger restock here</div></div>
+                    <div class="kpi-card green"><div class="label">EOQ</div><div class="value">${fmtI(Math.round(d.eoq))}</div><div class="sub">optimal order qty</div></div>
+                    <div class="kpi-card"><div class="label">Max Stock</div><div class="value">${fmtI(Math.round(d.max_stock))}</div><div class="sub">ROP + EOQ</div></div>
+                    <div class="kpi-card"><div class="label">Orders / Year</div><div class="value">${d.orders_per_year}</div><div class="sub">$${fmt(d.total_annual_cost)} total cost</div></div>
+                </div>
+                ${hasFc ? `<div style="background:#161b2e;border-radius:8px;padding:12px;margin-top:4px;font-size:0.84rem;color:#ccc">
+                    📈 <b>Forecast-adjusted ROP:</b> ${fmtI(Math.round(d.forecast_rop))} units &nbsp;·&nbsp;
+                    <b>Forecast EOQ:</b> ${fmtI(Math.round(d.forecast_eoq))} units &nbsp;·&nbsp;
+                    <b>Avg Daily Forecast:</b> ${d.avg_daily_forecast?.toFixed(2)} units
+                </div>` : ""}
+                <div style="background:#161b2e;border-radius:8px;padding:12px;margin-top:8px;font-size:0.84rem;color:#aaa;line-height:1.6">
+                    <b>Cost breakdown:</b>
+                    Holding: $${fmt(d.annual_holding_cost)}/yr &nbsp;·&nbsp;
+                    Ordering: $${fmt(d.annual_ordering_cost)}/yr &nbsp;·&nbsp;
+                    Unit price: $${fmt(d.avg_unit_price)} &nbsp;·&nbsp;
+                    Trading days: ${fmtI(d.trading_days)}
+                </div>
+            </div>`;
+    } catch(e) {
+        result.innerHTML = `<span style="color:#e74c3c">Error: ${e.message}</span>`;
+    }
+}
+
+// ── Geographic ────────────────────────────────────────────────────────────────
+let _geoData = null;   // cached summary regions array
+
+const GEO_COLORS = [
+    "#4f8ef7","#f39c12","#2ecc71","#e74c3c","#9b59b6",
+    "#1abc9c","#e67e22","#3498db","#e91e63","#00bcd4"
+];
+
+async function loadGeo() {
+    try {
+        const res  = await fetch(`${API}/api/geo/summary`);
+        const data = await res.json();
+
+        // KPIs
+        countUp(document.getElementById("geo-regions"),      data.total_regions,      '', '', 0);
+        countUp(document.getElementById("geo-revenue"),      data.total_revenue,      '$', '', 0);
+        countUp(document.getElementById("geo-transactions"), data.total_transactions, '', '', 0);
+        document.getElementById("geo-top-region").textContent   = data.top_region || "—";
+        document.getElementById("geo-top-share").textContent    = (data.top_region_share_pct || 0).toFixed(1) + "%";
+
+        _geoData = data.regions || [];
+
+        renderGeoBar();
+        renderGeoDonut();
+        renderGeoTable();
+
+        // YoY trend
+        const trendRes = await fetch(`${API}/api/geo/trends?top_n=6`);
+        const trendData = await trendRes.json();
+        renderGeoYoY(trendData);
+
+    } catch(e) {
+        document.getElementById("geo-kpis").innerHTML =
+            `<p style="color:#e74c3c">Failed to load geographic data: ${e.message}</p>`;
+    }
+}
+
+function renderGeoBar() {
+    // Exclude UK to show smaller markets clearly
+    const rows = (_geoData || [])
+        .filter(r => r.region !== "United Kingdom")
+        .slice(0, 15);
+
+    const ctx = document.getElementById("geo-bar");
+    if (!ctx) return;
+    if (ctx._chart) ctx._chart.destroy();
+
+    ctx._chart = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: rows.map(r => r.region),
+            datasets: [{
+                label: "Revenue ($)",
+                data: rows.map(r => r.total_revenue),
+                backgroundColor: GEO_COLORS[0] + "cc",
+                borderColor: GEO_COLORS[0],
+                borderWidth: 1,
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color:"#475569", callback: v => "$" + fmtI(v) }, grid: { color:"rgba(255,255,255,0.04)" } },
+                y: { ticks: { color:"#64748b" }, grid: { display: false } }
+            }
+        }
+    });
+}
+
+function renderGeoDonut() {
+    const rows = (_geoData || []).slice(0, 8);
+    const ctx  = document.getElementById("geo-donut");
+    if (!ctx) return;
+    if (ctx._chart) ctx._chart.destroy();
+
+    ctx._chart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+            labels: rows.map(r => r.region),
+            datasets: [{
+                data: rows.map(r => r.revenue_share_pct),
+                backgroundColor: GEO_COLORS,
+                borderColor: "#0d1117",
+                borderWidth: 2,
+            }]
+        },
+        options: {
+            cutout: "65%",
+            responsive: true,
+            plugins: {
+                legend: { position:"right", labels:{ usePointStyle:true, pointStyle:'circle', color:"#64748b" } },
+                tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toFixed(1)}%` } }
+            }
+        }
+    });
+}
+
+function renderGeoTable() {
+    const exclUK = document.getElementById("geo-excl-uk")?.checked;
+    const rows   = (_geoData || []).filter(r => !exclUK || r.region !== "United Kingdom");
+    const tbody  = document.getElementById("geo-tbody");
+    if (!tbody) return;
+
+    tbody.innerHTML = rows.map((r, i) => {
+        const growth = r.yoy_growth_pct == null ? "—"
+            : `<span style="color:${r.yoy_growth_pct >= 0 ? '#2ecc71' : '#e74c3c'}">${r.yoy_growth_pct >= 0 ? "+" : ""}${r.yoy_growth_pct.toFixed(1)}%</span>`;
+        return `<tr>
+          <td>${rankBadge(i)}</td>
+          <td style="font-weight:500">${r.region}</td>
+          <td style="text-align:right;font-weight:600;color:var(--accent3)">$${fmt(r.total_revenue)}</td>
+          <td style="text-align:right">${r.revenue_share_pct}%</td>
+          <td style="text-align:right">${fmtI(r.total_transactions)}</td>
+          <td style="text-align:right">${fmtI(r.unique_customers)}</td>
+          <td style="text-align:right">$${fmt(r.avg_order_value)}</td>
+          <td style="text-align:right">$${fmt(r.revenue_per_customer)}</td>
+          <td style="text-align:right">${growth}</td>
+        </tr>`;
+    }).join("");
+}
+
+function renderGeoYoY(trendData) {
+    const ctx = document.getElementById("geo-yoy");
+    if (!ctx) return;
+    if (ctx._chart) ctx._chart.destroy();
+
+    const years   = trendData.years   || [];
+    const regions = trendData.regions || [];
+
+    const datasets = regions.map((r, i) => ({
+        label: r.region,
+        data: years.map(y => r[String(y)] || 0),
+        borderColor: GEO_COLORS[i % GEO_COLORS.length],
+        backgroundColor: "transparent",
+        tension: 0.3,
+        pointRadius: 3,
+    }));
+
+    ctx._chart = new Chart(ctx, {
+        type: "line",
+        data: { labels: years.map(String), datasets },
+        options: {
+            responsive: true,
+            plugins: { legend: { labels: { usePointStyle:true, pointStyle:'circle', color:"#64748b" } } },
+            scales: {
+                x: { ticks:{ color:"#475569" }, grid:{ color:"rgba(255,255,255,0.04)" } },
+                y: { ticks:{ color:"#475569", callback: v => "$"+fmtI(v) }, grid:{ color:"rgba(255,255,255,0.04)" } }
+            }
+        }
+    });
+}
+
+async function lookupGeo() {
+    const region = document.getElementById("geo-lookup-input").value.trim();
+    const result = document.getElementById("geo-lookup-result");
+    if (!region) return;
+    result.innerHTML = "Loading...";
+    try {
+        const res  = await fetch(`${API}/api/geo/region/${encodeURIComponent(region)}`);
+        if (!res.ok) { result.innerHTML = `<span style="color:#e74c3c">Region not found.</span>`; return; }
+        const d = await res.json();
+        const s = d.summary;
+        const prods = (d.top_products || []).map((p, i) =>
+            `<tr><td>${i+1}</td><td>${p.product_name || p.product_id}</td><td style="text-align:right">$${fmt(p.revenue)}</td><td style="text-align:right">${fmtI(p.units)}</td></tr>`
+        ).join("");
+
+        result.innerHTML = `
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1rem">
+            <div class="kpi-card"><div class="kpi-value">$${fmt(s.total_revenue)}</div><div class="kpi-label">Revenue</div></div>
+            <div class="kpi-card"><div class="kpi-value">${fmtI(s.total_transactions)}</div><div class="kpi-label">Transactions</div></div>
+            <div class="kpi-card"><div class="kpi-value">${fmtI(s.unique_customers)}</div><div class="kpi-label">Customers</div></div>
+            <div class="kpi-card"><div class="kpi-value">$${fmt(s.avg_order_value)}</div><div class="kpi-label">Avg Order</div></div>
+          </div>
+          <h4 style="margin-bottom:.5rem">Top Products in ${s.region}</h4>
+          <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+            <thead><tr style="border-bottom:1px solid #334">
+              <th style="text-align:left;padding:.4rem">#</th>
+              <th style="text-align:left;padding:.4rem">Product</th>
+              <th style="text-align:right;padding:.4rem">Revenue</th>
+              <th style="text-align:right;padding:.4rem">Units</th>
+            </tr></thead>
+            <tbody>${prods}</tbody>
+          </table>`;
+    } catch(e) {
+        result.innerHTML = `<span style="color:#e74c3c">Error: ${e.message}</span>`;
+    }
+}
+
+// ── Anomaly Detection ─────────────────────────────────────────────────────────
+const SEV_COLOR = { Critical:"#e74c3c", High:"#e67e22", Medium:"#f1c40f", Normal:"#2ecc71" };
+
+async function loadAnomaly() {
+    try {
+        const res  = await fetch(`${API}/api/anomaly/summary`);
+        const data = await res.json();
+
+        countUp(document.getElementById("an-days"),     data.total_trading_days,          '', '', 0);
+        countUp(document.getElementById("an-total"),    data.overall_anomaly_count,        '', '', 0);
+        document.getElementById("an-rate").textContent  = (data.overall_anomaly_rate || 0) + "%";
+        countUp(document.getElementById("an-critical"), (data.severity_distribution || {})["Critical"] || 0, '', '', 0);
+        countUp(document.getElementById("an-high"),     (data.severity_distribution || {})["High"] || 0,     '', '', 0);
+
+        // Severity donut
+        const sevDist = data.severity_distribution || {};
+        const sevKeys = Object.keys(sevDist).filter(k => k !== "Normal");
+        const sevCtx  = document.getElementById("an-severity");
+        if (sevCtx._chart) sevCtx._chart.destroy();
+        sevCtx._chart = new Chart(sevCtx, {
+            type: "doughnut",
+            data: {
+                labels: sevKeys,
+                datasets: [{ data: sevKeys.map(k => sevDist[k]),
+                    backgroundColor: sevKeys.map(k => SEV_COLOR[k] || "#64748b"),
+                    borderColor:"#080c14", borderWidth:2, hoverOffset:6 }]
+            },
+            options: { cutout:"65%", responsive:true,
+                plugins:{
+                    legend:{ labels:{ usePointStyle:true, pointStyle:'circle', color:"#64748b" } },
+                    tooltip:{ callbacks:{ label: c => ` ${c.label}: ${c.raw}` } }
+                }
+            }
+        });
+
+        // Top anomalies table
+        const tbody = document.getElementById("an-top-tbody");
+        tbody.innerHTML = (data.top_anomalies || []).map((r, i) => `
+            <tr>
+              <td>${rankBadge(i)}</td>
+              <td style="font-weight:500">${r.date}</td>
+              <td style="text-align:right;color:var(--accent3);font-weight:600">$${fmt(r.revenue)}</td>
+              <td style="text-align:right;color:var(--text-secondary)">$${fmt(r.roll_mean)}</td>
+              <td style="text-align:right;font-weight:700;color:${(r.z_score||0)>0?'var(--accent5)':'var(--accent2)'}">${(r.z_score||0)>0?"+":""}${(r.z_score||0).toFixed(2)}</td>
+              <td style="text-align:center">${severityBadge(r.severity)}</td>
+              <td style="text-align:center">${dirBadge(r.direction)}</td>
+            </tr>`).join("");
+
+        // Monthly bar
+        const mRes  = await fetch(`${API}/api/anomaly/monthly`);
+        const mData = await mRes.json();
+        renderAnomalyMonthly(mData);
+
+        // Daily timeline
+        const dRes  = await fetch(`${API}/api/anomaly/daily`);
+        const dData = await dRes.json();
+        renderAnomalyTimeline(dData.data || []);
+
+        // Load default alerts
+        loadAnomalyAlerts();
+
+    } catch(e) {
+        document.getElementById("anomaly-kpis").innerHTML =
+            `<p style="color:#e74c3c">Failed to load anomaly data: ${e.message}</p>`;
+    }
+}
+
+function renderAnomalyTimeline(series) {
+    const ctx = document.getElementById("an-timeline");
+    if (!ctx) return;
+    if (ctx._chart) ctx._chart.destroy();
+
+    const labels    = series.map(r => r.date);
+    const revenues  = series.map(r => r.revenue);
+    const rollMeans = series.map(r => r.roll_mean);
+
+    // Point colours: red=spike anomaly, blue=drop anomaly, grey=normal
+    const ptColors = series.map(r => {
+        if (!r.is_anomaly) return "rgba(79,142,247,0.3)";
+        return r.direction === "Spike" ? "#e74c3c" : "#3498db";
+    });
+    const ptRadius = series.map(r => r.is_anomaly ? 4 : 2);
+
+    ctx._chart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels,
+            datasets: [
+                { label:"Daily Revenue", data:revenues,
+                  borderColor:"rgba(99,102,241,0.7)",
+                  backgroundColor:"rgba(99,102,241,0.06)",
+                  fill:true,
+                  pointBackgroundColor:ptColors, pointRadius:ptRadius,
+                  tension:0.25, borderWidth:1.5 },
+                { label:"30d Rolling Avg", data:rollMeans,
+                  borderColor:"#f59e0b", backgroundColor:"transparent",
+                  pointRadius:0, tension:0.3, borderWidth:2, borderDash:[5,4] },
+            ]
+        },
+        options: {
+            responsive:true,
+            animation: { duration: 400 },
+            plugins:{ legend:{ labels:{ usePointStyle:true, pointStyle:'circle' } } },
+            scales: {
+                x:{ ticks:{ maxTicksLimit:12, color:"#475569" }, grid:{ color:"rgba(255,255,255,0.04)" } },
+                y:{ ticks:{ color:"#475569", callback: v => "$"+fmtI(v) }, grid:{ color:"rgba(255,255,255,0.04)" } }
+            }
+        }
+    });
+}
+
+function renderAnomalyMonthly(data) {
+    const ctx = document.getElementById("an-monthly");
+    if (!ctx) return;
+    if (ctx._chart) ctx._chart.destroy();
+
+    ctx._chart = new Chart(ctx, {
+        type:"bar",
+        data:{
+            labels: data.map(r => r.year_month),
+            datasets:[{ label:"Anomalies", data: data.map(r => r.anomaly_count),
+                backgroundColor:"rgba(239,68,68,0.55)", borderColor:"rgba(239,68,68,0.9)",
+                borderWidth:1, borderRadius:5, borderSkipped:false }]
+        },
+        options:{
+            responsive:true,
+            plugins:{ legend:{ display:false } },
+            scales:{
+                x:{ ticks:{ maxRotation:45, color:"#475569" }, grid:{ display:false } },
+                y:{ ticks:{ color:"#475569", stepSize:1 }, grid:{ color:"rgba(255,255,255,0.04)" } }
+            }
+        }
+    });
+}
+
+async function loadAnomalyAlerts() {
+    const sev = document.getElementById("an-filter-severity")?.value || "";
+    const dir = document.getElementById("an-filter-direction")?.value || "";
+
+    let url = `${API}/api/anomaly/alerts?limit=50&scope=overall`;
+    if (sev) url += `&severity=${sev}`;
+    if (dir) url += `&direction=${dir}`;
+
+    try {
+        const res  = await fetch(url);
+        const data = await res.json();
+        const tbody = document.getElementById("an-alerts-tbody");
+        tbody.innerHTML = (data.data || []).map(r => `
+            <tr>
+              <td style="font-weight:500">${r.date}</td>
+              <td><span style="color:var(--text-secondary)">${r.scope || "—"}</span></td>
+              <td>${r.product_name || "—"}</td>
+              <td style="text-align:right;color:var(--accent3);font-weight:600">$${fmt(r.revenue)}</td>
+              <td style="text-align:right;font-weight:700;color:${(r.z_score||0)>0?'var(--accent5)':'var(--accent2)'}">${(r.z_score||0)>0?"+":""}${(r.z_score||0).toFixed(2)}</td>
+              <td style="text-align:center">${severityBadge(r.severity)}</td>
+              <td style="text-align:center">${dirBadge(r.direction)}</td>
+            </tr>`).join("");
+    } catch(e) {}
+}
+
+// ── Seasonality ───────────────────────────────────────────────────────────────
+async function loadSeasonality() {
+    try {
+        const [sumRes, patRes, yoyRes, hmRes, pkRes, decRes] = await Promise.all([
+            fetch(`${API}/api/seasonality/summary`),
+            fetch(`${API}/api/seasonality/patterns`),
+            fetch(`${API}/api/seasonality/yoy`),
+            fetch(`${API}/api/seasonality/heatmap`),
+            fetch(`${API}/api/seasonality/peaks`),
+            fetch(`${API}/api/seasonality/decomposition`),
+        ]);
+
+        if (!sumRes.ok) throw new Error("Run seasonality_analysis.py first.");
+
+        const [summary, patterns, yoy, heatmap, peaks, decomp] = await Promise.all([
+            sumRes.json(), patRes.json(), yoyRes.json(),
+            hmRes.json(),  pkRes.json(), decRes.json(),
+        ]);
+
+        // ── KPIs ──────────────────────────────────────────────────────────────
+        const wknd = summary.weekend_split || {};
+        document.getElementById("season-kpis").innerHTML = `
+            <div class="kpi-card orange">
+                <div class="kpi-icon">📈</div>
+                <div class="label">Trend Direction</div>
+                <div class="value" style="font-size:1.2rem;margin-top:8px">
+                    ${summary.trend_direction === "Upward"
+                        ? '<span class="trend-up">▲ Upward</span>'
+                        : summary.trend_direction === "Downward"
+                            ? '<span class="trend-down">▼ Downward</span>'
+                            : '<span class="trend-flat">→ Flat</span>'}
+                </div>
+                <div class="sub">Long-term revenue trend</div>
+            </div>
+            <div class="kpi-card green">
+                <div class="kpi-icon">💰</div>
+                <div class="label">Avg Daily Revenue</div>
+                <div class="value" id="kpi-season-avg">—</div>
+            </div>
+            <div class="kpi-card yellow">
+                <div class="kpi-icon">📅</div>
+                <div class="label">Best Day of Week</div>
+                <div class="value" style="font-size:1.15rem;margin-top:8px">${summary.best_day_of_week || "—"}</div>
+            </div>
+            <div class="kpi-card cyan">
+                <div class="kpi-icon">🗓️</div>
+                <div class="label">Best Month</div>
+                <div class="value" style="font-size:1.15rem;margin-top:8px">${summary.best_month || "—"}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">📊</div>
+                <div class="label">Seasonal Strength</div>
+                <div class="value" id="kpi-season-str">—</div>
+                <div class="sub">DoW coefficient of variation</div>
+            </div>
+        `;
+        countUp(document.getElementById("kpi-season-avg"), summary.avg_daily_revenue, '$', '', 0);
+        countUp(document.getElementById("kpi-season-str"), (summary.seasonal_strength||0)*100, '', '%', 1);
+
+        // ── Decomposition trend chart ──────────────────────────────────────────
+        renderSeasonTrend(decomp.data || []);
+
+        // ── Day-of-week bar ───────────────────────────────────────────────────
+        const dowData = patterns.dow_patterns || [];
+        makeBar(
+            "season-dow-chart",
+            dowData.map(r => r.day_of_week),
+            dowData.map(r => r.avg_revenue),
+            "Avg Revenue",
+            dowData.map(r => r.index_vs_avg >= 1 ? "#10b981" : "#6366f1")
+        );
+
+        // ── Month bar ─────────────────────────────────────────────────────────
+        const monData = patterns.month_patterns || [];
+        makeBar(
+            "season-month-chart",
+            monData.map(r => r.month_name),
+            monData.map(r => r.avg_revenue),
+            "Avg Revenue",
+            monData.map(r => r.index_vs_avg >= 1 ? "#10b981" : "#6366f1")
+        );
+
+        // ── Quarter bar ───────────────────────────────────────────────────────
+        const qData = patterns.quarter_patterns || [];
+        makeBar(
+            "season-quarter-chart",
+            qData.map(r => r.quarter_label),
+            qData.map(r => r.avg_revenue),
+            "Avg Revenue",
+            ["#6366f1","#06b6d4","#10b981","#f59e0b"]
+        );
+
+        // ── Weekend vs Weekday ────────────────────────────────────────────────
+        const wkndLabels = Object.keys(wknd);
+        const wkndVals   = wkndLabels.map(k => wknd[k].avg_revenue || 0);
+        makeDonut("season-weekend-chart", wkndLabels, wkndVals, ["#6366f1","#10b981"]);
+
+        // ── YoY monthly grouped bar (Plotly) ──────────────────────────────────
+        renderSeasonYoY(yoy);
+
+        // ── Week heatmap (Plotly) ─────────────────────────────────────────────
+        renderSeasonHeatmap(heatmap);
+
+        // ── Peak/Trough tables ────────────────────────────────────────────────
+        document.getElementById("season-peaks-tbody").innerHTML =
+            (peaks.peaks || []).map((r, i) => `
+                <tr>
+                    <td>${rankBadge(i)}</td>
+                    <td style="font-weight:500">${r.date_str}</td>
+                    <td><span style="color:var(--text-secondary)">${r.day_of_week}</span></td>
+                    <td style="text-align:right;font-weight:600;color:var(--accent3)">$${fmt(r.revenue)}</td>
+                    <td style="text-align:right">${fmtI(r.transactions)}</td>
+                </tr>`).join("");
+
+        document.getElementById("season-troughs-tbody").innerHTML =
+            (peaks.troughs || []).map((r, i) => `
+                <tr>
+                    <td>${rankBadge(i)}</td>
+                    <td style="font-weight:500">${r.date_str}</td>
+                    <td><span style="color:var(--text-secondary)">${r.day_of_week}</span></td>
+                    <td style="text-align:right;font-weight:600;color:var(--accent5)">$${fmt(r.revenue)}</td>
+                    <td style="text-align:right">${fmtI(r.transactions)}</td>
+                </tr>`).join("");
+
+    } catch (e) {
+        document.getElementById("season-kpis").innerHTML =
+            `<div class="kpi-card red"><div class="label">Error</div>
+             <div class="value" style="font-size:0.85rem;margin-top:8px">${e.message}</div></div>`;
+    }
+}
+
+function renderSeasonTrend(series) {
+    const ctx = document.getElementById("season-trend-chart");
+    if (!ctx) return;
+    if (ctx._chart) ctx._chart.destroy();
+
+    // Sample every 3rd point for a clean chart
+    const s = series.filter((_, i) => i % 3 === 0);
+
+    ctx._chart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: s.map(r => r.date),
+            datasets: [
+                {
+                    label: "Daily Revenue",
+                    data: s.map(r => r.revenue),
+                    borderColor: "rgba(99,102,241,0.35)",
+                    backgroundColor: "rgba(99,102,241,0.04)",
+                    fill: true, pointRadius: 0, tension: 0.3, borderWidth: 1,
+                },
+                {
+                    label: "365d Trend",
+                    data: s.map(r => r.trend),
+                    borderColor: "#10b981",
+                    backgroundColor: "transparent",
+                    pointRadius: 0, tension: 0.4, borderWidth: 2.5,
+                },
+                {
+                    label: "30d Trend",
+                    data: s.map(r => r.trend_30d),
+                    borderColor: "#f59e0b",
+                    backgroundColor: "transparent",
+                    pointRadius: 0, tension: 0.3, borderWidth: 1.5,
+                    borderDash: [5, 4],
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+            animation: { duration: 500 },
+            plugins: { legend: { labels: { usePointStyle: true, pointStyle: "circle" } } },
+            scales: {
+                x: {
+                    ticks: { maxTicksLimit: 12, color: "#475569" },
+                    grid:  { color: "rgba(255,255,255,0.04)" }
+                },
+                y: {
+                    ticks: { color: "#475569", callback: v => "$" + fmtI(v) },
+                    grid:  { color: "rgba(255,255,255,0.04)" }
+                }
+            }
+        }
+    });
+}
+
+function renderSeasonYoY(yoy) {
+    const el = document.getElementById("season-yoy-chart");
+    if (!el) return;
+
+    const years  = yoy.years  || [];
+    const months = yoy.month_names || [];
+    const rev    = yoy.revenue || {};
+
+    const traces = years.map((yr, i) => ({
+        type: "bar",
+        name: String(yr),
+        x:    months,
+        y:    months.map((_, mi) => (rev[yr] || {})[mi + 1] || 0),
+        marker: { color: ["#6366f1","#06b6d4","#10b981","#f59e0b","#ef4444","#8b5cf6"][i % 6] },
+    }));
+
+    const layout = Object.assign({}, PLOTLY_LAYOUT, {
+        barmode: "group",
+        margin:  { l: 70, r: 20, t: 30, b: 50 },
+        legend:  { orientation: "h", y: 1.08, font: { color: "#94a3b8" } },
+        yaxis:   { tickprefix: "$", gridcolor: "rgba(255,255,255,0.05)" },
+        xaxis:   { gridcolor: "rgba(255,255,255,0.0)" },
+    });
+
+    Plotly.react(el, traces, layout, { responsive: true, displayModeBar: false });
+    el._isPlotly = true;
+}
+
+function renderSeasonHeatmap(heatmap) {
+    const el = document.getElementById("season-heatmap-chart");
+    if (!el) return;
+
+    const years  = heatmap.years  || [];
+    const weeks  = heatmap.weeks  || [];
+    const matrix = heatmap.matrix || {};
+
+    const z = years.map(yr =>
+        weeks.map(w => (matrix[yr] || {})[w] || 0)
+    );
+
+    const trace = {
+        type: "heatmap",
+        x:    weeks.map(w => `W${w}`),
+        y:    years.map(String),
+        z,
+        colorscale: [
+            [0,    "#0f1520"],
+            [0.15, "#1e3a5f"],
+            [0.4,  "#1e4d8c"],
+            [0.65, "#6366f1"],
+            [0.85, "#10b981"],
+            [1,    "#f59e0b"],
+        ],
+        showscale: true,
+        colorbar: {
+            tickfont: { color: "#94a3b8" },
+            title: { text: "Revenue", font: { color: "#94a3b8" } },
+        },
+        hovertemplate: "Year %{y}, Week %{x}<br>Revenue: $%{z:,.0f}<extra></extra>",
+    };
+
+    const layout = Object.assign({}, PLOTLY_LAYOUT, {
+        margin: { l: 55, r: 80, t: 20, b: 50 },
+        xaxis:  { tickangle: 0, tickfont: { size: 9 }, nticks: 26 },
+        yaxis:  { tickfont: { color: "#94a3b8" } },
+    });
+
+    Plotly.react(el, [trace], layout, { responsive: true, displayModeBar: false });
+    el._isPlotly = true;
+}
+
+// ── Segmentation ──────────────────────────────────────────────────────────────
+let _segScatterData = [];
+let _segClusters    = [];
+let _segAllCustomers = [];
+
+async function loadSegmentation() {
+    document.getElementById("seg-kpis").innerHTML = skeletonKPIs(4);
+    try {
+        const [sumRes, clsRes, scatRes, elbowRes, custRes] = await Promise.all([
+            fetch(`${API}/api/segmentation/summary`),
+            fetch(`${API}/api/segmentation/clusters`),
+            fetch(`${API}/api/segmentation/scatter`),
+            fetch(`${API}/api/segmentation/elbow`),
+            fetch(`${API}/api/segmentation/customers?limit=200`),
+        ]);
+        if (!sumRes.ok) throw new Error("Run customer_segmentation.py first.");
+
+        const [sum, cls, scat, elbow, cust] = await Promise.all([
+            sumRes.json(), clsRes.json(), scatRes.json(), elbowRes.json(), custRes.json()
+        ]);
+
+        _segScatterData  = scat.data || [];
+        _segClusters     = cls.clusters || [];
+        _segAllCustomers = cust.data || [];
+
+        // Badge
+        document.getElementById("seg-k-badge").textContent = `k=${sum.n_clusters}`;
+
+        // KPIs
+        const kpis = [
+            { icon:"👥", label:"Total Customers",    val: sum.total_customers,  fmt: v => v.toLocaleString() },
+            { icon:"🎯", label:"Clusters (k)",        val: sum.n_clusters,       fmt: v => v },
+            { icon:"📐", label:"Silhouette Score",    val: sum.silhouette_score, fmt: v => v?.toFixed(4) },
+            { icon:"📊", label:"PCA Variance Explained", val: sum.pca_total_var_pct, fmt: v => v?.toFixed(1) + "%" },
+        ];
+        document.getElementById("seg-kpis").innerHTML = kpis.map(k => `
+          <div class="kpi-card">
+            <div class="kpi-icon">${k.icon}</div>
+            <div class="kpi-label">${k.label}</div>
+            <div class="kpi-value" data-target="${k.val}">${k.fmt(k.val)}</div>
+          </div>`).join("");
+
+        // Cluster size chart
+        const labels    = _segClusters.map(c => c.cluster_label);
+        const sizes     = _segClusters.map(c => c.size);
+        const palette   = ["#6366f1","#10b981","#f59e0b","#ef4444","#06b6d4","#a78bfa","#34d399","#fbbf24"];
+        makeBar("seg-size-chart", labels, sizes, "Customers", palette.slice(0, labels.length));
+
+        // Feature importance horizontal bar (custom — makeBar doesn't support indexAxis)
+        const fi     = sum.feature_importance || [];
+        const fiLbls = fi.map(f => f.feature.replace(/_/g," "));
+        const fiVals = fi.map(f => f.importance);
+        const featCtx = document.getElementById("seg-feat-chart").getContext("2d");
+        if (window._segFeatChart) window._segFeatChart.destroy();
+        window._segFeatChart = new Chart(featCtx, {
+            type: "bar",
+            data: { labels: fiLbls, datasets: [{ label: "PCA Loading Sum", data: fiVals,
+                backgroundColor: "#6366f1", borderRadius: 4, borderSkipped: false }] },
+            options: {
+                indexAxis: "y",
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: "rgba(255,255,255,0.04)" }, ticks: { color: "#475569" } },
+                    y: { grid: { display: false }, ticks: { color: "#94a3b8" } }
+                }
+            }
+        });
+
+        // Elbow chart (dual-axis: inertia + silhouette)
+        renderSegElbow(elbow);
+
+        // PCA scatter
+        renderSegScatter(_segScatterData, _segClusters);
+
+        // Cluster profiles table
+        renderSegProfiles(_segClusters);
+
+        // Customer table
+        renderSegCustomers(_segAllCustomers);
+
+        // Populate cluster filter dropdown
+        const sel = document.getElementById("seg-cluster-filter");
+        sel.innerHTML = '<option value="">All Clusters</option>' +
+            _segClusters.map(c =>
+                `<option value="${c.cluster_id}">[${c.cluster_id}] ${c.cluster_label}</option>`
+            ).join("");
+
+    } catch (e) {
+        document.getElementById("seg-kpis").innerHTML =
+            `<div class="kpi-card" style="grid-column:1/-1;color:#ef4444">${e.message}</div>`;
+    }
+}
+
+function renderSegElbow(elbow) {
+    const ctx = document.getElementById("seg-elbow-chart").getContext("2d");
+    if (window._segElbowChart) window._segElbowChart.destroy();
+    window._segElbowChart = new Chart(ctx, {
+        data: {
+            labels: elbow.k_values,
+            datasets: [
+                {
+                    type: "line", label: "Inertia", data: elbow.inertia_curve,
+                    borderColor: "#6366f1", backgroundColor: "rgba(99,102,241,0.1)",
+                    yAxisID: "y1", tension: 0.3, fill: true, pointRadius: 4,
+                },
+                {
+                    type: "line", label: "Silhouette", data: elbow.silhouette_curve,
+                    borderColor: "#10b981", backgroundColor: "rgba(16,185,129,0.1)",
+                    yAxisID: "y2", tension: 0.3, fill: false, pointRadius: 4,
+                },
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: "top" } },
+            scales: {
+                x:  { title: { display: true, text: "k (clusters)" }, ticks: { color: "#475569" } },
+                y1: { position: "left",  title: { display: true, text: "Inertia"    }, ticks: { color: "#6366f1" } },
+                y2: { position: "right", title: { display: true, text: "Silhouette" }, ticks: { color: "#10b981" }, grid: { drawOnChartArea: false } },
+            }
+        }
+    });
+}
+
+function renderSegScatter(data, clusters) {
+    const el = document.getElementById("seg-scatter");
+    const palette = ["#6366f1","#10b981","#f59e0b","#ef4444","#06b6d4","#a78bfa","#34d399","#fbbf24","#fb923c","#e879f9"];
+
+    // Group by cluster
+    const byCluster = {};
+    data.forEach(p => {
+        const cid = p.cluster_id;
+        if (!byCluster[cid]) byCluster[cid] = { x: [], y: [], text: [], cid };
+        byCluster[cid].x.push(p.pca_x);
+        byCluster[cid].y.push(p.pca_y);
+        byCluster[cid].text.push(
+            `${p.customer_name || p.customer_id}<br>` +
+            `Monetary: $${(p.monetary_total||0).toLocaleString()}<br>` +
+            `Frequency: ${p.frequency}<br>Recency: ${p.recency_days}d`
+        );
+    });
+
+    const labelMap = {};
+    clusters.forEach(c => { labelMap[c.cluster_id] = c.cluster_label; });
+
+    const traces = Object.values(byCluster).map((g, i) => ({
+        type: "scatter", mode: "markers",
+        name: labelMap[g.cid] || `Cluster ${g.cid}`,
+        x: g.x, y: g.y,
+        text: g.text, hovertemplate: "%{text}<extra></extra>",
+        marker: {
+            size: 7, opacity: 0.75,
+            color: palette[i % palette.length],
+            line: { width: 0.5, color: "#080c14" }
+        }
+    }));
+
+    const layout = Object.assign({}, PLOTLY_LAYOUT, {
+        margin: { l: 50, r: 20, t: 20, b: 50 },
+        xaxis: { title: { text: "PC1", font: { color: "#94a3b8" } }, zeroline: false },
+        yaxis: { title: { text: "PC2", font: { color: "#94a3b8" } }, zeroline: false },
+        legend: { font: { color: "#94a3b8" } },
+    });
+
+    Plotly.react(el, traces, layout, { responsive: true, displayModeBar: false });
+    el._isPlotly = true;
+}
+
+function renderSegProfiles(clusters) {
+    const tbody = document.getElementById("seg-profiles-tbody");
+    tbody.innerHTML = clusters.map(c => `
+      <tr>
+        <td>${c.cluster_id}</td>
+        <td><strong>${c.cluster_label}</strong></td>
+        <td>${c.size.toLocaleString()}</td>
+        <td>${c.pct_of_customers?.toFixed(1)}%</td>
+        <td style="text-align:right">$${(c.monetary_total_mean||0).toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+        <td style="text-align:right">${(c.frequency_mean||0).toFixed(1)}</td>
+        <td style="text-align:right">${(c.recency_days_mean||0).toFixed(0)}</td>
+        <td style="text-align:right">$${(c.avg_order_value_mean||0).toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+        <td style="text-align:right">${(c.product_variety_mean||0).toFixed(1)}</td>
+        <td style="text-align:right">${(c.purchase_span_mean||0).toFixed(0)}</td>
+      </tr>`).join("");
+}
+
+function renderSegCustomers(customers) {
+    const tbody = document.getElementById("seg-customers-tbody");
+    tbody.innerHTML = customers.map((c, i) => `
+      <tr>
+        <td>${rankBadge(i)}</td>
+        <td>${c.customer_id}</td>
+        <td>${c.customer_name || "—"}</td>
+        <td><span class="badge badge-purple">${c.cluster_label}</span></td>
+        <td style="text-align:right">$${(c.monetary_total||0).toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+        <td style="text-align:right">${c.frequency}</td>
+        <td style="text-align:right">${c.recency_days}</td>
+        <td style="text-align:right">$${(c.avg_order_value||0).toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+        <td>${c.state||"—"}</td>
+        <td>${c.age_group||"—"}</td>
+      </tr>`).join("");
+}
+
+async function filterSegCustomers() {
+    const sel = document.getElementById("seg-cluster-filter");
+    const cid = sel.value;
+    let url = `${API}/api/segmentation/customers?limit=200`;
+    if (cid !== "") url += `&cluster_id=${cid}`;
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        renderSegCustomers(data.data || []);
+    } catch(e) {}
+}
+
+// ── Store Performance ─────────────────────────────────────────────────────────
+let _storeData = [];
+
+async function loadStores() {
+    document.getElementById("store-kpis").innerHTML = skeletonKPIs(4);
+    try {
+        const [sumRes, topRes, yoyRes] = await Promise.all([
+            fetch(`${API}/api/store/summary`),
+            fetch(`${API}/api/store/stores?limit=50`),
+            fetch(`${API}/api/store/yoy/all`),
+        ]);
+        if (!sumRes.ok) throw new Error("Run store_performance.py first.");
+
+        const [sum, storesData, yoy] = await Promise.all([
+            sumRes.json(), topRes.json(), yoyRes.json()
+        ]);
+
+        _storeData = storesData.data || [];
+
+        // Badge
+        document.getElementById("store-count-badge").textContent = `${sum.total_stores} stores`;
+
+        // KPIs
+        const kpis = [
+            { icon:"🏪", label:"Total Stores",    val: sum.total_stores,   fmt: v => v },
+            { icon:"💰", label:"Total Revenue",   val: sum.total_revenue,  fmt: v => "$" + v?.toLocaleString(undefined,{maximumFractionDigits:0}) },
+            { icon:"🏆", label:"Top Store Share", val: sum.top_store_share,fmt: v => v?.toFixed(1) + "%" },
+            { icon:"🛒", label:"Overall AOV",     val: sum.overall_aov,    fmt: v => "$" + v?.toFixed(2) },
+        ];
+        document.getElementById("store-kpis").innerHTML = kpis.map(k => `
+          <div class="kpi-card">
+            <div class="kpi-icon">${k.icon}</div>
+            <div class="kpi-label">${k.label}</div>
+            <div class="kpi-value">${k.fmt(k.val)}</div>
+          </div>`).join("");
+
+        // Revenue bar (Plotly horizontal)
+        renderStoreRevBar(_storeData.slice(0, 15));
+
+        // Market share donut
+        const donut = sum.donut || {};
+        makeDonut("store-donut-chart", donut.labels || [], donut.values || [], "Market Share");
+
+        // YoY chart
+        renderStoreYoY(yoy, _storeData.slice(0, 5).map(s => s.store_name));
+
+        // Quarterly chart
+        const qData = sum.quarterly || [];
+        makeBar("store-quarter-chart",
+            qData.map(q => "Q" + q.quarter),
+            qData.map(q => q.total_revenue),
+            "Revenue", ["#6366f1","#10b981","#f59e0b","#06b6d4"]);
+
+        // Populate store selector for top-products panel
+        const sel = document.getElementById("store-product-selector");
+        sel.innerHTML = '<option value="">— select store —</option>' +
+            _storeData.map(s =>
+                `<option value="${s.store_id}">${s.store_name}</option>`
+            ).join("");
+
+        // League table
+        renderStoreLeague(_storeData);
+
+    } catch(e) {
+        document.getElementById("store-kpis").innerHTML =
+            `<div class="kpi-card" style="grid-column:1/-1;color:#ef4444">${e.message}</div>`;
+    }
+}
+
+function renderStoreRevBar(stores) {
+    const el = document.getElementById("store-rev-chart");
+    const names = stores.map(s => s.store_name).reverse();
+    const revs  = stores.map(s => s.total_revenue).reverse();
+    const tiers = stores.map(s => s.tier).reverse();
+    const colors = tiers.map(t => t==="A"?"#10b981":t==="B"?"#6366f1":"#64748b");
+
+    const trace = {
+        type: "bar", orientation: "h",
+        x: revs, y: names,
+        marker: { color: colors.reverse(), opacity: 0.85 },
+        hovertemplate: "<b>%{y}</b><br>Revenue: $%{x:,.0f}<extra></extra>",
+    };
+    const layout = Object.assign({}, PLOTLY_LAYOUT, {
+        margin: { l: 175, r: 30, t: 20, b: 50 },
+        xaxis: { tickformat: "$,.0f", gridcolor: "rgba(255,255,255,0.04)" },
+        yaxis: { tickfont: { size: 11 } },
+    });
+    Plotly.react(el, [trace], layout, { responsive: true, displayModeBar: false });
+    el._isPlotly = true;
+}
+
+function renderStoreYoY(yoy, topStoreNames) {
+    const ctx = document.getElementById("store-yoy-chart").getContext("2d");
+    if (window._storeYoYChart) window._storeYoYChart.destroy();
+
+    const years  = yoy.years || [];
+    const records = yoy.data || [];
+    const palette = ["#6366f1","#10b981","#f59e0b","#ef4444","#06b6d4"];
+
+    const datasets = topStoreNames.map((name, i) => {
+        const storeRecs = records.filter(r => r.store_name === name);
+        const revenueByYear = {};
+        storeRecs.forEach(r => { revenueByYear[r.year] = r.revenue; });
+        return {
+            label: name,
+            data : years.map(y => revenueByYear[y] || 0),
+            backgroundColor: palette[i % palette.length],
+            borderRadius: 4,
+        };
+    });
+
+    window._storeYoYChart = new Chart(ctx, {
+        type: "bar",
+        data: { labels: years, datasets },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: "top", labels: { font: { size: 10 } } } },
+            scales: {
+                x: { stacked: false, ticks: { color: "#475569" } },
+                y: { ticks: { color: "#475569", callback: v => "$" + (v/1000).toFixed(0)+"k" } }
+            }
+        }
+    });
+}
+
+function renderStoreLeague(stores) {
+    const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const tbody = document.getElementById("store-league-tbody");
+    tbody.innerHTML = stores.map((s, i) => {
+        const tierCls = s.tier==="A"?"badge-a":s.tier==="B"?"badge-b":"badge-c";
+        const bm = s.best_month_month
+            ? MONTHS[(s.best_month_month||1)-1] + " " + (s.best_month_year||"")
+            : "—";
+        return `<tr>
+          <td>${rankBadge(i)}</td>
+          <td><strong>${s.store_name}</strong></td>
+          <td>${s.country||"—"}</td>
+          <td><span class="badge ${tierCls}">Tier ${s.tier}</span></td>
+          <td style="text-align:right">$${(s.total_revenue||0).toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+          <td style="text-align:right">${(s.market_share_pct||0).toFixed(1)}%</td>
+          <td style="text-align:right">${(s.total_txns||0).toLocaleString()}</td>
+          <td style="text-align:right">$${(s.avg_order_value||0).toFixed(2)}</td>
+          <td style="text-align:right">${(s.unique_customers||0).toLocaleString()}</td>
+          <td style="text-align:right">${bm}</td>
+        </tr>`;
+    }).join("");
+}
+
+async function loadStoreProducts() {
+    const sel      = document.getElementById("store-product-selector");
+    const storeId  = sel.value;
+    const title    = document.getElementById("store-product-title");
+    if (!storeId) return;
+    title.textContent = "Loading…";
+    try {
+        const res  = await fetch(`${API}/api/store/products/${storeId}?n=10`);
+        const data = await res.json();
+        title.textContent = data.store_name || storeId;
+        document.getElementById("store-products-tbody").innerHTML =
+            (data.products || []).map((p, i) => `
+              <tr>
+                <td>${rankBadge(i)}</td>
+                <td>${p.product_name}</td>
+                <td style="text-align:right">$${(p.revenue||0).toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+                <td style="text-align:right">${(p.units||0).toLocaleString()}</td>
+                <td style="text-align:right">${(p.txns||0).toLocaleString()}</td>
+              </tr>`).join("");
+    } catch(e) {
+        title.textContent = "Error loading products";
+    }
+}
+
+function filterStoreTable() {
+    const tier = document.getElementById("store-tier-filter").value;
+    const filtered = tier ? _storeData.filter(s => s.tier === tier) : _storeData;
+    renderStoreLeague(filtered);
+}
+
+// ── Recommendations ───────────────────────────────────────────────────────────
+let _recMeta = null;
+
+async function loadRecommendations() {
+    try {
+        const res  = await fetch(`${API}/api/recommendations/summary`);
+        const data = await res.json();
+        _recMeta   = data;
+
+        // Badge
+        document.getElementById("rec-coverage-badge").textContent =
+            `${data.customers_served?.toLocaleString()} customers · 100% coverage`;
+
+        // KPIs
+        const kpis = [
+            { icon:"🛍️", label:"Products",          val: data.n_products?.toLocaleString() },
+            { icon:"👥", label:"Customers Served",   val: data.customers_served?.toLocaleString() },
+            { icon:"🔗", label:"Purchase Pairs",     val: data.n_pairs?.toLocaleString() },
+            { icon:"📊", label:"Matrix Sparsity",    val: data.sparsity_pct?.toFixed(1) + "%" },
+            { icon:"🎯", label:"Avg Similarity",     val: data.avg_similarity?.toFixed(4) },
+            { icon:"📋", label:"Recs / Customer",    val: data.avg_recs_per_customer?.toFixed(1) },
+        ];
+        document.getElementById("rec-kpis").innerHTML = kpis.map(k => `
+            <div class="kpi-card">
+                <div class="kpi-icon">${k.icon}</div>
+                <div class="label">${k.label}</div>
+                <div class="value">${k.val ?? "—"}</div>
+            </div>`).join("");
+
+        // Top recommended products bar
+        const top = (data.top_recommended || []).slice(0, 12);
+        const topLabels = top.map(p => (p.product_name || p.product_id || "—").substring(0, 28));
+        const topVals   = top.map(p => p.recommendation_count);
+        makeBar("rec-top-chart", topLabels, topVals, "Customers Recommended To",
+            top.map((_, i) => `hsl(${230 + i * 7}, 70%, 60%)`));
+
+        // Popular products bar
+        const pop = (data.popular_products || []).slice(0, 12);
+        const popLabels = pop.map(p => (p.product_name || p.product_id || "—").substring(0, 28));
+        const popVals   = pop.map(p => p.unique_buyers);
+        makeBar("rec-popular-chart", popLabels, popVals, "Unique Buyers",
+            pop.map((_, i) => `hsl(${160 + i * 6}, 65%, 55%)`));
+
+    } catch (e) {
+        console.warn("loadRecommendations:", e);
+        document.getElementById("rec-kpis").innerHTML =
+            `<p style="color:#ef4444">Failed to load recommendations data.</p>`;
+    }
+}
+
+async function lookupCustomerRec() {
+    const custId = document.getElementById("rec-cust-input").value.trim();
+    if (!custId) return;
+    const label  = document.getElementById("rec-cust-label");
+    const tbody  = document.getElementById("rec-cust-tbody");
+    label.textContent = "Loading…";
+    try {
+        const res  = await fetch(`${API}/api/recommendations/customer/${encodeURIComponent(custId)}`);
+        const data = await res.json();
+        if (!res.ok) { label.textContent = `Not found`; return; }
+
+        if (data.found) {
+            label.textContent = `${data.customer_name || custId}`;
+        } else {
+            label.textContent = `Customer not found — showing popular products`;
+        }
+
+        const recs = data.recommendations || [];
+        tbody.innerHTML = recs.length
+            ? recs.map((r, i) => `<tr>
+                <td>${r.rank ?? i + 1}</td>
+                <td><code>${r.product_id || "—"}</code></td>
+                <td>${r.product_name || r.product_id || "—"}</td>
+                <td>${(r.rec_score ?? r.total_qty ?? "—")}</td>
+              </tr>`).join("")
+            : `<tr><td colspan="4" style="color:#64748b">No recommendations found.</td></tr>`;
+    } catch (e) {
+        label.textContent = "Error fetching recommendations.";
+    }
+}
+
+async function lookupSimilarProducts() {
+    const prodId = document.getElementById("rec-prod-input").value.trim();
+    if (!prodId) return;
+    const label  = document.getElementById("rec-prod-label");
+    const tbody  = document.getElementById("rec-prod-tbody");
+    label.textContent = "Loading…";
+    try {
+        const res  = await fetch(`${API}/api/recommendations/product/${encodeURIComponent(prodId)}`);
+        if (!res.ok) {
+            label.textContent = `Product not found.`;
+            tbody.innerHTML = `<tr><td colspan="4" style="color:#64748b">No data.</td></tr>`;
+            return;
+        }
+        const data = await res.json();
+        label.textContent = data.product_name || prodId;
+        const similar = data.similar || [];
+        tbody.innerHTML = similar.length
+            ? similar.map((s, i) => `<tr>
+                <td>${i + 1}</td>
+                <td><code>${s.product_id || "—"}</code></td>
+                <td>${s.product_name || "—"}</td>
+                <td>${s.similarity?.toFixed(4) ?? "—"}</td>
+              </tr>`).join("")
+            : `<tr><td colspan="4" style="color:#64748b">No similar products found.</td></tr>`;
+    } catch (e) {
+        label.textContent = "Error fetching similar products.";
+    }
+}
+
 // ── Boot — load all tabs in parallel ─────────────────────────────────────────
 (async () => {
     await Promise.allSettled([
@@ -2041,7 +4739,14 @@ async function lookupJourney() {
         loadSHAP(),
         loadForecast(),
         loadElasticity(),
-        loadJourney()
+        loadJourney(),
+        loadInventory(),
+        loadGeo(),
+        loadAnomaly(),
+        loadSeasonality(),
+        loadSegmentation(),
+        loadStores(),
+        loadRecommendations(),
     ]);
 })();
 </script>

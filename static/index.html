@@ -4,571 +4,1163 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Retail Analytics API</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:'Segoe UI',sans-serif;background:#0a0d1a;color:#e0e0e0;min-height:100vh;}
+        :root {
+            --bg-base:    #080c14;
+            --bg-card:    #0f1520;
+            --bg-hover:   #141d2e;
+            --border:     rgba(255,255,255,0.07);
+            --accent:     #6366f1;
+            --accent2:    #10b981;
+            --amber:      #f59e0b;
+            --red:        #ef4444;
+            --cyan:       #06b6d4;
+            --text-primary: #e2e8f0;
+            --text-muted:   #64748b;
+            --text-dim:     #334155;
+        }
 
-        /* ── HERO ── */
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg-base);color:var(--text-primary);min-height:100vh;overflow-x:hidden;}
+
+        /* ── HERO ────────────────────────────────────────────────── */
         .hero{
-            background:linear-gradient(135deg,#0d1433 0%,#1a2560 50%,#0d1433 100%);
-            padding:60px 40px 50px;
+            background:linear-gradient(135deg,#060a14 0%,#0d1533 40%,#0f1a3a 60%,#060a14 100%);
+            padding:64px 48px 52px;
             text-align:center;
-            border-bottom:1px solid #1e2a50;
+            border-bottom:1px solid var(--border);
             position:relative;
             overflow:hidden;
         }
         .hero::before{
             content:'';position:absolute;inset:0;
-            background:radial-gradient(ellipse at 50% 0%, rgba(68,114,196,0.18) 0%, transparent 70%);
+            background:
+                radial-gradient(ellipse 80% 60% at 50% -20%, rgba(99,102,241,0.18) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 30% at 20% 80%, rgba(16,185,129,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 30% at 80% 80%, rgba(6,182,212,0.06) 0%, transparent 60%);
         }
-        .hero h1{font-size:2.6rem;font-weight:800;letter-spacing:2px;position:relative;}
-        .hero h1 span{color:#4472C4;}
-        .hero p{margin-top:12px;color:#8899bb;font-size:1rem;position:relative;}
-        .badge-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;position:relative;}
-        .badge{padding:4px 14px;border-radius:20px;font-size:0.75rem;font-weight:700;letter-spacing:.5px;}
-        .badge-blue{background:#1e3a6e;color:#7eb3ff;border:1px solid #2d4f8e;}
-        .badge-green{background:#1a3d1a;color:#7dcc7d;border:1px solid #2a5c2a;}
-        .badge-orange{background:#3d2a10;color:#ffaa55;border:1px solid #5c3f1a;}
-        .badge-purple{background:#2d1a4a;color:#bb88ff;border:1px solid #4a2d7a;}
+        .hero-eyebrow{
+            display:inline-block;
+            background:rgba(99,102,241,0.12);
+            border:1px solid rgba(99,102,241,0.25);
+            color:#818cf8;
+            font-size:0.7rem;font-weight:700;letter-spacing:2px;
+            padding:4px 14px;border-radius:20px;
+            margin-bottom:20px;
+            position:relative;
+        }
+        .hero h1{
+            font-size:3rem;font-weight:800;letter-spacing:-1px;
+            position:relative;
+            background:linear-gradient(135deg,#fff 30%,#818cf8 60%,#10b981 100%);
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+        }
+        .hero-sub{
+            margin-top:14px;color:var(--text-muted);font-size:0.95rem;
+            position:relative;max-width:600px;margin-left:auto;margin-right:auto;line-height:1.6;
+        }
+        .badge-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:24px;position:relative;}
+        .badge{
+            padding:3px 12px;border-radius:20px;font-size:0.7rem;font-weight:700;
+            letter-spacing:.4px;border:1px solid;
+        }
+        .badge-blue  {background:rgba(99,102,241,0.1);  color:#818cf8;border-color:rgba(99,102,241,0.25);}
+        .badge-green {background:rgba(16,185,129,0.1);  color:#34d399;border-color:rgba(16,185,129,0.25);}
+        .badge-amber {background:rgba(245,158,11,0.1);  color:#fbbf24;border-color:rgba(245,158,11,0.25);}
+        .badge-red   {background:rgba(239,68,68,0.1);   color:#f87171;border-color:rgba(239,68,68,0.25);}
+        .badge-cyan  {background:rgba(6,182,212,0.1);   color:#22d3ee;border-color:rgba(6,182,212,0.25);}
+        .badge-purple{background:rgba(167,139,250,0.1); color:#a78bfa;border-color:rgba(167,139,250,0.25);}
+        .badge-orange{background:rgba(251,146,60,0.1);  color:#fb923c;border-color:rgba(251,146,60,0.25);}
 
-        /* ── STATUS BAR ── */
+        /* ── HERO LINKS ──────────────────────────────────────────── */
+        .hero-links{
+            display:flex;gap:12px;justify-content:center;margin-top:28px;position:relative;
+        }
+        .hero-btn{
+            display:inline-flex;align-items:center;gap:8px;
+            padding:10px 24px;border-radius:8px;font-size:0.85rem;font-weight:700;
+            text-decoration:none;transition:all .2s;border:1px solid;
+        }
+        .hero-btn-primary{
+            background:var(--accent);color:#fff;border-color:var(--accent);
+        }
+        .hero-btn-primary:hover{background:#4f46e5;transform:translateY(-1px);}
+        .hero-btn-secondary{
+            background:rgba(255,255,255,0.04);color:var(--text-primary);border-color:var(--border);
+        }
+        .hero-btn-secondary:hover{background:rgba(255,255,255,0.08);transform:translateY(-1px);}
+
+        /* ── STATUS BAR ──────────────────────────────────────────── */
         .status-bar{
-            background:#0f1428;
-            border-bottom:1px solid #1e2a50;
-            padding:12px 40px;
-            display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+            background:#0a0f1d;
+            border-bottom:1px solid var(--border);
+            padding:10px 40px;
+            display:flex;align-items:center;gap:0;flex-wrap:wrap;
+            overflow-x:auto;
         }
-        .status-item{display:flex;align-items:center;gap:8px;font-size:0.82rem;}
-        .dot{width:8px;height:8px;border-radius:50%;background:#70AD47;
-             box-shadow:0 0 6px #70AD47;animation:pulse 2s infinite;}
-        @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-        .dot.red{background:#e74c3c;box-shadow:0 0 6px #e74c3c;}
-        .dot.yellow{background:#FFC000;box-shadow:0 0 6px #FFC000;}
-        .status-label{color:#888;}
-        .status-val{color:#fff;font-weight:600;}
-
-        /* ── MAIN LAYOUT ── */
-        .container{max-width:1300px;margin:0 auto;padding:36px 32px;}
-
-        /* ── SECTION HEADERS ── */
-        .section-header{
-            display:flex;align-items:center;gap:12px;
-            margin:36px 0 18px;
+        .status-item{
+            display:flex;align-items:center;gap:6px;
+            font-size:0.75rem;
+            padding:4px 14px;
+            border-right:1px solid var(--border);
         }
-        .section-header h2{font-size:1.1rem;font-weight:700;color:#fff;}
-        .section-header .line{flex:1;height:1px;background:#1e2a50;}
+        .status-item:last-child{border-right:none;}
+        .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+        .dot-green{background:#10b981;box-shadow:0 0 6px rgba(16,185,129,0.6);}
+        .dot-yellow{background:#f59e0b;box-shadow:0 0 6px rgba(245,158,11,0.5);}
+        .dot-red{background:#ef4444;box-shadow:0 0 6px rgba(239,68,68,0.6);}
+        @keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:.4;}}
+        .dot-pulse{animation:pulse-dot 2s infinite;}
+        .status-label{color:var(--text-muted);font-size:0.7rem;}
+        .status-val{color:var(--text-primary);font-weight:600;font-size:0.7rem;}
+        .status-links{margin-left:auto;display:flex;gap:12px;align-items:center;padding-left:14px;flex-shrink:0;}
+        .status-links a{
+            color:var(--text-muted);font-size:0.72rem;text-decoration:none;
+            padding:3px 10px;border:1px solid var(--border);border-radius:4px;
+            transition:all .15s;
+        }
+        .status-links a:hover{color:var(--text-primary);border-color:var(--accent);}
 
-        /* ── KPI STRIP ── */
-        .kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:32px;}
-        .kpi{background:#111827;border:1px solid #1e2a50;border-radius:10px;padding:16px 18px;
-             transition:transform .2s,border-color .2s;}
-        .kpi:hover{transform:translateY(-3px);border-color:#4472C4;}
-        .kpi .ico{font-size:1.4rem;margin-bottom:6px;}
-        .kpi .val{font-size:1.6rem;font-weight:800;color:#fff;}
-        .kpi .lbl{font-size:0.72rem;color:#666;text-transform:uppercase;letter-spacing:.8px;margin-top:3px;}
-        .kpi.loading .val{color:#333;animation:shimmer 1.5s infinite;}
-        @keyframes shimmer{0%,100%{opacity:.3;}50%{opacity:.8;}}
+        /* ── MAIN ────────────────────────────────────────────────── */
+        .container{max-width:1400px;margin:0 auto;padding:36px 32px;}
 
-        /* ── ENDPOINT GRID ── */
-        .endpoint-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;}
+        /* ── SECTION HEADER ──────────────────────────────────────── */
+        .section-hdr{
+            display:flex;align-items:center;gap:14px;
+            margin:44px 0 20px;
+        }
+        .section-hdr-icon{
+            width:34px;height:34px;border-radius:8px;display:flex;align-items:center;
+            justify-content:center;font-size:1rem;flex-shrink:0;
+        }
+        .section-hdr h2{font-size:1rem;font-weight:700;color:var(--text-primary);}
+        .section-hdr .line{flex:1;height:1px;background:var(--border);}
+        .section-hdr .count-pill{
+            font-size:0.7rem;color:var(--text-muted);
+            background:var(--bg-card);border:1px solid var(--border);
+            padding:2px 10px;border-radius:10px;white-space:nowrap;
+        }
 
-        /* ── MODULE CARD ── */
-        .module-card{background:#111827;border:1px solid #1e2a50;border-radius:12px;overflow:hidden;
-                     transition:border-color .2s,transform .2s;}
-        .module-card:hover{border-color:#4472C4;transform:translateY(-2px);}
-        .module-header{padding:16px 18px;display:flex;align-items:center;gap:12px;
-                       border-bottom:1px solid #1e2a50;}
-        .module-icon{font-size:1.5rem;}
-        .module-title{font-size:1rem;font-weight:700;color:#fff;}
-        .module-desc{font-size:0.75rem;color:#666;margin-top:2px;}
-        .endpoint-list{padding:10px 0;}
-        .ep{display:flex;align-items:center;gap:10px;padding:8px 18px;
-            cursor:pointer;transition:background .15s;text-decoration:none;}
-        .ep:hover{background:#1a2040;}
-        .method{font-size:0.65rem;font-weight:800;padding:2px 7px;border-radius:4px;
-                min-width:40px;text-align:center;letter-spacing:.5px;}
-        .get {background:#0d3a2a;color:#4ec994;border:1px solid #1a5c3e;}
-        .post{background:#2a1a3a;color:#bb88ff;border:1px solid #4a2d6a;}
-        .ep-path{font-size:0.78rem;color:#8899bb;font-family:'Courier New',monospace;}
-        .ep-desc{font-size:0.7rem;color:#555;margin-left:auto;text-align:right;max-width:120px;}
+        /* ── KPI STRIP ───────────────────────────────────────────── */
+        .kpi-strip{
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(155px,1fr));
+            gap:12px;
+            margin-bottom:8px;
+        }
+        .kpi{
+            background:var(--bg-card);border:1px solid var(--border);
+            border-radius:10px;padding:16px 18px;
+            transition:transform .2s,border-color .2s;
+            position:relative;overflow:hidden;
+        }
+        .kpi::before{
+            content:'';position:absolute;inset:0;
+            background:radial-gradient(ellipse at top right, var(--kpi-color, rgba(99,102,241,0.06)) 0%, transparent 60%);
+        }
+        .kpi:hover{transform:translateY(-2px);border-color:var(--accent);}
+        .kpi .ico{font-size:1.2rem;margin-bottom:8px;position:relative;}
+        .kpi .val{font-size:1.5rem;font-weight:800;color:#fff;position:relative;line-height:1;}
+        .kpi .lbl{font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;
+                  letter-spacing:.7px;margin-top:5px;position:relative;}
+        .kpi .sub{font-size:0.68rem;color:var(--text-dim);margin-top:2px;position:relative;}
+        @keyframes shimmer-kpi{0%,100%{opacity:.25;}50%{opacity:.6;}}
+        .kpi.loading .val{color:var(--bg-hover);background:var(--bg-hover);
+            border-radius:4px;animation:shimmer-kpi 1.5s infinite;}
 
-        /* ── TRY IT PANEL ── */
+        /* ── ARCHITECTURE STRIP ──────────────────────────────────── */
+        .arch-strip{
+            display:flex;align-items:center;gap:0;
+            background:var(--bg-card);border:1px solid var(--border);
+            border-radius:12px;padding:20px 28px;
+            overflow-x:auto;margin-bottom:8px;
+        }
+        .arch-node{
+            display:flex;flex-direction:column;align-items:center;gap:6px;
+            min-width:80px;
+            text-align:center;flex-shrink:0;
+        }
+        .arch-node .arch-icon{
+            width:44px;height:44px;border-radius:10px;
+            display:flex;align-items:center;justify-content:center;
+            font-size:1.3rem;border:1px solid var(--border);
+            background:var(--bg-base);
+        }
+        .arch-node .arch-label{font-size:0.65rem;color:var(--text-muted);font-weight:600;letter-spacing:.3px;}
+        .arch-node .arch-sub{font-size:0.6rem;color:var(--text-dim);}
+        .arch-arrow{
+            color:var(--text-dim);font-size:1.2rem;
+            padding:0 8px;flex-shrink:0;
+        }
+
+        /* ── ENDPOINT GRID ───────────────────────────────────────── */
+        .endpoint-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+            gap:14px;
+        }
+
+        /* ── MODULE CARD ─────────────────────────────────────────── */
+        .module-card{
+            background:var(--bg-card);border:1px solid var(--border);
+            border-radius:12px;overflow:hidden;
+            transition:border-color .2s,transform .2s,box-shadow .2s;
+        }
+        .module-card:hover{
+            border-color:rgba(99,102,241,0.35);
+            transform:translateY(-2px);
+            box-shadow:0 8px 30px rgba(0,0,0,0.4);
+        }
+        .module-header{
+            padding:14px 18px;display:flex;align-items:center;gap:12px;
+            border-bottom:1px solid var(--border);
+        }
+        .module-icon{font-size:1.4rem;flex-shrink:0;}
+        .module-title{font-size:0.9rem;font-weight:700;color:#fff;}
+        .module-desc{font-size:0.72rem;color:var(--text-muted);margin-top:2px;line-height:1.4;}
+        .module-tag{
+            font-size:0.62rem;font-weight:700;letter-spacing:.4px;
+            padding:2px 8px;border-radius:10px;border:1px solid;
+            display:inline-block;margin-left:4px;vertical-align:middle;
+        }
+        .module-stat{
+            font-size:0.68rem;color:var(--text-dim);
+            margin-top:5px;display:flex;gap:10px;flex-wrap:wrap;
+        }
+        .module-stat span{
+            display:flex;align-items:center;gap:3px;
+        }
+        .endpoint-list{padding:8px 0;}
+        .ep{
+            display:flex;align-items:center;gap:10px;padding:7px 18px;
+            cursor:pointer;transition:background .15s;text-decoration:none;
+        }
+        .ep:hover{background:var(--bg-hover);}
+        .method{
+            font-size:0.6rem;font-weight:800;padding:2px 6px;border-radius:4px;
+            min-width:36px;text-align:center;letter-spacing:.5px;flex-shrink:0;
+        }
+        .get {background:rgba(16,185,129,0.12);color:#34d399;border:1px solid rgba(16,185,129,0.25);}
+        .post{background:rgba(167,139,250,0.12);color:#a78bfa;border:1px solid rgba(167,139,250,0.25);}
+        .ep-path{font-size:0.75rem;color:#94a3b8;font-family:'JetBrains Mono','Courier New',monospace;}
+        .ep-desc{font-size:0.68rem;color:var(--text-dim);margin-left:auto;text-align:right;max-width:110px;flex-shrink:0;}
+
+        /* ── TRY IT ──────────────────────────────────────────────── */
         .try-panel{
-            background:#111827;border:1px solid #1e2a50;border-radius:12px;
-            padding:24px;margin-top:32px;
+            background:var(--bg-card);border:1px solid var(--border);
+            border-radius:12px;padding:24px;
         }
-        .try-panel h3{font-size:1rem;font-weight:700;color:#fff;margin-bottom:16px;}
-        .try-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
-        .try-row select,.try-row input{
-            background:#0a0d1a;border:1px solid #2d3a5a;border-radius:6px;
-            color:#e0e0e0;padding:9px 12px;font-size:0.84rem;
+        .try-panel h3{font-size:0.9rem;font-weight:700;color:#fff;margin-bottom:16px;}
+        .try-row{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+        .try-method-sel{
+            background:var(--bg-base);border:1px solid var(--border);
+            border-radius:6px;color:var(--text-primary);padding:8px 12px;
+            font-size:0.82rem;min-width:90px;
         }
-        .try-row select{min-width:100px;}
-        .try-row input{flex:1;min-width:220px;}
+        .try-input{
+            flex:1;min-width:220px;
+            background:var(--bg-base);border:1px solid var(--border);
+            border-radius:6px;color:var(--text-primary);padding:8px 12px;
+            font-size:0.82rem;font-family:'JetBrains Mono','Courier New',monospace;
+            transition:border-color .2s;
+        }
+        .try-input:focus{outline:none;border-color:var(--accent);}
         .btn{
-            background:#4472C4;color:#fff;border:none;border-radius:6px;
-            padding:9px 22px;font-size:0.84rem;font-weight:700;cursor:pointer;
-            transition:background .2s;
+            background:var(--accent);color:#fff;border:none;border-radius:6px;
+            padding:8px 20px;font-size:0.82rem;font-weight:700;cursor:pointer;
+            transition:background .2s,transform .1s;font-family:'Inter',sans-serif;
         }
-        .btn:hover{background:#2d5aad;}
-        .btn.red{background:#c0392b;}
-        .btn.red:hover{background:#a93226;}
+        .btn:hover{background:#4f46e5;transform:translateY(-1px);}
+        .btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text-muted);}
+        .btn.ghost:hover{background:var(--bg-hover);color:var(--text-primary);}
         .response-box{
-            background:#060810;border:1px solid #1e2a50;border-radius:8px;
-            padding:16px;margin-top:14px;font-family:'Courier New',monospace;
-            font-size:0.78rem;color:#7dcc7d;min-height:80px;max-height:320px;
+            background:#030508;border:1px solid var(--border);border-radius:8px;
+            padding:16px;margin-top:12px;font-family:'JetBrains Mono','Courier New',monospace;
+            font-size:0.75rem;color:#34d399;min-height:60px;max-height:360px;
             overflow-y:auto;white-space:pre-wrap;word-break:break-all;
-            display:none;
+            display:none;line-height:1.6;
         }
         .response-box.visible{display:block;}
-        .response-box.error{color:#e74c3c;}
-
-        /* ── CHURN SECTION ── */
-        .churn-form{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
-        .form-group label{display:block;font-size:0.72rem;color:#666;
-                          text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
-        .form-group input{
-            width:100%;background:#0a0d1a;border:1px solid #2d3a5a;
-            border-radius:6px;color:#e0e0e0;padding:8px 10px;font-size:0.84rem;
+        .response-box.error{color:#f87171;}
+        .response-meta{
+            font-size:0.68rem;color:var(--text-dim);margin-bottom:6px;
+            font-family:'Inter',sans-serif;display:flex;gap:12px;
         }
+        .response-meta span{color:var(--text-muted);}
+
+        /* ── CHURN PREDICTOR ─────────────────────────────────────── */
+        .churn-form{
+            display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;
+            margin-top:16px;
+        }
+        .form-group label{
+            display:block;font-size:0.68rem;color:var(--text-muted);
+            text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;font-weight:600;
+        }
+        .form-group input{
+            width:100%;background:var(--bg-base);border:1px solid var(--border);
+            border-radius:6px;color:var(--text-primary);padding:8px 10px;
+            font-size:0.84rem;transition:border-color .2s;font-family:'Inter',sans-serif;
+        }
+        .form-group input:focus{outline:none;border-color:var(--accent);}
         .churn-result{
-            background:#060810;border:1px solid #1e2a50;border-radius:10px;
-            padding:20px;margin-top:16px;display:none;
+            background:var(--bg-base);border:1px solid var(--border);border-radius:10px;
+            padding:24px;margin-top:16px;display:none;
         }
         .churn-result.visible{display:block;}
-        .churn-prob{font-size:2.4rem;font-weight:800;text-align:center;}
+        .churn-prob{font-size:2.8rem;font-weight:800;text-align:center;line-height:1;}
         .risk-badge{
-            display:inline-block;padding:4px 16px;border-radius:20px;
-            font-size:0.8rem;font-weight:700;margin-top:8px;
+            display:inline-block;padding:5px 18px;border-radius:20px;
+            font-size:0.8rem;font-weight:700;margin-top:10px;
         }
 
-        /* ── FOOTER ── */
-        footer{text-align:center;padding:28px;color:#333;font-size:0.78rem;
-               border-top:1px solid #1a2040;margin-top:40px;}
+        /* ── FOOTER ──────────────────────────────────────────────── */
+        footer{
+            text-align:center;padding:28px 32px;
+            color:var(--text-dim);font-size:0.75rem;
+            border-top:1px solid var(--border);margin-top:48px;
+            display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;
+        }
+        footer a{color:var(--text-muted);text-decoration:none;transition:color .15s;}
+        footer a:hover{color:var(--text-primary);}
 
-        @media(max-width:600px){
-            .hero h1{font-size:1.6rem;}
+        @media(max-width:700px){
+            .hero{padding:40px 20px 36px;}
+            .hero h1{font-size:1.8rem;}
             .container{padding:20px 16px;}
             .endpoint-grid{grid-template-columns:1fr;}
+            .arch-strip{padding:16px;}
+            .status-bar{padding:8px 16px;}
         }
     </style>
 </head>
 <body>
 
-<!-- ── HERO ──────────────────────────────────────────────────────────── -->
+<!-- ── HERO ──────────────────────────────────────────────────────── -->
 <div class="hero">
-    <h1>🛒 <span>Retail</span> Analytics API</h1>
-    <p>Data Warehouse · ETL Pipeline · Advanced Analytics · ML Churn Prediction</p>
+    <div class="hero-eyebrow">RETAIL DATA WAREHOUSE · ANALYTICS API</div>
+    <h1>🛒 Retail Analytics Platform</h1>
+    <p class="hero-sub">
+        End-to-end retail intelligence — from raw transactions to ML predictions,
+        demand forecasting, customer segmentation, and real-time dashboards.
+    </p>
     <div class="badge-row">
         <span class="badge badge-blue">FastAPI</span>
-        <span class="badge badge-blue">PostgreSQL</span>
+        <span class="badge badge-blue">PostgreSQL DWH</span>
+        <span class="badge badge-blue">Star Schema</span>
         <span class="badge badge-green">RFM · ABC · CLV</span>
-        <span class="badge badge-orange">Market Basket</span>
+        <span class="badge badge-green">Cohort Analysis</span>
+        <span class="badge badge-green">Market Basket</span>
+        <span class="badge badge-amber">Demand Forecast</span>
+        <span class="badge badge-amber">Price Elasticity</span>
+        <span class="badge badge-amber">Inventory EOQ</span>
         <span class="badge badge-purple">ML Churn Model</span>
-        <span class="badge badge-blue">Star Schema DWH</span>
-        <span class="badge badge-green">Demand Forecasting</span>
-        <span class="badge badge-orange">Price Elasticity</span>
-        <span class="badge badge-purple">Customer Journey</span>
+        <span class="badge badge-purple">SHAP Explainability</span>
+        <span class="badge badge-purple">K-Means Clustering</span>
+        <span class="badge badge-cyan">Customer Journey</span>
+        <span class="badge badge-cyan">Geographic Analysis</span>
+        <span class="badge badge-red">Anomaly Detection</span>
+        <span class="badge badge-blue">Seasonality Analysis</span>
+        <span class="badge badge-green">Store Performance</span>
+        <span class="badge badge-purple">Recommendations Engine</span>
+    </div>
+    <div class="hero-links">
+        <a class="hero-btn hero-btn-primary" href="/dashboard">📊 Open Dashboard</a>
+        <a class="hero-btn hero-btn-secondary" href="/docs">📖 Swagger Docs</a>
+        <a class="hero-btn hero-btn-secondary" href="/redoc">📄 ReDoc</a>
     </div>
 </div>
 
-<!-- ── STATUS BAR ──────────────────────────────────────────────────── -->
+<!-- ── STATUS BAR ─────────────────────────────────────────────────── -->
 <div class="status-bar">
-    <div class="status-item"><div class="dot" id="api-dot"></div>
+    <div class="status-item">
+        <div class="dot dot-yellow dot-pulse" id="api-dot"></div>
         <span class="status-label">API</span>
-        <span class="status-val" id="api-status">Checking...</span></div>
-    <div class="status-item"><div class="dot yellow" id="rfm-dot"></div>
-        <span class="status-label">RFM</span>
-        <span class="status-val" id="rfm-status">—</span></div>
-    <div class="status-item"><div class="dot yellow" id="abc-dot"></div>
-        <span class="status-label">ABC</span>
-        <span class="status-val" id="abc-status">—</span></div>
-    <div class="status-item"><div class="dot yellow" id="churn-dot"></div>
-        <span class="status-label">Churn Model</span>
-        <span class="status-val" id="churn-status">—</span></div>
-    <div class="status-item"><div class="dot yellow" id="forecast-dot"></div>
-        <span class="status-label">Forecast</span>
-        <span class="status-val" id="forecast-status">—</span></div>
-    <div class="status-item"><div class="dot yellow" id="elasticity-dot"></div>
-        <span class="status-label">Elasticity</span>
-        <span class="status-val" id="elasticity-status">—</span></div>
-    <div class="status-item"><div class="dot yellow" id="journey-dot"></div>
-        <span class="status-label">Journey</span>
-        <span class="status-val" id="journey-status">—</span></div>
-    <div class="status-item" style="margin-left:auto;color:#555;font-size:0.75rem">
-        v1.0.0 · <a href="/docs" style="color:#4472C4;text-decoration:none">Swagger UI ↗</a>
-        &nbsp;·&nbsp; <a href="/redoc" style="color:#4472C4;text-decoration:none">ReDoc ↗</a>
+        <span class="status-val" id="api-status">Checking…</span>
+    </div>
+    <div class="status-item"><div class="dot dot-yellow" id="rfm-dot"></div><span class="status-label">RFM</span><span class="status-val" id="rfm-status">—</span></div>
+    <div class="status-item"><div class="dot dot-yellow" id="abc-dot"></div><span class="status-label">ABC</span><span class="status-val" id="abc-status">—</span></div>
+    <div class="status-item"><div class="dot dot-yellow" id="churn-dot"></div><span class="status-label">Churn</span><span class="status-val" id="churn-status">—</span></div>
+    <div class="status-item"><div class="dot dot-yellow" id="forecast-dot"></div><span class="status-label">Forecast</span><span class="status-val" id="forecast-status">—</span></div>
+    <div class="status-item"><div class="dot dot-yellow" id="elasticity-dot"></div><span class="status-label">Elasticity</span><span class="status-val" id="elasticity-status">—</span></div>
+    <div class="status-item"><div class="dot dot-yellow" id="journey-dot"></div><span class="status-label">Journey</span><span class="status-val" id="journey-status">—</span></div>
+    <div class="status-item"><div class="dot dot-yellow" id="inventory-dot"></div><span class="status-label">Inventory</span><span class="status-val" id="inventory-status">—</span></div>
+    <div class="status-item"><div class="dot dot-yellow" id="geo-dot"></div><span class="status-label">Geo</span><span class="status-val" id="geo-status">—</span></div>
+    <div class="status-item"><div class="dot dot-yellow" id="anomaly-dot"></div><span class="status-label">Anomaly</span><span class="status-val" id="anomaly-status">—</span></div>
+    <div class="status-item"><div class="dot dot-yellow" id="seasonality-dot"></div><span class="status-label">Season</span><span class="status-val" id="seasonality-status">—</span></div>
+    <div class="status-item"><div class="dot dot-yellow" id="segmentation-dot"></div><span class="status-label">Segments</span><span class="status-val" id="segmentation-status">—</span></div>
+    <div class="status-item"><div class="dot dot-yellow" id="store-dot"></div><span class="status-label">Stores</span><span class="status-val" id="store-status">—</span></div>
+    <div class="status-links">
+        <a href="/health" target="_blank">Health</a>
+        <a href="/docs" target="_blank">Swagger ↗</a>
+        <a href="/redoc" target="_blank">ReDoc ↗</a>
+        <span style="color:var(--text-dim);font-size:0.7rem">v1.0.0</span>
     </div>
 </div>
 
-<!-- ── MAIN ──────────────────────────────────────────────────────────── -->
+<!-- ── MAIN ───────────────────────────────────────────────────────── -->
 <div class="container">
 
-    <!-- KPI strip -->
-    <div class="kpi-strip">
-        <div class="kpi loading"><div class="ico">👥</div><div class="val" id="k-customers">—</div><div class="lbl">Customers</div></div>
-        <div class="kpi loading"><div class="ico">📦</div><div class="val" id="k-products">—</div><div class="lbl">Products</div></div>
-        <div class="kpi loading"><div class="ico">💰</div><div class="val" id="k-revenue">—</div><div class="lbl">Total Revenue</div></div>
-        <div class="kpi loading"><div class="ico">💎</div><div class="val" id="k-clv">—</div><div class="lbl">Avg CLV</div></div>
-        <div class="kpi loading"><div class="ico">⚠️</div><div class="val" id="k-churn">—</div><div class="lbl">Churn Rate</div></div>
-        <div class="kpi loading"><div class="ico">⭐</div><div class="val" id="k-champions">—</div><div class="lbl">Champions</div></div>
+    <!-- ── ARCHITECTURE ── -->
+    <div class="section-hdr" style="margin-top:28px;">
+        <div class="section-hdr-icon" style="background:rgba(99,102,241,0.1);">⚙️</div>
+        <h2>Architecture</h2><div class="line"></div>
+    </div>
+    <div class="arch-strip">
+        <div class="arch-node">
+            <div class="arch-icon">📥</div>
+            <div class="arch-label">Raw Data</div>
+            <div class="arch-sub">CSV / Transactions</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">
+            <div class="arch-icon" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.05);">⚙️</div>
+            <div class="arch-label">ETL Pipeline</div>
+            <div class="arch-sub">Extract · Transform</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">
+            <div class="arch-icon" style="border-color:rgba(6,182,212,0.3);background:rgba(6,182,212,0.05);">🐘</div>
+            <div class="arch-label">PostgreSQL DWH</div>
+            <div class="arch-sub">Star Schema</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">
+            <div class="arch-icon" style="border-color:rgba(99,102,241,0.3);background:rgba(99,102,241,0.05);">🔬</div>
+            <div class="arch-label">Analytics Engine</div>
+            <div class="arch-sub">Python · pandas</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">
+            <div class="arch-icon" style="border-color:rgba(167,139,250,0.3);background:rgba(167,139,250,0.05);">🤖</div>
+            <div class="arch-label">ML Models</div>
+            <div class="arch-sub">sklearn · SHAP</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">
+            <div class="arch-icon" style="border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.05);">⚡</div>
+            <div class="arch-label">FastAPI</div>
+            <div class="arch-sub">REST · JSON</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">
+            <div class="arch-icon" style="border-color:rgba(6,182,212,0.3);background:rgba(6,182,212,0.05);">📊</div>
+            <div class="arch-label">Dashboard</div>
+            <div class="arch-sub">Chart.js · Plotly</div>
+        </div>
     </div>
 
-    <!-- ── ENDPOINT EXPLORER ── -->
-    <div class="section-header">
-        <h2>📡 API Endpoints</h2><div class="line"></div>
+    <!-- ── LIVE KPIs ── -->
+    <div class="section-hdr">
+        <div class="section-hdr-icon" style="background:rgba(16,185,129,0.1);">📊</div>
+        <h2>Live Analytics KPIs</h2><div class="line"></div>
+        <span class="count-pill" id="kpi-updated">Loading…</span>
     </div>
 
+    <div class="kpi-strip" id="kpi-strip">
+        <!-- Loaded dynamically -->
+        <div class="kpi loading"><div class="ico">👥</div><div class="val" id="k-customers">——</div><div class="lbl">Customers</div></div>
+        <div class="kpi loading"><div class="ico">📦</div><div class="val" id="k-products">——</div><div class="lbl">Products</div></div>
+        <div class="kpi loading"><div class="ico">💰</div><div class="val" id="k-revenue">——</div><div class="lbl">Total Revenue</div></div>
+        <div class="kpi loading"><div class="ico">🛒</div><div class="val" id="k-txns">——</div><div class="lbl">Transactions</div></div>
+        <div class="kpi loading"><div class="ico">💎</div><div class="val" id="k-clv">——</div><div class="lbl">Avg CLV</div></div>
+        <div class="kpi loading"><div class="ico">⭐</div><div class="val" id="k-champions">——</div><div class="lbl">Champions</div></div>
+        <div class="kpi loading"><div class="ico">⚠️</div><div class="val" id="k-churn">——</div><div class="lbl">Churn Rate</div></div>
+        <div class="kpi loading"><div class="ico">🏪</div><div class="val" id="k-stores">——</div><div class="lbl">Stores</div></div>
+        <div class="kpi loading"><div class="ico">🌍</div><div class="val" id="k-countries">——</div><div class="lbl">Countries</div></div>
+        <div class="kpi loading"><div class="ico">🎯</div><div class="val" id="k-clusters">——</div><div class="lbl">K-Means k</div></div>
+        <div class="kpi loading"><div class="ico">📈</div><div class="val" id="k-forecast-products">——</div><div class="lbl">Forecast Products</div></div>
+        <div class="kpi loading"><div class="ico">🚨</div><div class="val" id="k-anomalies">——</div><div class="lbl">Anomalies Detected</div></div>
+    </div>
+
+    <!-- ── CUSTOMER ANALYTICS ── -->
+    <div class="section-hdr">
+        <div class="section-hdr-icon" style="background:rgba(99,102,241,0.1);">👥</div>
+        <h2>Customer Analytics</h2><div class="line"></div>
+        <span class="count-pill">6 modules</span>
+    </div>
     <div class="endpoint-grid">
 
         <!-- RFM -->
         <div class="module-card">
-            <div class="module-header">
+            <div class="module-header" style="background:rgba(99,102,241,0.04);">
                 <span class="module-icon">🎯</span>
-                <div><div class="module-title">RFM Analysis</div>
-                <div class="module-desc">Customer segmentation by recency, frequency & monetary</div></div>
+                <div>
+                    <div class="module-title">RFM Analysis
+                        <span class="module-tag badge-blue">Scoring</span>
+                    </div>
+                    <div class="module-desc">Recency · Frequency · Monetary customer scoring with 10 segments</div>
+                    <div class="module-stat">
+                        <span>📊 <span id="ms-rfm-customers">—</span> customers</span>
+                        <span>🏆 <span id="ms-rfm-champions">—</span> champions</span>
+                    </div>
+                </div>
             </div>
             <div class="endpoint-list">
                 <a class="ep" onclick="tryEndpoint('/api/rfm/customers?limit=5')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/rfm/customers</span>
+                    <span class="method get">GET</span><span class="ep-path">/api/rfm/customers</span>
                     <span class="ep-desc">All customers</span></a>
                 <a class="ep" onclick="tryEndpoint('/api/rfm/segments/summary')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/rfm/segments/summary</span>
+                    <span class="method get">GET</span><span class="ep-path">/api/rfm/segments/summary</span>
                     <span class="ep-desc">Segment stats</span></a>
                 <a class="ep" onclick="tryEndpoint('/api/rfm/segments/list')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/rfm/segments/list</span>
-                    <span class="ep-desc">Segment names</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/rfm/top?n=5')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/rfm/top</span>
+                    <span class="method get">GET</span><span class="ep-path">/api/rfm/segments/list</span>
+                    <span class="ep-desc">All segment names</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/rfm/top?n=10')">
+                    <span class="method get">GET</span><span class="ep-path">/api/rfm/top</span>
                     <span class="ep-desc">Top customers</span></a>
-            </div>
-        </div>
-
-        <!-- ABC -->
-        <div class="module-card">
-            <div class="module-header">
-                <span class="module-icon">📦</span>
-                <div><div class="module-title">ABC Analysis</div>
-                <div class="module-desc">Product classification by revenue contribution</div></div>
-            </div>
-            <div class="endpoint-list">
-                <a class="ep" onclick="tryEndpoint('/api/abc/products?limit=5')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/abc/products</span>
-                    <span class="ep-desc">All products</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/abc/classes/summary')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/abc/classes/summary</span>
-                    <span class="ep-desc">Class stats</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/abc/top?n=5')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/abc/top</span>
-                    <span class="ep-desc">Top products</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/abc/categories')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/abc/categories</span>
-                    <span class="ep-desc">Category list</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/rfm/customer/12350')">
+                    <span class="method get">GET</span><span class="ep-path">/api/rfm/customer/{id}</span>
+                    <span class="ep-desc">Single customer</span></a>
             </div>
         </div>
 
         <!-- CLV -->
         <div class="module-card">
-            <div class="module-header">
+            <div class="module-header" style="background:rgba(99,102,241,0.04);">
                 <span class="module-icon">💎</span>
-                <div><div class="module-title">CLV Analysis</div>
-                <div class="module-desc">Customer lifetime value scoring & segments</div></div>
+                <div>
+                    <div class="module-title">Customer Lifetime Value
+                        <span class="module-tag badge-purple">CLV</span>
+                    </div>
+                    <div class="module-desc">Predicted CLV scoring with 5 value segments and acquisition costs</div>
+                    <div class="module-stat">
+                        <span>💰 Avg CLV: <span id="ms-clv">—</span></span>
+                    </div>
+                </div>
             </div>
             <div class="endpoint-list">
                 <a class="ep" onclick="tryEndpoint('/api/clv/customers?limit=5')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/clv/customers</span>
+                    <span class="method get">GET</span><span class="ep-path">/api/clv/customers</span>
                     <span class="ep-desc">All CLV scores</span></a>
                 <a class="ep" onclick="tryEndpoint('/api/clv/segments/summary')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/clv/segments/summary</span>
+                    <span class="method get">GET</span><span class="ep-path">/api/clv/segments/summary</span>
                     <span class="ep-desc">Segment breakdown</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/clv/top?n=5')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/clv/top</span>
+                <a class="ep" onclick="tryEndpoint('/api/clv/top?n=10')">
+                    <span class="method get">GET</span><span class="ep-path">/api/clv/top</span>
                     <span class="ep-desc">Top by CLV</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/clv/customer/12350')">
+                    <span class="method get">GET</span><span class="ep-path">/api/clv/customer/{id}</span>
+                    <span class="ep-desc">Single customer</span></a>
             </div>
         </div>
 
         <!-- Cohort -->
         <div class="module-card">
-            <div class="module-header">
+            <div class="module-header" style="background:rgba(6,182,212,0.04);">
                 <span class="module-icon">📅</span>
-                <div><div class="module-title">Cohort Analysis</div>
-                <div class="module-desc">Customer retention matrix by acquisition cohort</div></div>
+                <div>
+                    <div class="module-title">Cohort Analysis
+                        <span class="module-tag badge-cyan">Retention</span>
+                    </div>
+                    <div class="module-desc">Monthly retention matrix by customer acquisition cohort</div>
+                </div>
             </div>
             <div class="endpoint-list">
                 <a class="ep" onclick="tryEndpoint('/api/cohort')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/cohort</span>
+                    <span class="method get">GET</span><span class="ep-path">/api/cohort</span>
                     <span class="ep-desc">Retention matrix</span></a>
                 <a class="ep" onclick="tryEndpoint('/api/summary')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/summary</span>
-                    <span class="ep-desc">Full summary</span></a>
+                    <span class="method get">GET</span><span class="ep-path">/api/summary</span>
+                    <span class="ep-desc">Full analytics summary</span></a>
+            </div>
+        </div>
+
+        <!-- Customer Journey -->
+        <div class="module-card">
+            <div class="module-header" style="background:rgba(167,139,250,0.04);">
+                <span class="module-icon">🗺️</span>
+                <div>
+                    <div class="module-title">Customer Journey
+                        <span class="module-tag badge-purple">Sankey</span>
+                    </div>
+                    <div class="module-desc">Tier transitions · Retention funnel · Purchase sequences · Sankey flow</div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/journey/summary')">
+                    <span class="method get">GET</span><span class="ep-path">/api/journey/summary</span>
+                    <span class="ep-desc">Journey KPIs</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/journey/sankey-data')">
+                    <span class="method get">GET</span><span class="ep-path">/api/journey/sankey-data</span>
+                    <span class="ep-desc">Sankey JSON</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/journey/funnel')">
+                    <span class="method get">GET</span><span class="ep-path">/api/journey/funnel</span>
+                    <span class="ep-desc">Retention funnel</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/journey/transitions')">
+                    <span class="method get">GET</span><span class="ep-path">/api/journey/transitions</span>
+                    <span class="ep-desc">Transition matrix</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/journey/sequences?limit=5')">
+                    <span class="method get">GET</span><span class="ep-path">/api/journey/sequences</span>
+                    <span class="ep-desc">Purchase paths</span></a>
+            </div>
+        </div>
+
+        <!-- Segmentation -->
+        <div class="module-card">
+            <div class="module-header" style="background:rgba(167,139,250,0.04);">
+                <span class="module-icon">🎯</span>
+                <div>
+                    <div class="module-title">K-Means Segmentation
+                        <span class="module-tag badge-purple">ML</span>
+                    </div>
+                    <div class="module-desc">7-feature behavioural clustering · PCA scatter · Elbow method · Silhouette</div>
+                    <div class="module-stat">
+                        <span>k = <span id="ms-seg-k">—</span> clusters</span>
+                        <span>sil = <span id="ms-seg-sil">—</span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/segmentation/summary')">
+                    <span class="method get">GET</span><span class="ep-path">/api/segmentation/summary</span>
+                    <span class="ep-desc">KPIs · k · silhouette</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/segmentation/clusters')">
+                    <span class="method get">GET</span><span class="ep-path">/api/segmentation/clusters</span>
+                    <span class="ep-desc">Cluster profiles</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/segmentation/scatter')">
+                    <span class="method get">GET</span><span class="ep-path">/api/segmentation/scatter</span>
+                    <span class="ep-desc">PCA 2D scatter</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/segmentation/elbow')">
+                    <span class="method get">GET</span><span class="ep-path">/api/segmentation/elbow</span>
+                    <span class="ep-desc">Elbow + silhouette curves</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/segmentation/customers?limit=10')">
+                    <span class="method get">GET</span><span class="ep-path">/api/segmentation/customers</span>
+                    <span class="ep-desc">Per-customer assignments</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/segmentation/customer/12350')">
+                    <span class="method get">GET</span><span class="ep-path">/api/segmentation/customer/{id}</span>
+                    <span class="ep-desc">Single customer cluster</span></a>
+            </div>
+        </div>
+
+        <!-- Churn -->
+        <div class="module-card">
+            <div class="module-header" style="background:rgba(239,68,68,0.04);">
+                <span class="module-icon">🤖</span>
+                <div>
+                    <div class="module-title">Churn Prediction
+                        <span class="module-tag badge-red">RandomForest</span>
+                    </div>
+                    <div class="module-desc">ML churn probability per customer · Risk tiers · Top at-risk list</div>
+                    <div class="module-stat">
+                        <span>⚠️ Rate: <span id="ms-churn-rate">—</span></span>
+                        <span>🎯 AUC: <span id="ms-churn-auc">—</span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/churn/summary')">
+                    <span class="method get">GET</span><span class="ep-path">/api/churn/summary</span>
+                    <span class="ep-desc">Model metrics</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/churn/risk/critical')">
+                    <span class="method get">GET</span><span class="ep-path">/api/churn/risk/{tier}</span>
+                    <span class="ep-desc">By risk tier</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/churn/top-at-risk?n=10')">
+                    <span class="method get">GET</span><span class="ep-path">/api/churn/top-at-risk</span>
+                    <span class="ep-desc">High value at risk</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/churn/customer/12350')">
+                    <span class="method get">GET</span><span class="ep-path">/api/churn/customer/{id}</span>
+                    <span class="ep-desc">Single customer</span></a>
+                <a class="ep" onclick="() => {}">
+                    <span class="method post">POST</span><span class="ep-path">/api/churn/predict</span>
+                    <span class="ep-desc">Live prediction ↓</span></a>
+            </div>
+        </div>
+
+    </div><!-- /customer analytics grid -->
+
+    <!-- ── SHAP / XAI ── -->
+    <div class="section-hdr">
+        <div class="section-hdr-icon" style="background:rgba(16,185,129,0.1);">🧠</div>
+        <h2>Explainable AI (SHAP)</h2><div class="line"></div>
+        <span class="count-pill">5 endpoints</span>
+    </div>
+    <div class="endpoint-grid">
+        <div class="module-card">
+            <div class="module-header" style="background:rgba(16,185,129,0.04);">
+                <span class="module-icon">🧠</span>
+                <div>
+                    <div class="module-title">SHAP Explainability
+                        <span class="module-tag badge-green">XAI</span>
+                    </div>
+                    <div class="module-desc">Global feature importance · Per-customer churn explanation · Waterfall charts · Beeswarm plots</div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/churn/explain/importance')">
+                    <span class="method get">GET</span><span class="ep-path">/api/churn/explain/importance</span>
+                    <span class="ep-desc">Global importance</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/churn/explain/bar-data')">
+                    <span class="method get">GET</span><span class="ep-path">/api/churn/explain/bar-data</span>
+                    <span class="ep-desc">Bar chart data</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/churn/explain/summary-data')">
+                    <span class="method get">GET</span><span class="ep-path">/api/churn/explain/summary-data</span>
+                    <span class="ep-desc">Beeswarm data</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/churn/explain/customer/12350')">
+                    <span class="method get">GET</span><span class="ep-path">/api/churn/explain/customer/{id}</span>
+                    <span class="ep-desc">Customer breakdown</span></a>
+                <a class="ep" href="/api/churn/explain/customer/12350/waterfall" target="_blank">
+                    <span class="method get">GET</span><span class="ep-path">/api/churn/explain/customer/{id}/waterfall</span>
+                    <span class="ep-desc">Waterfall PNG ↗</span></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── PRODUCT ANALYTICS ── -->
+    <div class="section-hdr">
+        <div class="section-hdr-icon" style="background:rgba(245,158,11,0.1);">📦</div>
+        <h2>Product &amp; Inventory Analytics</h2><div class="line"></div>
+        <span class="count-pill">4 modules</span>
+    </div>
+    <div class="endpoint-grid">
+
+        <!-- ABC -->
+        <div class="module-card">
+            <div class="module-header" style="background:rgba(245,158,11,0.04);">
+                <span class="module-icon">📦</span>
+                <div>
+                    <div class="module-title">ABC Analysis
+                        <span class="module-tag badge-amber">Pareto</span>
+                    </div>
+                    <div class="module-desc">Product classification by cumulative revenue — A (top 80%), B, C tiers</div>
+                    <div class="module-stat">
+                        <span>📦 <span id="ms-abc-products">—</span> products</span>
+                        <span>💰 <span id="ms-abc-revenue">—</span> revenue</span>
+                    </div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/abc/products?limit=5')">
+                    <span class="method get">GET</span><span class="ep-path">/api/abc/products</span>
+                    <span class="ep-desc">All products</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/abc/classes/summary')">
+                    <span class="method get">GET</span><span class="ep-path">/api/abc/classes/summary</span>
+                    <span class="ep-desc">Tier stats</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/abc/top?n=10')">
+                    <span class="method get">GET</span><span class="ep-path">/api/abc/top</span>
+                    <span class="ep-desc">Top by revenue</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/abc/categories')">
+                    <span class="method get">GET</span><span class="ep-path">/api/abc/categories</span>
+                    <span class="ep-desc">Category list</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/abc/product/85123A')">
+                    <span class="method get">GET</span><span class="ep-path">/api/abc/product/{id}</span>
+                    <span class="ep-desc">Single product</span></a>
             </div>
         </div>
 
         <!-- Market Basket -->
         <div class="module-card">
-            <div class="module-header">
+            <div class="module-header" style="background:rgba(245,158,11,0.04);">
                 <span class="module-icon">🛒</span>
-                <div><div class="module-title">Market Basket</div>
-                <div class="module-desc">Association rules — products bought together</div></div>
-            </div>
-            <div class="endpoint-list">
-                <a class="ep" onclick="tryEndpoint('/api/basket/top?n=5')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/basket/rules</span>
-                    <span class="ep-desc">All rules</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/basket/top?n=5')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/basket/top</span>
-                    <span class="ep-desc">Top by lift</span></a>
-            </div>
-        </div>
-
-        <!-- Churn -->
-        <div class="module-card" style="border-color:#2d1a4a;">
-            <div class="module-header" style="background:#0d0a1a;">
-                <span class="module-icon">🤖</span>
                 <div>
-                    <div class="module-title">Churn Prediction <span style="color:#bb88ff;font-size:0.7rem">ML</span></div>
-                    <div class="module-desc">RandomForest model · Churn probability per customer</div>
+                    <div class="module-title">Market Basket
+                        <span class="module-tag badge-amber">Apriori</span>
+                    </div>
+                    <div class="module-desc">Association rules — products frequently bought together · Lift · Confidence</div>
                 </div>
             </div>
             <div class="endpoint-list">
-                <a class="ep" onclick="tryEndpoint('/api/churn/summary')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/churn/summary</span>
-                    <span class="ep-desc">Model metrics</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/churn/risk/critical')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/churn/risk/critical</span>
-                    <span class="ep-desc">Critical risk</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/churn/top-at-risk?n=5')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/churn/top-at-risk</span>
-                    <span class="ep-desc">High value at risk</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/churn/customer/12350')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/churn/customer/{id}</span>
-                    <span class="ep-desc">Single customer</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/basket/rules?limit=5')">
+                    <span class="method get">GET</span><span class="ep-path">/api/basket/rules</span>
+                    <span class="ep-desc">All rules</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/basket/top?n=10')">
+                    <span class="method get">GET</span><span class="ep-path">/api/basket/top</span>
+                    <span class="ep-desc">Top by lift</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/basket/summary')">
+                    <span class="method get">GET</span><span class="ep-path">/api/basket/summary</span>
+                    <span class="ep-desc">Summary stats</span></a>
             </div>
         </div>
 
-<!-- SHAP -->
-<div class="module-card" style="border-color:#1a3a2a;">
-    <div class="module-header" style="background:#0a1a10;">
-        <span class="module-icon">🧠</span>
-        <div>
-            <div class="module-title">SHAP Explainability <span style="color:#4ec994;font-size:0.7rem">XAI</span></div>
-            <div class="module-desc">Feature importance · Per-customer churn explanation</div>
+        <!-- Inventory -->
+        <div class="module-card">
+            <div class="module-header" style="background:rgba(16,185,129,0.04);">
+                <span class="module-icon">🏭</span>
+                <div>
+                    <div class="module-title">Inventory Optimisation
+                        <span class="module-tag badge-green">EOQ</span>
+                    </div>
+                    <div class="module-desc">Safety stock · Reorder points · EOQ model · Stockout risk · Carrying costs</div>
+                    <div class="module-stat">
+                        <span>🚨 <span id="ms-inv-critical">—</span> critical alerts</span>
+                    </div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/inventory/summary')">
+                    <span class="method get">GET</span><span class="ep-path">/api/inventory/summary</span>
+                    <span class="ep-desc">Overview + costs</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/inventory/alerts?risk_level=Critical')">
+                    <span class="method get">GET</span><span class="ep-path">/api/inventory/alerts</span>
+                    <span class="ep-desc">Stockout alerts</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/inventory/products?limit=5')">
+                    <span class="method get">GET</span><span class="ep-path">/api/inventory/products</span>
+                    <span class="ep-desc">All products</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/inventory/categories')">
+                    <span class="method get">GET</span><span class="ep-path">/api/inventory/categories</span>
+                    <span class="ep-desc">By category</span></a>
+            </div>
         </div>
-    </div>
-    <div class="endpoint-list">
-        <a class="ep" onclick="tryEndpoint('/api/churn/explain/importance')">
-            <span class="method get">GET</span>
-            <span class="ep-path">/api/churn/explain/importance</span>
-            <span class="ep-desc">Global importance</span></a>
-        <a class="ep" onclick="tryEndpoint('/api/churn/explain/bar-data')">
-            <span class="method get">GET</span>
-            <span class="ep-path">/api/churn/explain/bar-data</span>
-            <span class="ep-desc">Bar chart JSON</span></a>
-        <a class="ep" onclick="tryEndpoint('/api/churn/explain/summary-data')">
-            <span class="method get">GET</span>
-            <span class="ep-path">/api/churn/explain/summary-data</span>
-            <span class="ep-desc">Beeswarm JSON</span></a>
-        <a class="ep" onclick="tryEndpoint('/api/churn/explain/customer/12350')">
-            <span class="method get">GET</span>
-            <span class="ep-path">/api/churn/explain/customer/{id}</span>
-            <span class="ep-desc">Customer breakdown</span></a>
-        <a class="ep" onclick="tryEndpoint('/api/churn/explain/customer/12350/waterfall')">
-            <span class="method get">GET</span>
-            <span class="ep-path">/api/churn/explain/customer/{id}/waterfall</span>
-            <span class="ep-desc">Waterfall PNG</span></a>
-    </div>
-</div>
 
+        <!-- Price Elasticity -->
+        <div class="module-card">
+            <div class="module-header" style="background:rgba(251,146,60,0.04);">
+                <span class="module-icon">💹</span>
+                <div>
+                    <div class="module-title">Price Elasticity
+                        <span class="module-tag badge-orange">Log-Log OLS</span>
+                    </div>
+                    <div class="module-desc">Demand sensitivity to price — elastic vs inelastic products per category</div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/elasticity/summary')">
+                    <span class="method get">GET</span><span class="ep-path">/api/elasticity/summary</span>
+                    <span class="ep-desc">Distribution + stats</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/elasticity/top/elastic?n=5')">
+                    <span class="method get">GET</span><span class="ep-path">/api/elasticity/top/elastic</span>
+                    <span class="ep-desc">Most elastic</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/elasticity/top/inelastic?n=5')">
+                    <span class="method get">GET</span><span class="ep-path">/api/elasticity/top/inelastic</span>
+                    <span class="ep-desc">Most inelastic</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/elasticity/categories')">
+                    <span class="method get">GET</span><span class="ep-path">/api/elasticity/categories</span>
+                    <span class="ep-desc">By category</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/elasticity/products?limit=5&significant_only=true')">
+                    <span class="method get">GET</span><span class="ep-path">/api/elasticity/products</span>
+                    <span class="ep-desc">All products</span></a>
+            </div>
+        </div>
+
+    </div><!-- /product analytics grid -->
+
+    <!-- ── FORECASTING & TIME SERIES ── -->
+    <div class="section-hdr">
+        <div class="section-hdr-icon" style="background:rgba(6,182,212,0.1);">📈</div>
+        <h2>Forecasting &amp; Time Series</h2><div class="line"></div>
+        <span class="count-pill">3 modules</span>
+    </div>
+    <div class="endpoint-grid">
+
+        <!-- Demand Forecasting -->
+        <div class="module-card">
+            <div class="module-header" style="background:rgba(6,182,212,0.04);">
+                <span class="module-icon">📈</span>
+                <div>
+                    <div class="module-title">Demand Forecasting
+                        <span class="module-tag badge-cyan">Prophet / ETS</span>
+                    </div>
+                    <div class="module-desc">30-day demand forecast per product and category with MAPE accuracy metrics</div>
+                    <div class="module-stat">
+                        <span>📦 <span id="ms-fc-products">—</span> products</span>
+                        <span>📉 MAPE: <span id="ms-fc-mape">—</span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/forecast/summary')">
+                    <span class="method get">GET</span><span class="ep-path">/api/forecast/summary</span>
+                    <span class="ep-desc">Overview + KPIs</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/forecast/top?n=5')">
+                    <span class="method get">GET</span><span class="ep-path">/api/forecast/top</span>
+                    <span class="ep-desc">Top forecast products</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/forecast/categories')">
+                    <span class="method get">GET</span><span class="ep-path">/api/forecast/categories</span>
+                    <span class="ep-desc">Category list</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/forecast/accuracy')">
+                    <span class="method get">GET</span><span class="ep-path">/api/forecast/accuracy</span>
+                    <span class="ep-desc">MAPE / RMSE metrics</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/forecast/products?limit=5')">
+                    <span class="method get">GET</span><span class="ep-path">/api/forecast/products</span>
+                    <span class="ep-desc">All forecasts</span></a>
+            </div>
+        </div>
+
+        <!-- Seasonality -->
+        <div class="module-card">
+            <div class="module-header" style="background:rgba(6,182,212,0.04);">
+                <span class="module-icon">📆</span>
+                <div>
+                    <div class="module-title">Seasonality &amp; Trend
+                        <span class="module-tag badge-cyan">Decomposition</span>
+                    </div>
+                    <div class="module-desc">Trend/seasonal/residual decomposition · DoW/Month patterns · YoY matrix · Week heatmap</div>
+                    <div class="module-stat">
+                        <span>📅 6 years of data</span>
+                        <span>📊 <span id="ms-season-trend">—</span> trend</span>
+                    </div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/seasonality/summary')">
+                    <span class="method get">GET</span><span class="ep-path">/api/seasonality/summary</span>
+                    <span class="ep-desc">Trend + KPIs</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/seasonality/decomposition')">
+                    <span class="method get">GET</span><span class="ep-path">/api/seasonality/decomposition</span>
+                    <span class="ep-desc">Daily series</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/seasonality/patterns')">
+                    <span class="method get">GET</span><span class="ep-path">/api/seasonality/patterns</span>
+                    <span class="ep-desc">DoW / Month / Quarter</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/seasonality/yoy')">
+                    <span class="method get">GET</span><span class="ep-path">/api/seasonality/yoy</span>
+                    <span class="ep-desc">Year-over-year matrix</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/seasonality/heatmap')">
+                    <span class="method get">GET</span><span class="ep-path">/api/seasonality/heatmap</span>
+                    <span class="ep-desc">Week heatmap data</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/seasonality/peaks')">
+                    <span class="method get">GET</span><span class="ep-path">/api/seasonality/peaks</span>
+                    <span class="ep-desc">Peak + trough days</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/seasonality/daily?limit=30')">
+                    <span class="method get">GET</span><span class="ep-path">/api/seasonality/daily</span>
+                    <span class="ep-desc">Daily CSV data</span></a>
+            </div>
+        </div>
+
+        <!-- Anomaly -->
+        <div class="module-card">
+            <div class="module-header" style="background:rgba(239,68,68,0.04);">
+                <span class="module-icon">🚨</span>
+                <div>
+                    <div class="module-title">Anomaly Detection
+                        <span class="module-tag badge-red">Z-Score + IQR</span>
+                    </div>
+                    <div class="module-desc">Sales spike and drop detection with severity tiers and product drilldown</div>
+                    <div class="module-stat">
+                        <span>🔴 <span id="ms-anomaly-critical">—</span> critical</span>
+                        <span>🟡 <span id="ms-anomaly-total">—</span> total</span>
+                    </div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/anomaly/summary')">
+                    <span class="method get">GET</span><span class="ep-path">/api/anomaly/summary</span>
+                    <span class="ep-desc">Detection KPIs</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/anomaly/alerts?severity=Critical')">
+                    <span class="method get">GET</span><span class="ep-path">/api/anomaly/alerts</span>
+                    <span class="ep-desc">Filtered alerts</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/anomaly/top?n=10')">
+                    <span class="method get">GET</span><span class="ep-path">/api/anomaly/top</span>
+                    <span class="ep-desc">Top anomalies</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/anomaly/daily?limit=30')">
+                    <span class="method get">GET</span><span class="ep-path">/api/anomaly/daily</span>
+                    <span class="ep-desc">Daily series</span></a>
+            </div>
+        </div>
+
+    </div><!-- /forecasting grid -->
+
+    <!-- ── OPERATIONS ── -->
+    <div class="section-hdr">
+        <div class="section-hdr-icon" style="background:rgba(16,185,129,0.1);">🌍</div>
+        <h2>Operations &amp; Infrastructure</h2><div class="line"></div>
+        <span class="count-pill">4 modules</span>
+    </div>
+    <div class="endpoint-grid">
+
+        <!-- Geographic -->
+        <div class="module-card">
+            <div class="module-header" style="background:rgba(6,182,212,0.04);">
+                <span class="module-icon">🌍</span>
+                <div>
+                    <div class="module-title">Geographic Analysis
+                        <span class="module-tag badge-cyan">33 Regions</span>
+                    </div>
+                    <div class="module-desc">Revenue by country · YoY growth · Top products per region · Market share</div>
+                    <div class="module-stat">
+                        <span>🌐 <span id="ms-geo-regions">—</span> regions</span>
+                        <span>📈 <span id="ms-geo-growth">—</span> YoY growth</span>
+                    </div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/geo/summary')">
+                    <span class="method get">GET</span><span class="ep-path">/api/geo/summary</span>
+                    <span class="ep-desc">Global KPIs</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/geo/regions?exclude_uk=true')">
+                    <span class="method get">GET</span><span class="ep-path">/api/geo/regions</span>
+                    <span class="ep-desc">All regions ranked</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/geo/trends?top_n=6')">
+                    <span class="method get">GET</span><span class="ep-path">/api/geo/trends</span>
+                    <span class="ep-desc">YoY revenue trends</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/geo/region/France')">
+                    <span class="method get">GET</span><span class="ep-path">/api/geo/region/{region}</span>
+                    <span class="ep-desc">Single region detail</span></a>
+            </div>
+        </div>
+
+        <!-- Store Performance -->
+        <div class="module-card">
+            <div class="module-header" style="background:rgba(16,185,129,0.04);">
+                <span class="module-icon">🏪</span>
+                <div>
+                    <div class="module-title">Store Performance
+                        <span class="module-tag badge-green">33 Stores</span>
+                    </div>
+                    <div class="module-desc">Per-store KPIs · Tier A/B/C classification · YoY growth · Top products per store</div>
+                    <div class="module-stat">
+                        <span>🏆 Top: <span id="ms-store-top">—</span></span>
+                        <span>📊 <span id="ms-store-share">—</span>% market share</span>
+                    </div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/store/summary')">
+                    <span class="method get">GET</span><span class="ep-path">/api/store/summary</span>
+                    <span class="ep-desc">Global KPIs + tiers</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/store/stores?limit=10')">
+                    <span class="method get">GET</span><span class="ep-path">/api/store/stores</span>
+                    <span class="ep-desc">All stores</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/store/top?n=5')">
+                    <span class="method get">GET</span><span class="ep-path">/api/store/top</span>
+                    <span class="ep-desc">Top N by revenue</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/store/32')">
+                    <span class="method get">GET</span><span class="ep-path">/api/store/{store_id}</span>
+                    <span class="ep-desc">Single store detail</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/store/trends/monthly')">
+                    <span class="method get">GET</span><span class="ep-path">/api/store/trends/monthly</span>
+                    <span class="ep-desc">Monthly series</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/store/products/32?n=10')">
+                    <span class="method get">GET</span><span class="ep-path">/api/store/products/{id}</span>
+                    <span class="ep-desc">Top products</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/store/yoy/all')">
+                    <span class="method get">GET</span><span class="ep-path">/api/store/yoy/all</span>
+                    <span class="ep-desc">Year-over-year</span></a>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="module-card">
+            <div class="module-header" style="background:rgba(99,102,241,0.05);">
+                <span class="module-icon">🔮</span>
+                <div>
+                    <div class="module-title">Product Recommendations
+                        <span class="module-tag badge-purple">Item-Item CF</span>
+                    </div>
+                    <div class="module-desc">Collaborative filtering · per-customer top-10 · similar product lookup · cold-start fallback</div>
+                    <div class="module-stat">
+                        <span>👥 <span id="ms-rec-customers">—</span> customers served</span>
+                        <span>🔗 <span id="ms-rec-pairs">—</span> purchase pairs</span>
+                    </div>
+                </div>
+            </div>
+            <div class="endpoint-list">
+                <a class="ep" onclick="tryEndpoint('/api/recommendations/summary')">
+                    <span class="method get">GET</span><span class="ep-path">/api/recommendations/summary</span>
+                    <span class="ep-desc">Model stats + popular</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/recommendations/popular?n=10')">
+                    <span class="method get">GET</span><span class="ep-path">/api/recommendations/popular</span>
+                    <span class="ep-desc">Cold-start fallback</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/recommendations/top?n=10')">
+                    <span class="method get">GET</span><span class="ep-path">/api/recommendations/top</span>
+                    <span class="ep-desc">Most recommended products</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/recommendations/customer/12748')">
+                    <span class="method get">GET</span><span class="ep-path">/api/recommendations/customer/{id}</span>
+                    <span class="ep-desc">Top-10 recs for customer</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/recommendations/product/85123A')">
+                    <span class="method get">GET</span><span class="ep-path">/api/recommendations/product/{id}</span>
+                    <span class="ep-desc">Similar products</span></a>
+                <a class="ep" onclick="tryEndpoint('/api/recommendations/customers?limit=20')">
+                    <span class="method get">GET</span><span class="ep-path">/api/recommendations/customers</span>
+                    <span class="ep-desc">All customers list</span></a>
+            </div>
+        </div>
 
         <!-- ETL -->
         <div class="module-card">
             <div class="module-header">
                 <span class="module-icon">⚙️</span>
-                <div><div class="module-title">ETL Pipeline</div>
-                <div class="module-desc">Trigger & monitor data pipeline jobs</div></div>
+                <div>
+                    <div class="module-title">ETL Pipeline
+                        <span class="module-tag badge-blue">Incremental</span>
+                    </div>
+                    <div class="module-desc">Trigger and monitor incremental data loads into the DWH</div>
+                </div>
             </div>
             <div class="endpoint-list">
                 <a class="ep" onclick="tryEndpoint('/etl/status')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/etl/status</span>
-                    <span class="ep-desc">Job status</span></a>
+                    <span class="method get">GET</span><span class="ep-path">/etl/status</span>
+                    <span class="ep-desc">Pipeline status</span></a>
                 <a class="ep" onclick="postEndpoint('/etl/run')">
-                    <span class="method post">POST</span>
-                    <span class="ep-path">/etl/run</span>
-                    <span class="ep-desc">Trigger ETL</span></a>
+                    <span class="method post">POST</span><span class="ep-path">/etl/run</span>
+                    <span class="ep-desc">Trigger ETL job</span></a>
                 <a class="ep" onclick="postEndpoint('/etl/analytics/refresh')">
-                    <span class="method post">POST</span>
-                    <span class="ep-path">/etl/analytics/refresh</span>
+                    <span class="method post">POST</span><span class="ep-path">/etl/analytics/refresh</span>
                     <span class="ep-desc">Refresh analytics</span></a>
+                <a class="ep" onclick="postEndpoint('/etl/quality/check')">
+                    <span class="method post">POST</span><span class="ep-path">/etl/quality/check</span>
+                    <span class="ep-desc">Data quality check</span></a>
             </div>
         </div>
 
-        <!-- Dashboard -->
+        <!-- Dashboard + Health -->
         <div class="module-card">
             <div class="module-header">
                 <span class="module-icon">📊</span>
-                <div><div class="module-title">Dashboard & Files</div>
-                <div class="module-desc">Visual dashboard & report downloads</div></div>
+                <div>
+                    <div class="module-title">Dashboard &amp; Utilities</div>
+                    <div class="module-desc">Visual dashboard · Excel export · Health check · API docs</div>
+                </div>
             </div>
             <div class="endpoint-list">
                 <a class="ep" href="/dashboard" target="_blank">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/dashboard</span>
+                    <span class="method get">GET</span><span class="ep-path">/dashboard</span>
                     <span class="ep-desc">Open dashboard ↗</span></a>
-                <a class="ep" href="/download/excel">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/download/excel</span>
+                <a class="ep" href="/download/excel" target="_blank">
+                    <span class="method get">GET</span><span class="ep-path">/download/excel</span>
                     <span class="ep-desc">Download .xlsx ↓</span></a>
-                <a class="ep" href="/health" target="_blank">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/health</span>
-                    <span class="ep-desc">Health check</span></a>
+                <a class="ep" onclick="tryEndpoint('/health')">
+                    <span class="method get">GET</span><span class="ep-path">/health</span>
+                    <span class="ep-desc">File health check</span></a>
+                <a class="ep" onclick="tryEndpoint('/api')">
+                    <span class="method get">GET</span><span class="ep-path">/api</span>
+                    <span class="ep-desc">API info JSON</span></a>
+                <a class="ep" href="/docs" target="_blank">
+                    <span class="method get">GET</span><span class="ep-path">/docs</span>
+                    <span class="ep-desc">Swagger UI ↗</span></a>
+                <a class="ep" href="/redoc" target="_blank">
+                    <span class="method get">GET</span><span class="ep-path">/redoc</span>
+                    <span class="ep-desc">ReDoc ↗</span></a>
             </div>
         </div>
 
-        <!-- Demand Forecasting -->
-        <div class="module-card" style="border-color:#1a3d2a;">
-            <div class="module-header" style="background:#0a1a10;">
-                <span class="module-icon">📈</span>
-                <div>
-                    <div class="module-title">Demand Forecasting <span style="color:#4ec994;font-size:0.7rem">Prophet/ETS</span></div>
-                    <div class="module-desc">30-day demand forecast per product & category</div>
-                </div>
-            </div>
-            <div class="endpoint-list">
-                <a class="ep" onclick="tryEndpoint('/api/forecast/summary')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/forecast/summary</span>
-                    <span class="ep-desc">Overview & KPIs</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/forecast/top?n=5')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/forecast/top</span>
-                    <span class="ep-desc">Top products</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/forecast/categories')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/forecast/categories</span>
-                    <span class="ep-desc">Category list</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/forecast/accuracy')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/forecast/accuracy</span>
-                    <span class="ep-desc">Model accuracy</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/forecast/products?limit=5')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/forecast/products</span>
-                    <span class="ep-desc">All forecasts</span></a>
-            </div>
-        </div>
-
-        <!-- Price Elasticity -->
-        <div class="module-card" style="border-color:#3d2a10;">
-            <div class="module-header" style="background:#1a1005;">
-                <span class="module-icon">💹</span>
-                <div>
-                    <div class="module-title">Price Elasticity <span style="color:#ffaa55;font-size:0.7rem">Log-Log OLS</span></div>
-                    <div class="module-desc">Demand sensitivity to price changes per product</div>
-                </div>
-            </div>
-            <div class="endpoint-list">
-                <a class="ep" onclick="tryEndpoint('/api/elasticity/summary')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/elasticity/summary</span>
-                    <span class="ep-desc">Distribution & stats</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/elasticity/top/elastic?n=5')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/elasticity/top/elastic</span>
-                    <span class="ep-desc">Most elastic</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/elasticity/top/inelastic?n=5')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/elasticity/top/inelastic</span>
-                    <span class="ep-desc">Most inelastic</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/elasticity/categories')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/elasticity/categories</span>
-                    <span class="ep-desc">By category</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/elasticity/products?limit=5&significant_only=true')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/elasticity/products</span>
-                    <span class="ep-desc">All products</span></a>
-            </div>
-        </div>
-
-        <!-- Customer Journey -->
-        <div class="module-card" style="border-color:#2d1a4a;">
-            <div class="module-header" style="background:#120a22;">
-                <span class="module-icon">🗺️</span>
-                <div>
-                    <div class="module-title">Customer Journey <span style="color:#bb88ff;font-size:0.7rem">Sankey</span></div>
-                    <div class="module-desc">Purchase tier transitions · retention funnel · sequences</div>
-                </div>
-            </div>
-            <div class="endpoint-list">
-                <a class="ep" onclick="tryEndpoint('/api/journey/summary')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/journey/summary</span>
-                    <span class="ep-desc">Journey metadata</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/journey/sankey-data')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/journey/sankey-data</span>
-                    <span class="ep-desc">Sankey JSON</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/journey/funnel')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/journey/funnel</span>
-                    <span class="ep-desc">Retention funnel</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/journey/transitions')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/journey/transitions</span>
-                    <span class="ep-desc">Transition matrix</span></a>
-                <a class="ep" onclick="tryEndpoint('/api/journey/sequences?limit=5')">
-                    <span class="method get">GET</span>
-                    <span class="ep-path">/api/journey/sequences</span>
-                    <span class="ep-desc">Purchase paths</span></a>
-            </div>
-        </div>
-
-    </div><!-- /endpoint-grid -->
+    </div><!-- /operations grid -->
 
     <!-- ── TRY IT ── -->
-    <div class="section-header" style="margin-top:40px;">
-        <h2>⚡ Try It Live</h2><div class="line"></div>
+    <div class="section-hdr" style="margin-top:44px;">
+        <div class="section-hdr-icon" style="background:rgba(99,102,241,0.1);">⚡</div>
+        <h2>Try It Live</h2><div class="line"></div>
     </div>
 
     <div class="try-panel">
-        <h3>GET Request</h3>
+        <h3>Live API Request</h3>
         <div class="try-row">
-            <input id="try-url" type="text" placeholder="/api/rfm/segments/summary" value="/api/rfm/segments/summary"/>
+            <select class="try-method-sel" id="try-method">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+            </select>
+            <input id="try-url" class="try-input" type="text" placeholder="/api/rfm/segments/summary" value="/api/rfm/segments/summary"/>
             <button class="btn" onclick="sendTry()">Send →</button>
-            <button class="btn red" onclick="clearTry()">Clear</button>
+            <button class="btn ghost" onclick="clearTry()">Clear</button>
+        </div>
+        <div id="response-meta" class="response-meta" style="display:none">
+            <span>Status: <span id="resp-status">—</span></span>
+            <span>Time: <span id="resp-time">—</span>ms</span>
+            <span>Size: <span id="resp-size">—</span></span>
         </div>
         <div class="response-box" id="try-response"></div>
     </div>
 
     <!-- ── CHURN PREDICTOR ── -->
-    <div class="section-header" style="margin-top:40px;">
-        <h2>🤖 Live Churn Predictor</h2><div class="line"></div>
+    <div class="section-hdr" style="margin-top:44px;">
+        <div class="section-hdr-icon" style="background:rgba(239,68,68,0.1);">🤖</div>
+        <h2>Live Churn Predictor</h2><div class="line"></div>
     </div>
 
     <div class="try-panel">
-        <h3>Enter customer RFM values to predict churn probability</h3>
-        <div class="churn-form" style="margin-top:16px;">
+        <h3>Enter customer RFM values to get an instant churn probability</h3>
+        <div class="churn-form">
             <div class="form-group">
                 <label>Recency (days)</label>
                 <input id="c-recency"   type="number" value="365" placeholder="e.g. 365"/>
@@ -582,29 +1174,29 @@
                 <input id="c-monetary"  type="number" value="500" placeholder="e.g. 500"/>
             </div>
             <div class="form-group">
-                <label>R Score (1-5)</label>
+                <label>R Score (1–5)</label>
                 <input id="c-r"         type="number" value="3"   min="1" max="5"/>
             </div>
             <div class="form-group">
-                <label>F Score (1-5)</label>
+                <label>F Score (1–5)</label>
                 <input id="c-f"         type="number" value="3"   min="1" max="5"/>
             </div>
             <div class="form-group">
-                <label>M Score (1-5)</label>
+                <label>M Score (1–5)</label>
                 <input id="c-m"         type="number" value="3"   min="1" max="5"/>
             </div>
         </div>
-        <div style="margin-top:16px;">
-            <button class="btn" onclick="predictChurn()">🤖 Predict Churn</button>
+        <div style="margin-top:18px;">
+            <button class="btn" onclick="predictChurn()">🤖 Predict Churn Probability</button>
         </div>
         <div class="churn-result" id="churn-result">
             <div style="text-align:center;">
                 <div class="churn-prob" id="churn-prob-val">—</div>
-                <div style="color:#888;font-size:0.8rem;margin-top:4px;">Churn Probability</div>
-                <div id="churn-risk-badge" style="margin-top:10px;"></div>
-                <div id="churn-raw" style="margin-top:16px;font-size:0.75rem;color:#555;
-                     font-family:monospace;text-align:left;background:#0a0d1a;
-                     padding:12px;border-radius:6px;"></div>
+                <div style="color:var(--text-muted);font-size:0.78rem;margin-top:6px;">Churn Probability</div>
+                <div id="churn-risk-badge" style="margin-top:12px;"></div>
+                <div id="churn-raw" style="margin-top:18px;font-size:0.72rem;color:var(--text-muted);
+                     font-family:monospace;text-align:left;background:var(--bg-base);
+                     padding:14px;border-radius:8px;border:1px solid var(--border);"></div>
             </div>
         </div>
     </div>
@@ -612,113 +1204,233 @@
 </div><!-- /container -->
 
 <footer>
-    Retail Analytics API v1.0.0 &nbsp;·&nbsp;
-    FastAPI · PostgreSQL · scikit-learn · Prophet · SHAP &nbsp;·&nbsp;
-    <a href="/docs" style="color:#4472C4;text-decoration:none">Swagger Docs</a> &nbsp;·&nbsp;
-    <a href="/dashboard" style="color:#4472C4;text-decoration:none">Dashboard</a>
+    <span>🛒 Retail Analytics Platform v1.0.0</span>
+    <span>·</span>
+    <span>FastAPI · PostgreSQL · scikit-learn · Prophet · SHAP · Chart.js · Plotly</span>
+    <span>·</span>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/docs">Swagger</a>
+    <a href="/redoc">ReDoc</a>
+    <a href="/health" target="_blank">Health</a>
 </footer>
 
 <script>
 const API = "";
 
-// ── Status check ──────────────────────────────────────────────────────
+// ── Status check ───────────────────────────────────────────────────────────
 async function checkStatus() {
     try {
         const r = await fetch(`${API}/health`);
         const d = await r.json();
+        setApiDot("api-dot", true);
         document.getElementById("api-status").textContent = "Online";
-        document.getElementById("api-dot").className = "dot";
 
-        const setDot = (id, ok) => {
-            document.getElementById(id).className = "dot " + (ok ? "" : "red");
-        };
         const f = d.files || {};
-        setDot("rfm-dot",        f.rfm_csv);
-        setDot("abc-dot",        f.abc_csv);
-        setDot("churn-dot",      f.churn_model);
-        setDot("forecast-dot",   f.forecast_csv);
-        setDot("elasticity-dot", f.elasticity_csv ?? false);
-        setDot("journey-dot",    f.journey_csv ?? false);
-        document.getElementById("rfm-status").textContent        = f.rfm_csv       ? "Ready"    : "Missing";
-        document.getElementById("abc-status").textContent        = f.abc_csv       ? "Ready"    : "Missing";
-        document.getElementById("churn-status").textContent      = f.churn_model   ? "Loaded"   : "Not trained";
-        document.getElementById("forecast-status").textContent   = f.forecast_csv  ? "Ready"    : "Missing";
-        document.getElementById("elasticity-status").textContent = f.elasticity_csv ?? false ? "Ready" : "Missing";
-        document.getElementById("journey-status").textContent    = f.journey_csv   ?? false ? "Ready" : "Missing";
+        const setDot = (id, ok) => {
+            const el = document.getElementById(id);
+            if (el) el.className = "dot " + (ok ? "dot-green" : "dot-red");
+        };
+        const setText = (id, ok) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = ok ? "Ready" : "Missing";
+        };
+
+        setDot("rfm-dot",         f.rfm_csv);          setText("rfm-status",          f.rfm_csv);
+        setDot("abc-dot",         f.abc_csv);           setText("abc-status",          f.abc_csv);
+        setDot("churn-dot",       f.churn_model);       setText("churn-status",        f.churn_model ? "Loaded" : "Not trained");
+        setDot("forecast-dot",    f.forecast_csv);      setText("forecast-status",     f.forecast_csv);
+        setDot("elasticity-dot",  f.elasticity_csv);    setText("elasticity-status",   f.elasticity_csv);
+        setDot("journey-dot",     f.journey_csv);       setText("journey-status",      f.journey_csv);
+        setDot("inventory-dot",   f.inventory_csv);     setText("inventory-status",    f.inventory_csv);
+        setDot("geo-dot",         f.geographic_csv);    setText("geo-status",          f.geographic_csv);
+        setDot("anomaly-dot",     f.anomaly_csv);       setText("anomaly-status",      f.anomaly_csv);
+        setDot("seasonality-dot", f.seasonality_csv);   setText("seasonality-status",  f.seasonality_csv);
+        setDot("segmentation-dot",f.segmentation_csv);  setText("segmentation-status", f.segmentation_csv);
+        setDot("store-dot",       f.store_csv);         setText("store-status",        f.store_csv);
 
     } catch(e) {
+        setApiDot("api-dot", false);
         document.getElementById("api-status").textContent = "Offline";
-        document.getElementById("api-dot").className = "dot red";
     }
 }
 
-// ── KPIs ──────────────────────────────────────────────────────────────
+function setApiDot(id, ok) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.className = "dot dot-pulse " + (ok ? "dot-green" : "dot-red");
+    }
+}
+
+// ── KPIs ───────────────────────────────────────────────────────────────────
 async function loadKPIs() {
+    const set = (id, v) => {
+        const el = document.getElementById(id);
+        if (el) { el.textContent = v; el.closest(".kpi")?.classList.remove("loading"); }
+    };
+    const fmt  = n => n == null ? "—" : Number(n).toLocaleString("en-US", {maximumFractionDigits:0});
+    const fmtC = n => n == null ? "—" : "$" + Number(n).toLocaleString("en-US", {maximumFractionDigits:0});
+
+    // Summary (RFM + ABC + CLV)
     try {
         const r = await fetch(`${API}/api/summary`);
         const d = await r.json();
+        set("k-customers", fmt(d.rfm?.total_customers));
+        set("k-products",  fmt(d.abc?.total_products));
+        set("k-revenue",   fmtC(d.abc?.total_revenue));
+        set("k-txns",      fmt(d.rfm?.total_transactions));
+        set("k-clv",       fmtC(d.clv?.avg_clv));
+        if (d.abc) {
+            document.getElementById("ms-abc-products").textContent = fmt(d.abc.total_products);
+            document.getElementById("ms-abc-revenue").textContent  = fmtC(d.abc.total_revenue);
+        }
+        if (d.clv) document.getElementById("ms-clv").textContent = fmtC(d.clv.avg_clv);
+    } catch(e) {}
 
-        const fmt = n => n == null ? "—" : Number(n).toLocaleString("en-US",{maximumFractionDigits:0});
-        const fmtC = n => n == null ? "—" : "$" + Number(n).toLocaleString("en-US",{maximumFractionDigits:0});
+    // RFM segments
+    try {
+        const r = await fetch(`${API}/api/rfm/segments/summary`);
+        const d = await r.json();
+        const champions = d.find(s => s.segment === "Champions");
+        set("k-champions", fmt(champions?.customer_count));
+        if (champions) {
+            document.getElementById("ms-rfm-customers").textContent  = fmt(champions?.customer_count);
+            document.getElementById("ms-rfm-champions").textContent  = fmt(champions?.customer_count);
+        }
+        // total customers from all segments
+        const total = d.reduce((a, s) => a + (s.customer_count || 0), 0);
+        document.getElementById("ms-rfm-customers").textContent = fmt(total);
+    } catch(e) {}
 
-        document.getElementById("k-customers").textContent = fmt(d.rfm?.total_customers);
-        document.getElementById("k-products").textContent  = fmt(d.abc?.total_products);
-        document.getElementById("k-revenue").textContent   = fmtC(d.abc?.total_revenue);
-        document.getElementById("k-clv").textContent       = fmtC(d.clv?.avg_clv);
-        document.querySelectorAll(".kpi").forEach(k => k.classList.remove("loading"));
-
-        // Champions from RFM summary
-        const rfmR = await fetch(`${API}/api/rfm/segments/summary`);
-        const rfmD = await rfmR.json();
-        const champions = rfmD.find(s => s.segment === "Champions");
-        document.getElementById("k-champions").textContent = champions
-            ? fmt(champions.customer_count) : "—";
-    } catch(e) { console.warn("KPI load error", e); }
-
+    // Churn
     try {
         const r = await fetch(`${API}/api/churn/summary`);
         const d = await r.json();
-        document.getElementById("k-churn").textContent = d.churn_rate_pct + "%";
-    } catch { document.getElementById("k-churn").textContent = "—"; }
+        set("k-churn", (d.churn_rate_pct || "—") + (d.churn_rate_pct != null ? "%" : ""));
+        document.getElementById("ms-churn-rate").textContent = d.churn_rate_pct + "%";
+        document.getElementById("ms-churn-auc").textContent  = d.roc_auc || "—";
+    } catch(e) {}
+
+    // Store performance
+    try {
+        const r = await fetch(`${API}/api/store/summary`);
+        const d = await r.json();
+        set("k-stores", d.total_stores || "—");
+        document.getElementById("ms-store-top").textContent   = (d.top_store_name || "—").replace(" Store","");
+        document.getElementById("ms-store-share").textContent = d.top_store_share?.toFixed(1) || "—";
+    } catch(e) {}
+
+    // Geographic
+    try {
+        const r = await fetch(`${API}/api/geo/summary`);
+        const d = await r.json();
+        set("k-countries", d.total_regions || "—");
+        document.getElementById("ms-geo-regions").textContent = d.total_regions || "—";
+        const growth = d.yoy_growth_pct;
+        document.getElementById("ms-geo-growth").textContent = growth != null ? growth.toFixed(1) + "%" : "—";
+    } catch(e) {}
+
+    // Segmentation
+    try {
+        const r = await fetch(`${API}/api/segmentation/summary`);
+        const d = await r.json();
+        set("k-clusters", d.n_clusters || "—");
+        document.getElementById("ms-seg-k").textContent   = d.n_clusters || "—";
+        document.getElementById("ms-seg-sil").textContent = d.silhouette_score?.toFixed(3) || "—";
+    } catch(e) {}
+
+    // Forecasting
+    try {
+        const r = await fetch(`${API}/api/forecast/summary`);
+        const d = await r.json();
+        set("k-forecast-products", d.total_products || "—");
+        document.getElementById("ms-fc-products").textContent = d.total_products || "—";
+        document.getElementById("ms-fc-mape").textContent     = d.avg_mape != null ? d.avg_mape.toFixed(1) + "%" : "—";
+    } catch(e) {}
+
+    // Anomaly
+    try {
+        const r = await fetch(`${API}/api/anomaly/summary`);
+        const d = await r.json();
+        const total    = d.total_anomalies || d.total || "—";
+        const critical = d.critical_count  || d.by_severity?.Critical || "—";
+        set("k-anomalies", total);
+        document.getElementById("ms-anomaly-total").textContent    = total;
+        document.getElementById("ms-anomaly-critical").textContent = critical;
+    } catch(e) {}
+
+    // Seasonality
+    try {
+        const r = await fetch(`${API}/api/seasonality/summary`);
+        const d = await r.json();
+        document.getElementById("ms-season-trend").textContent = d.trend_direction || "—";
+    } catch(e) {}
+
+    // Inventory
+    try {
+        const r = await fetch(`${API}/api/inventory/summary`);
+        const d = await r.json();
+        document.getElementById("ms-inv-critical").textContent = d.critical_count || d.stockout_risk?.Critical || "—";
+    } catch(e) {}
+
+    // Recommendations
+    try {
+        const r = await fetch(`${API}/api/recommendations/summary`);
+        const d = await r.json();
+        const el1 = document.getElementById("ms-rec-customers");
+        const el2 = document.getElementById("ms-rec-pairs");
+        if (el1) el1.textContent = fmt(d.customers_served);
+        if (el2) el2.textContent = fmt(d.n_pairs);
+    } catch(e) {}
+
+    document.getElementById("kpi-updated").textContent = "Updated " + new Date().toLocaleTimeString();
 }
 
-// ── Try It ────────────────────────────────────────────────────────────
+// ── Try It ─────────────────────────────────────────────────────────────────
 function tryEndpoint(url) {
     document.getElementById("try-url").value = url;
+    document.getElementById("try-method").value = "GET";
     sendTry();
+    document.getElementById("try-url").scrollIntoView({behavior:"smooth", block:"center"});
 }
 
 async function postEndpoint(url) {
-    document.getElementById("try-url").value = url + " (POST)";
-    const box = document.getElementById("try-response");
-    box.classList.add("visible");
-    box.classList.remove("error");
-    box.textContent = "Sending POST...";
-    try {
-        const r = await fetch(`${API}${url}`, {method:"POST"});
-        const d = await r.json();
-        box.textContent = JSON.stringify(d, null, 2);
-    } catch(e) {
-        box.classList.add("error");
-        box.textContent = "Error: " + e.message;
-    }
+    document.getElementById("try-url").value = url;
+    document.getElementById("try-method").value = "POST";
+    sendTry();
 }
 
 async function sendTry() {
-    let url = document.getElementById("try-url").value.trim();
-    if (url.includes("(POST)")) { return; }
+    let url    = document.getElementById("try-url").value.trim();
+    const method = document.getElementById("try-method").value;
     if (!url.startsWith("/")) url = "/" + url;
-    const box = document.getElementById("try-response");
+    const box  = document.getElementById("try-response");
+    const meta = document.getElementById("response-meta");
     box.classList.add("visible");
     box.classList.remove("error");
-    box.textContent = "Loading...";
+    box.textContent = "Loading…";
+    meta.style.display = "none";
+    const t0 = performance.now();
     try {
-        const r = await fetch(`${API}${url}`);
-        const d = await r.json();
-        box.textContent = JSON.stringify(d, null, 2);
+        const r = await fetch(`${API}${url}`, {
+            method,
+            headers: method === "POST" ? {"Content-Type":"application/json"} : {}
+        });
+        const elapsed = (performance.now() - t0).toFixed(0);
+        const text    = await r.text();
+        let display;
+        try {
+            display = JSON.stringify(JSON.parse(text), null, 2);
+        } catch { display = text; }
+        if (!r.ok) box.classList.add("error");
+        box.textContent = display;
+        meta.style.display = "flex";
+        document.getElementById("resp-status").textContent = r.status + " " + r.statusText;
+        document.getElementById("resp-status").style.color = r.ok ? "#34d399" : "#f87171";
+        document.getElementById("resp-time").textContent   = elapsed;
+        document.getElementById("resp-size").textContent   = (text.length / 1024).toFixed(1) + " KB";
     } catch(e) {
         box.classList.add("error");
-        box.textContent = "Error: " + e.message;
+        box.textContent = "Network error: " + e.message;
     }
 }
 
@@ -727,9 +1439,10 @@ function clearTry() {
     const box = document.getElementById("try-response");
     box.classList.remove("visible","error");
     box.textContent = "";
+    document.getElementById("response-meta").style.display = "none";
 }
 
-// ── Churn Predictor ───────────────────────────────────────────────────
+// ── Churn Predictor ─────────────────────────────────────────────────────────
 async function predictChurn() {
     const body = {
         recency:   +document.getElementById("c-recency").value,
@@ -738,43 +1451,36 @@ async function predictChurn() {
         r_score:   +document.getElementById("c-r").value,
         f_score:   +document.getElementById("c-f").value,
         m_score:   +document.getElementById("c-m").value,
-        rfm_value: +(document.getElementById("c-r").value +
-                     document.getElementById("c-f").value +
-                     document.getElementById("c-m").value)
+        rfm_value: +(+document.getElementById("c-r").value
+                   + +document.getElementById("c-f").value
+                   + +document.getElementById("c-m").value),
     };
-
     const result = document.getElementById("churn-result");
     result.classList.add("visible");
-    document.getElementById("churn-prob-val").textContent = "...";
-
+    document.getElementById("churn-prob-val").textContent = "…";
     try {
         const r = await fetch(`${API}/api/churn/predict`, {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify(body)
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(body)
         });
         const d = await r.json();
-
         const pct  = d.churn_probability_pct;
         const tier = d.risk_tier;
-
         document.getElementById("churn-prob-val").textContent = pct + "%";
-        document.getElementById("churn-prob-val").style.color =
-            pct >= 75 ? "#e74c3c" : pct >= 50 ? "#FF7F00" : pct >= 25 ? "#FFC000" : "#70AD47";
-
-        const tierColors = {
-            "Critical Risk": "#e74c3c","High Risk": "#FF7F00",
-            "Medium Risk": "#FFC000","Low Risk": "#70AD47"
+        const col = pct >= 75 ? "#ef4444" : pct >= 50 ? "#fb923c" : pct >= 25 ? "#f59e0b" : "#10b981";
+        document.getElementById("churn-prob-val").style.color = col;
+        const tierMap = {
+            "Critical Risk": {bg:"rgba(239,68,68,0.1)",  color:"#f87171", border:"rgba(239,68,68,0.3)"},
+            "High Risk"    : {bg:"rgba(251,146,60,0.1)", color:"#fb923c", border:"rgba(251,146,60,0.3)"},
+            "Medium Risk"  : {bg:"rgba(245,158,11,0.1)", color:"#fbbf24", border:"rgba(245,158,11,0.3)"},
+            "Low Risk"     : {bg:"rgba(16,185,129,0.1)", color:"#34d399", border:"rgba(16,185,129,0.3)"},
         };
-        const tierBg = {
-            "Critical Risk":"#3a0a0a","High Risk":"#3a1a0a",
-            "Medium Risk":"#2a200a","Low Risk":"#0a2a0a"
-        };
+        const t = tierMap[tier] || {bg:"rgba(100,116,139,0.1)",color:"#94a3b8",border:"rgba(100,116,139,0.3)"};
         document.getElementById("churn-risk-badge").innerHTML =
-            `<span class="risk-badge" style="background:${tierBg[tier]||"#1a1a1a"};
-             color:${tierColors[tier]||"#fff"};border:1px solid ${tierColors[tier]||"#fff"}">
-             ${tier}</span>`;
-
+            `<span style="display:inline-block;padding:6px 20px;border-radius:20px;
+             background:${t.bg};color:${t.color};border:1px solid ${t.border};
+             font-size:0.85rem;font-weight:700">${tier}</span>`;
         document.getElementById("churn-raw").textContent = JSON.stringify(d, null, 2);
     } catch(e) {
         document.getElementById("churn-prob-val").textContent = "Error";
@@ -782,7 +1488,7 @@ async function predictChurn() {
     }
 }
 
-// ── Boot ──────────────────────────────────────────────────────────────
+// ── Boot ───────────────────────────────────────────────────────────────────
 checkStatus();
 loadKPIs();
 </script>

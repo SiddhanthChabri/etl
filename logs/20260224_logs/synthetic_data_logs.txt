@@ -1,0 +1,159 @@
+2026-02-24 05:03:51 - synthetic_data - INFO - ============================================================
+2026-02-24 05:03:51 - synthetic_data - INFO - SYNTHETIC DATA GENERATOR
+2026-02-24 05:03:51 - synthetic_data - INFO -   Range             : 2012-01-01 -> 2015-12-31
+2026-02-24 05:03:51 - synthetic_data - INFO -   Base invoices/day : 25
+2026-02-24 05:03:51 - synthetic_data - INFO - ============================================================
+2026-02-24 05:03:51 - synthetic_data - INFO - Loading reference data from DWH ...
+2026-02-24 05:03:52 - synthetic_data - INFO -   Products : 3,507
+2026-02-24 05:03:52 - synthetic_data - INFO -   Customers: 3,004
+2026-02-24 05:03:52 - synthetic_data - INFO -   Stores   : 33
+2026-02-24 05:03:52 - synthetic_data - INFO -   Existing dim_time dates : 127
+2026-02-24 05:03:52 - synthetic_data - INFO - Trading days to generate: 1,252  (2012-01-01 → 2015-12-31)
+2026-02-24 05:03:53 - synthetic_data - INFO -   Flushed batch | day=2012-01-12 | invoices so far=247 | fact rows so far=5,141
+2026-02-24 05:03:54 - synthetic_data - INFO -   Flushed batch | day=2012-01-23 | invoices so far=473 | fact rows so far=10,465
+2026-02-24 05:03:56 - synthetic_data - INFO -   Flushed batch | day=2012-02-03 | invoices so far=693 | fact rows so far=15,783
+2026-02-24 05:03:59 - synthetic_data - INFO -   Flushed batch | day=2012-02-15 | invoices so far=913 | fact rows so far=20,870
+2026-02-24 05:04:02 - synthetic_data - INFO -   Flushed batch | day=2012-02-29 | invoices so far=1,147 | fact rows so far=26,240
+2026-02-24 05:04:05 - synthetic_data - INFO -   Flushed batch | day=2012-03-13 | invoices so far=1,359 | fact rows so far=31,345
+2026-02-24 05:04:08 - synthetic_data - INFO -   Flushed batch | day=2012-03-27 | invoices so far=1,571 | fact rows so far=36,348
+2026-02-24 05:04:11 - synthetic_data - INFO -   Flushed batch | day=2012-04-07 | invoices so far=1,815 | fact rows so far=41,777
+2026-02-24 05:04:13 - synthetic_data - INFO -   Flushed batch | day=2012-04-18 | invoices so far=2,049 | fact rows so far=46,869
+2026-02-24 05:04:17 - synthetic_data - INFO -   Flushed batch | day=2012-04-30 | invoices so far=2,298 | fact rows so far=52,742
+2026-02-24 05:04:20 - synthetic_data - INFO -   Flushed batch | day=2012-05-10 | invoices so far=2,529 | fact rows so far=58,035
+2026-02-24 05:04:23 - synthetic_data - INFO -   Flushed batch | day=2012-05-19 | invoices so far=2,770 | fact rows so far=63,214
+2026-02-24 05:04:26 - synthetic_data - INFO -   Flushed batch | day=2012-05-29 | invoices so far=2,996 | fact rows so far=68,351
+2026-02-24 05:04:29 - synthetic_data - INFO -   Flushed batch | day=2012-06-06 | invoices so far=3,234 | fact rows so far=73,994
+2026-02-24 05:04:32 - synthetic_data - INFO -   Flushed batch | day=2012-06-14 | invoices so far=3,454 | fact rows so far=79,175
+2026-02-24 05:04:35 - synthetic_data - INFO -   Flushed batch | day=2012-06-21 | invoices so far=3,665 | fact rows so far=84,205
+2026-02-24 05:04:38 - synthetic_data - INFO -   Flushed batch | day=2012-06-29 | invoices so far=3,913 | fact rows so far=89,646
+2026-02-24 05:04:41 - synthetic_data - INFO -   Flushed batch | day=2012-07-09 | invoices so far=4,141 | fact rows so far=94,907
+2026-02-24 05:04:44 - synthetic_data - INFO -   Flushed batch | day=2012-07-20 | invoices so far=4,402 | fact rows so far=100,390
+2026-02-24 05:04:47 - synthetic_data - INFO -   Flushed batch | day=2012-07-30 | invoices so far=4,619 | fact rows so far=105,408
+2026-02-24 05:04:50 - synthetic_data - INFO -   Flushed batch | day=2012-08-08 | invoices so far=4,858 | fact rows so far=110,523
+2026-02-24 05:04:53 - synthetic_data - INFO -   Flushed batch | day=2012-08-18 | invoices so far=5,096 | fact rows so far=115,945
+2026-02-24 05:04:56 - synthetic_data - INFO -   Flushed batch | day=2012-08-28 | invoices so far=5,333 | fact rows so far=121,222
+2026-02-24 05:04:59 - synthetic_data - INFO -   Flushed batch | day=2012-09-07 | invoices so far=5,542 | fact rows so far=126,395
+2026-02-24 05:05:02 - synthetic_data - INFO -   Flushed batch | day=2012-09-19 | invoices so far=5,778 | fact rows so far=131,454
+2026-02-24 05:05:05 - synthetic_data - INFO -   Flushed batch | day=2012-10-02 | invoices so far=6,028 | fact rows so far=136,895
+2026-02-24 05:05:08 - synthetic_data - INFO -   Flushed batch | day=2012-10-12 | invoices so far=6,254 | fact rows so far=142,104
+2026-02-24 05:05:11 - synthetic_data - INFO -   Flushed batch | day=2012-10-23 | invoices so far=6,491 | fact rows so far=147,494
+2026-02-24 05:05:14 - synthetic_data - INFO -   Flushed batch | day=2012-11-01 | invoices so far=6,712 | fact rows so far=152,674
+2026-02-24 05:05:18 - synthetic_data - INFO -   Flushed batch | day=2012-11-09 | invoices so far=6,945 | fact rows so far=157,898
+2026-02-24 05:05:21 - synthetic_data - INFO -   Flushed batch | day=2012-11-20 | invoices so far=7,195 | fact rows so far=163,214
+2026-02-24 05:05:24 - synthetic_data - INFO -   Flushed batch | day=2012-11-30 | invoices so far=7,435 | fact rows so far=168,805
+2026-02-24 05:05:27 - synthetic_data - INFO -   Flushed batch | day=2012-12-08 | invoices so far=7,674 | fact rows so far=174,291
+2026-02-24 05:05:30 - synthetic_data - INFO -   Flushed batch | day=2012-12-17 | invoices so far=7,907 | fact rows so far=179,678
+2026-02-24 05:05:33 - synthetic_data - INFO -   Flushed batch | day=2012-12-25 | invoices so far=8,143 | fact rows so far=184,900
+2026-02-24 05:05:36 - synthetic_data - INFO -   Flushed batch | day=2013-01-04 | invoices so far=8,389 | fact rows so far=190,494
+2026-02-24 05:05:40 - synthetic_data - INFO -   Flushed batch | day=2013-01-16 | invoices so far=8,631 | fact rows so far=195,545
+2026-02-24 05:05:43 - synthetic_data - INFO -   Flushed batch | day=2013-01-28 | invoices so far=8,874 | fact rows so far=200,595
+2026-02-24 05:05:46 - synthetic_data - INFO -   Flushed batch | day=2013-02-08 | invoices so far=9,091 | fact rows so far=205,938
+2026-02-24 05:05:49 - synthetic_data - INFO -   Flushed batch | day=2013-02-20 | invoices so far=9,308 | fact rows so far=211,345
+2026-02-24 05:05:52 - synthetic_data - INFO -   Flushed batch | day=2013-03-05 | invoices so far=9,562 | fact rows so far=216,978
+2026-02-24 05:05:55 - synthetic_data - INFO -   Flushed batch | day=2013-03-19 | invoices so far=9,788 | fact rows so far=222,011
+2026-02-24 05:05:58 - synthetic_data - INFO -   Flushed batch | day=2013-03-30 | invoices so far=9,996 | fact rows so far=227,473
+2026-02-24 05:06:01 - synthetic_data - INFO -   Flushed batch | day=2013-04-09 | invoices so far=10,248 | fact rows so far=233,299
+2026-02-24 05:06:03 - synthetic_data - INFO -   Flushed batch | day=2013-04-19 | invoices so far=10,473 | fact rows so far=238,333
+2026-02-24 05:06:06 - synthetic_data - INFO -   Flushed batch | day=2013-04-30 | invoices so far=10,744 | fact rows so far=244,080
+2026-02-24 05:06:09 - synthetic_data - INFO -   Flushed batch | day=2013-05-08 | invoices so far=10,947 | fact rows so far=249,341
+2026-02-24 05:06:11 - synthetic_data - INFO -   Flushed batch | day=2013-05-18 | invoices so far=11,197 | fact rows so far=254,750
+2026-02-24 05:06:14 - synthetic_data - INFO -   Flushed batch | day=2013-05-27 | invoices so far=11,430 | fact rows so far=260,064
+2026-02-24 05:06:16 - synthetic_data - INFO -   Flushed batch | day=2013-06-04 | invoices so far=11,653 | fact rows so far=265,208
+2026-02-24 05:06:19 - synthetic_data - INFO -   Flushed batch | day=2013-06-13 | invoices so far=11,917 | fact rows so far=271,169
+2026-02-24 05:06:22 - synthetic_data - INFO -   Flushed batch | day=2013-06-22 | invoices so far=12,202 | fact rows so far=276,964
+2026-02-24 05:06:25 - synthetic_data - INFO -   Flushed batch | day=2013-07-01 | invoices so far=12,428 | fact rows so far=282,256
+2026-02-24 05:06:27 - synthetic_data - INFO -   Flushed batch | day=2013-07-10 | invoices so far=12,654 | fact rows so far=287,452
+2026-02-24 05:06:30 - synthetic_data - INFO -   Flushed batch | day=2013-07-18 | invoices so far=12,875 | fact rows so far=292,473
+2026-02-24 05:06:32 - synthetic_data - INFO -   Flushed batch | day=2013-07-27 | invoices so far=13,116 | fact rows so far=297,681
+2026-02-24 05:06:35 - synthetic_data - INFO -   Flushed batch | day=2013-08-07 | invoices so far=13,365 | fact rows so far=303,323
+2026-02-24 05:06:38 - synthetic_data - INFO -   Flushed batch | day=2013-08-16 | invoices so far=13,594 | fact rows so far=308,757
+2026-02-24 05:06:41 - synthetic_data - INFO -   Flushed batch | day=2013-08-28 | invoices so far=13,851 | fact rows so far=314,186
+2026-02-24 05:06:43 - synthetic_data - INFO -   Flushed batch | day=2013-09-07 | invoices so far=14,094 | fact rows so far=319,747
+2026-02-24 05:06:46 - synthetic_data - INFO -   Flushed batch | day=2013-09-19 | invoices so far=14,325 | fact rows so far=324,992
+2026-02-24 05:06:49 - synthetic_data - INFO -   Flushed batch | day=2013-09-30 | invoices so far=14,548 | fact rows so far=330,070
+2026-02-24 05:06:51 - synthetic_data - INFO -   Flushed batch | day=2013-10-09 | invoices so far=14,762 | fact rows so far=335,123
+2026-02-24 05:06:54 - synthetic_data - INFO -   Flushed batch | day=2013-10-18 | invoices so far=14,967 | fact rows so far=340,430
+2026-02-24 05:06:57 - synthetic_data - INFO -   Flushed batch | day=2013-10-28 | invoices so far=15,206 | fact rows so far=345,566
+2026-02-24 05:06:59 - synthetic_data - INFO -   Flushed batch | day=2013-11-06 | invoices so far=15,427 | fact rows so far=350,862
+2026-02-24 05:07:02 - synthetic_data - INFO -   Flushed batch | day=2013-11-16 | invoices so far=15,670 | fact rows so far=356,356
+2026-02-24 05:07:05 - synthetic_data - INFO -   Flushed batch | day=2013-11-27 | invoices so far=15,904 | fact rows so far=362,047
+2026-02-24 05:07:07 - synthetic_data - INFO -   Flushed batch | day=2013-12-06 | invoices so far=16,163 | fact rows so far=367,500
+2026-02-24 05:07:10 - synthetic_data - INFO -   Flushed batch | day=2013-12-14 | invoices so far=16,381 | fact rows so far=372,926
+2026-02-24 05:07:13 - synthetic_data - INFO -   Flushed batch | day=2013-12-24 | invoices so far=16,631 | fact rows so far=378,462
+2026-02-24 05:07:15 - synthetic_data - INFO -   Flushed batch | day=2014-01-02 | invoices so far=16,895 | fact rows so far=383,492
+2026-02-24 05:07:18 - synthetic_data - INFO -   Flushed batch | day=2014-01-14 | invoices so far=17,109 | fact rows so far=388,653
+2026-02-24 05:07:21 - synthetic_data - INFO -   Flushed batch | day=2014-01-27 | invoices so far=17,355 | fact rows so far=393,992
+2026-02-24 05:07:23 - synthetic_data - INFO -   Flushed batch | day=2014-02-07 | invoices so far=17,593 | fact rows so far=399,175
+2026-02-24 05:07:26 - synthetic_data - INFO -   Flushed batch | day=2014-02-19 | invoices so far=17,806 | fact rows so far=404,247
+2026-02-24 05:07:29 - synthetic_data - INFO -   Flushed batch | day=2014-03-05 | invoices so far=18,028 | fact rows so far=409,437
+2026-02-24 05:07:31 - synthetic_data - INFO -   Flushed batch | day=2014-03-18 | invoices so far=18,259 | fact rows so far=414,621
+2026-02-24 05:07:34 - synthetic_data - INFO -   Flushed batch | day=2014-03-31 | invoices so far=18,489 | fact rows so far=420,182
+2026-02-24 05:07:37 - synthetic_data - INFO -   Flushed batch | day=2014-04-10 | invoices so far=18,741 | fact rows so far=425,604
+2026-02-24 05:07:40 - synthetic_data - INFO -   Flushed batch | day=2014-04-22 | invoices so far=19,010 | fact rows so far=431,406
+2026-02-24 05:07:42 - synthetic_data - INFO -   Flushed batch | day=2014-05-02 | invoices so far=19,267 | fact rows so far=436,816
+2026-02-24 05:07:45 - synthetic_data - INFO -   Flushed batch | day=2014-05-12 | invoices so far=19,502 | fact rows so far=441,948
+2026-02-24 05:07:47 - synthetic_data - INFO -   Flushed batch | day=2014-05-21 | invoices so far=19,737 | fact rows so far=447,179
+2026-02-24 05:07:50 - synthetic_data - INFO -   Flushed batch | day=2014-05-30 | invoices so far=19,974 | fact rows so far=452,455
+2026-02-24 05:07:52 - synthetic_data - INFO -   Flushed batch | day=2014-06-09 | invoices so far=20,220 | fact rows so far=457,550
+2026-02-24 05:07:55 - synthetic_data - INFO -   Flushed batch | day=2014-06-18 | invoices so far=20,493 | fact rows so far=463,295
+2026-02-24 05:07:58 - synthetic_data - INFO -   Flushed batch | day=2014-06-27 | invoices so far=20,739 | fact rows so far=468,798
+2026-02-24 05:08:01 - synthetic_data - INFO -   Flushed batch | day=2014-07-07 | invoices so far=20,973 | fact rows so far=473,963
+2026-02-24 05:08:04 - synthetic_data - INFO -   Flushed batch | day=2014-07-15 | invoices so far=21,193 | fact rows so far=478,988
+2026-02-24 05:08:06 - synthetic_data - INFO -   Flushed batch | day=2014-07-25 | invoices so far=21,446 | fact rows so far=484,454
+2026-02-24 05:08:09 - synthetic_data - INFO -   Flushed batch | day=2014-08-04 | invoices so far=21,684 | fact rows so far=489,944
+2026-02-24 05:08:12 - synthetic_data - INFO -   Flushed batch | day=2014-08-15 | invoices so far=21,928 | fact rows so far=495,386
+2026-02-24 05:08:14 - synthetic_data - INFO -   Flushed batch | day=2014-08-23 | invoices so far=22,137 | fact rows so far=500,565
+2026-02-24 05:08:17 - synthetic_data - INFO -   Flushed batch | day=2014-09-01 | invoices so far=22,333 | fact rows so far=505,905
+2026-02-24 05:08:20 - synthetic_data - INFO -   Flushed batch | day=2014-09-12 | invoices so far=22,562 | fact rows so far=511,243
+2026-02-24 05:08:22 - synthetic_data - INFO -   Flushed batch | day=2014-09-23 | invoices so far=22,784 | fact rows so far=516,299
+2026-02-24 05:08:24 - synthetic_data - INFO -   Flushed batch | day=2014-10-04 | invoices so far=23,018 | fact rows so far=521,488
+2026-02-24 05:08:27 - synthetic_data - INFO -   Flushed batch | day=2014-10-16 | invoices so far=23,249 | fact rows so far=526,918
+2026-02-24 05:08:30 - synthetic_data - INFO -   Flushed batch | day=2014-10-29 | invoices so far=23,525 | fact rows so far=532,827
+2026-02-24 05:08:33 - synthetic_data - INFO -   Flushed batch | day=2014-11-06 | invoices so far=23,751 | fact rows so far=538,066
+2026-02-24 05:08:36 - synthetic_data - INFO -   Flushed batch | day=2014-11-15 | invoices so far=23,989 | fact rows so far=543,572
+2026-02-24 05:08:38 - synthetic_data - INFO -   Flushed batch | day=2014-11-24 | invoices so far=24,206 | fact rows so far=548,770
+2026-02-24 05:08:41 - synthetic_data - INFO -   Flushed batch | day=2014-12-02 | invoices so far=24,426 | fact rows so far=553,992
+2026-02-24 05:08:43 - synthetic_data - INFO -   Flushed batch | day=2014-12-11 | invoices so far=24,683 | fact rows so far=559,344
+2026-02-24 05:08:46 - synthetic_data - INFO -   Flushed batch | day=2014-12-19 | invoices so far=24,927 | fact rows so far=564,955
+2026-02-24 05:08:49 - synthetic_data - INFO -   Flushed batch | day=2014-12-26 | invoices so far=25,143 | fact rows so far=570,011
+2026-02-24 05:08:53 - synthetic_data - INFO -   Flushed batch | day=2015-01-03 | invoices so far=25,356 | fact rows so far=575,020
+2026-02-24 05:08:56 - synthetic_data - INFO -   Flushed batch | day=2015-01-15 | invoices so far=25,574 | fact rows so far=580,447
+2026-02-24 05:08:59 - synthetic_data - INFO -   Flushed batch | day=2015-01-27 | invoices so far=25,831 | fact rows so far=586,067
+2026-02-24 05:09:02 - synthetic_data - INFO -   Flushed batch | day=2015-02-09 | invoices so far=26,083 | fact rows so far=591,757
+2026-02-24 05:09:05 - synthetic_data - INFO -   Flushed batch | day=2015-02-19 | invoices so far=26,311 | fact rows so far=597,295
+2026-02-24 05:09:07 - synthetic_data - INFO -   Flushed batch | day=2015-03-03 | invoices so far=26,542 | fact rows so far=602,321
+2026-02-24 05:09:10 - synthetic_data - INFO -   Flushed batch | day=2015-03-18 | invoices so far=26,791 | fact rows so far=607,350
+2026-02-24 05:09:12 - synthetic_data - INFO -   Flushed batch | day=2015-04-01 | invoices so far=27,048 | fact rows so far=612,714
+2026-02-24 05:09:15 - synthetic_data - INFO -   Flushed batch | day=2015-04-11 | invoices so far=27,296 | fact rows so far=617,765
+2026-02-24 05:09:18 - synthetic_data - INFO -   Flushed batch | day=2015-04-23 | invoices so far=27,554 | fact rows so far=623,556
+2026-02-24 05:09:20 - synthetic_data - INFO -   Flushed batch | day=2015-05-02 | invoices so far=27,791 | fact rows so far=628,680
+2026-02-24 05:09:23 - synthetic_data - INFO -   Flushed batch | day=2015-05-12 | invoices so far=28,020 | fact rows so far=633,854
+2026-02-24 05:09:26 - synthetic_data - INFO -   Flushed batch | day=2015-05-22 | invoices so far=28,279 | fact rows so far=639,297
+2026-02-24 05:09:29 - synthetic_data - INFO -   Flushed batch | day=2015-06-02 | invoices so far=28,544 | fact rows so far=645,200
+2026-02-24 05:09:31 - synthetic_data - INFO -   Flushed batch | day=2015-06-10 | invoices so far=28,761 | fact rows so far=650,233
+2026-02-24 05:09:34 - synthetic_data - INFO -   Flushed batch | day=2015-06-18 | invoices so far=28,986 | fact rows so far=655,370
+2026-02-24 05:09:37 - synthetic_data - INFO -   Flushed batch | day=2015-06-26 | invoices so far=29,196 | fact rows so far=660,580
+2026-02-24 05:09:39 - synthetic_data - INFO -   Flushed batch | day=2015-07-06 | invoices so far=29,423 | fact rows so far=665,751
+2026-02-24 05:09:42 - synthetic_data - INFO -   Flushed batch | day=2015-07-16 | invoices so far=29,663 | fact rows so far=671,047
+2026-02-24 05:09:44 - synthetic_data - INFO -   Flushed batch | day=2015-07-25 | invoices so far=29,901 | fact rows so far=676,364
+2026-02-24 05:09:47 - synthetic_data - INFO -   Flushed batch | day=2015-08-05 | invoices so far=30,138 | fact rows so far=681,756
+2026-02-24 05:09:50 - synthetic_data - INFO -   Flushed batch | day=2015-08-13 | invoices so far=30,353 | fact rows so far=686,885
+2026-02-24 05:09:52 - synthetic_data - INFO -   Flushed batch | day=2015-08-24 | invoices so far=30,620 | fact rows so far=692,190
+2026-02-24 05:09:55 - synthetic_data - INFO -   Flushed batch | day=2015-09-02 | invoices so far=30,849 | fact rows so far=697,464
+2026-02-24 05:09:58 - synthetic_data - INFO -   Flushed batch | day=2015-09-12 | invoices so far=31,040 | fact rows so far=702,657
+2026-02-24 05:10:00 - synthetic_data - INFO -   Flushed batch | day=2015-09-24 | invoices so far=31,263 | fact rows so far=707,866
+2026-02-24 05:10:03 - synthetic_data - INFO -   Flushed batch | day=2015-10-06 | invoices so far=31,495 | fact rows so far=713,019
+2026-02-24 05:10:06 - synthetic_data - INFO -   Flushed batch | day=2015-10-17 | invoices so far=31,738 | fact rows so far=718,318
+2026-02-24 05:10:08 - synthetic_data - INFO -   Flushed batch | day=2015-10-28 | invoices so far=31,939 | fact rows so far=723,359
+2026-02-24 05:10:11 - synthetic_data - INFO -   Flushed batch | day=2015-11-07 | invoices so far=32,179 | fact rows so far=728,703
+2026-02-24 05:10:13 - synthetic_data - INFO -   Flushed batch | day=2015-11-16 | invoices so far=32,410 | fact rows so far=733,824
+2026-02-24 05:10:16 - synthetic_data - INFO -   Flushed batch | day=2015-11-25 | invoices so far=32,662 | fact rows so far=739,396
+2026-02-24 05:10:18 - synthetic_data - INFO -   Flushed batch | day=2015-12-04 | invoices so far=32,896 | fact rows so far=744,446
+2026-02-24 05:10:21 - synthetic_data - INFO -   Flushed batch | day=2015-12-12 | invoices so far=33,134 | fact rows so far=749,629
+2026-02-24 05:10:23 - synthetic_data - INFO -   Flushed batch | day=2015-12-21 | invoices so far=33,350 | fact rows so far=754,787
+2026-02-24 05:10:26 - synthetic_data - INFO -   Flushed batch | day=2015-12-29 | invoices so far=33,592 | fact rows so far=760,150
+2026-02-24 05:10:27 - synthetic_data - INFO - Generation complete.
+2026-02-24 05:10:27 - synthetic_data - INFO -   New dim_time rows : 1,252
+2026-02-24 05:10:27 - synthetic_data - INFO -   New fact_sales rows: 761,499
+2026-02-24 05:10:27 - synthetic_data - INFO -   New invoices       : 33,656
+2026-02-24 05:10:27 - synthetic_data - INFO - Watermark updated to 2015-12-31
