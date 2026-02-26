@@ -3,15 +3,62 @@ main.py — FastAPI Entry Point
 Retail Analytics API
 """
 
+import os
+from contextlib import asynccontextmanager
+from datetime import datetime
+
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, FileResponse
-from routers import rfm, abc, clv, basket, etl, dashboard, churn, forecast, elasticity, journey, inventory, geographic, anomaly, seasonality, segmentation, store_performance, recommendations
-import uvicorn
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+
+from routers import (
+    abc, anomaly, basket, churn, clv, clv_prediction, dashboard,
+    elasticity, etl, forecast, geographic, inventory, journey,
+    recommendations, rfm, seasonality, segmentation, store_performance,
+)
+from routers import drift, pricing
 from routers.explain import router as explain_router
 
+# ── APScheduler (ETL auto-refresh) ────────────────────────────────────────────
+try:
+    from apscheduler.schedulers.asyncio import AsyncIOScheduler
+    from apscheduler.triggers.cron import CronTrigger
+    _HAS_SCHEDULER = True
+except ImportError:
+    _HAS_SCHEDULER = False
 
+_scheduler = None
+
+
+async def _refresh_analytics():
+    """Nightly analytics refresh triggered by APScheduler."""
+    import subprocess, sys
+    print(f"[Scheduler] Starting nightly analytics refresh at {datetime.utcnow().isoformat()}")
+    subprocess.Popen([sys.executable, "run_all.py", "--no-server"])
+
+
+# ── Lifespan (startup / shutdown) ─────────────────────────────────────────────
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global _scheduler
+    if _HAS_SCHEDULER:
+        _scheduler = AsyncIOScheduler()
+        # Refresh analytics every night at 02:00 UTC
+        _scheduler.add_job(
+            _refresh_analytics,
+            trigger=CronTrigger(hour=2, minute=0),
+            id="nightly_refresh",
+            replace_existing=True,
+        )
+        _scheduler.start()
+        print("[Scheduler] APScheduler started — nightly refresh at 02:00 UTC")
+    yield
+    if _scheduler and _scheduler.running:
+        _scheduler.shutdown(wait=False)
+
+
+# ── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(
     title="🛒 Retail Analytics API",
     description="""
@@ -25,11 +72,14 @@ A complete REST API for retail analytics powered by a PostgreSQL Data Warehouse.
 | 🎯 **RFM Analysis** | Customer segmentation by Recency, Frequency & Monetary value |
 | 📦 **ABC Analysis** | Product classification by revenue contribution |
 | 💎 **CLV Analysis** | Customer Lifetime Value scoring |
+| 🔮 **CLV Prediction** | Forward-looking CLV via BG/NBD model |
 | 📅 **Cohort Analysis** | Retention tracking by customer acquisition cohort |
 | 🛒 **Market Basket** | Association rules — products bought together |
 | 🤖 **Churn Prediction** | ML model to identify customers likely to leave |
-| 📈 **Demand Forecasting** | Time-series forecast of product demand (Prophet/ETS) |
+| 📈 **Demand Forecasting** | Time-series forecast of product demand |
 | 💹 **Price Elasticity** | Log-log OLS regression — demand sensitivity to price |
+| 💰 **Pricing Optimizer** | Revenue-maximising price recommendations |
+| 📊 **Drift Monitor** | Feature distribution drift detection (PSI) |
 | ⚙️  **ETL Pipeline** | Trigger & monitor incremental data loads |
 | 📊 **Dashboard** | Serve HTML dashboard & download Excel reports |
 
@@ -38,16 +88,20 @@ A complete REST API for retail analytics powered by a PostgreSQL Data Warehouse.
 2. Visit `/docs` for interactive API documentation
 3. Use `/api/summary` for a full analytics overview
     """,
-    version="1.0.0",
+    version="2.0.0",
     contact={"name": "Retail Analytics Project"},
     license_info={"name": "MIT"},
+    lifespan=lifespan,
     openapi_tags=[
         {"name": "Health",              "description": "Health check & root endpoints"},
         {"name": "RFM Analysis",        "description": "Customer segmentation using RFM scoring"},
         {"name": "ABC Analysis",        "description": "Product classification by revenue contribution"},
         {"name": "CLV Analysis",        "description": "Customer Lifetime Value calculation & segmentation"},
+        {"name": "CLV Prediction",      "description": "Forward-looking CLV via BG/NBD + Gamma-Gamma"},
         {"name": "Market Basket",       "description": "Association rule mining — frequently bought together"},
         {"name": "Churn Prediction 🤖", "description": "ML-based churn probability scoring per customer"},
+        {"name": "Pricing Optimizer",   "description": "Revenue-maximising price adjustment recommendations"},
+        {"name": "Drift Monitor",       "description": "PSI-based feature distribution drift detection"},
         {"name": "ETL Pipeline",        "description": "Trigger & monitor ETL pipeline jobs"},
         {"name": "Dashboard",           "description": "HTML dashboard, Excel download & cohort data"},
         {"name": "Demand Forecasting",  "description": "Time-series demand forecasting per product & category"},
@@ -64,7 +118,7 @@ A complete REST API for retail analytics powered by a PostgreSQL Data Warehouse.
 )
 
 
-# ── CORS ──────────────────────────────────────────────────────────────────
+# ── CORS ──────────────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -74,152 +128,136 @@ app.add_middleware(
 )
 
 
-# ── STATIC FILES ──────────────────────────────────────────────────────────
+# ── STATIC FILES ──────────────────────────────────────────────────────────────
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-# ── ROUTERS ───────────────────────────────────────────────────────────────
-app.include_router(rfm.router,       prefix="/api/rfm",    tags=["RFM Analysis"])
-app.include_router(abc.router,       prefix="/api/abc",    tags=["ABC Analysis"])
-app.include_router(clv.router,       prefix="/api/clv",    tags=["CLV Analysis"])
-app.include_router(basket.router,    prefix="/api/basket", tags=["Market Basket"])
-app.include_router(churn.router,     prefix="/api/churn",  tags=["Churn Prediction 🤖"])
-app.include_router(etl.router,       prefix="/etl",        tags=["ETL Pipeline"])
-app.include_router(dashboard.router, prefix="",            tags=["Dashboard"])
-app.include_router(forecast.router,   prefix="/api/forecast",    tags=["Demand Forecasting"])
-app.include_router(elasticity.router, prefix="/api/elasticity", tags=["Price Elasticity"])
-app.include_router(journey.router,    prefix="/api/journey",    tags=["Customer Journey"])
-app.include_router(inventory.router,  prefix="/api/inventory",  tags=["Inventory Optimisation"])
-app.include_router(geographic.router, prefix="/api/geo",         tags=["Geographic Analysis"])
-app.include_router(anomaly.router,      prefix="/api/anomaly",      tags=["Anomaly Detection"])
-app.include_router(seasonality.router,   prefix="/api/seasonality",   tags=["Seasonality Analysis"])
-app.include_router(segmentation.router,    prefix="/api/segmentation",  tags=["Customer Segmentation"])
-app.include_router(store_performance.router,  prefix="/api/store",           tags=["Store Performance"])
-app.include_router(recommendations.router,   prefix="/api/recommendations",  tags=["Recommendations"])
+# ── ROUTERS ───────────────────────────────────────────────────────────────────
+app.include_router(rfm.router,              prefix="/api/rfm",            tags=["RFM Analysis"])
+app.include_router(abc.router,              prefix="/api/abc",            tags=["ABC Analysis"])
+app.include_router(clv.router,              prefix="/api/clv",            tags=["CLV Analysis"])
+app.include_router(clv_prediction.router,   prefix="/api/clv-predict",    tags=["CLV Prediction"])
+app.include_router(basket.router,           prefix="/api/basket",         tags=["Market Basket"])
+app.include_router(churn.router,            prefix="/api/churn",          tags=["Churn Prediction 🤖"])
+app.include_router(pricing.router,          prefix="/api/pricing",        tags=["Pricing Optimizer"])
+app.include_router(drift.router,            prefix="/api/drift",          tags=["Drift Monitor"])
+app.include_router(etl.router,              prefix="/etl",                tags=["ETL Pipeline"])
+app.include_router(dashboard.router,        prefix="",                    tags=["Dashboard"])
+app.include_router(forecast.router,         prefix="/api/forecast",       tags=["Demand Forecasting"])
+app.include_router(elasticity.router,       prefix="/api/elasticity",     tags=["Price Elasticity"])
+app.include_router(journey.router,          prefix="/api/journey",        tags=["Customer Journey"])
+app.include_router(inventory.router,        prefix="/api/inventory",      tags=["Inventory Optimisation"])
+app.include_router(geographic.router,       prefix="/api/geo",            tags=["Geographic Analysis"])
+app.include_router(anomaly.router,          prefix="/api/anomaly",        tags=["Anomaly Detection"])
+app.include_router(seasonality.router,      prefix="/api/seasonality",    tags=["Seasonality Analysis"])
+app.include_router(segmentation.router,     prefix="/api/segmentation",   tags=["Customer Segmentation"])
+app.include_router(store_performance.router, prefix="/api/store",         tags=["Store Performance"])
+app.include_router(recommendations.router,  prefix="/api/recommendations", tags=["Recommendations"])
 app.include_router(explain_router)
 
 
-# ── ROOT — Serve landing page ─────────────────────────────────────────────
+# ── ROOT ──────────────────────────────────────────────────────────────────────
 @app.get("/", tags=["Health"], summary="API root — serve landing page",
          include_in_schema=False)
 def root():
     return FileResponse("static/index.html")
 
 
-# ── API INFO — JSON for programmatic access ───────────────────────────────
+# ── API INFO ──────────────────────────────────────────────────────────────────
 @app.get("/api", tags=["Health"], summary="API info JSON")
 def api_info():
     return {
-        "status":  "✅ running",
-        "app":     "Retail Analytics API",
-        "version": "1.0.0",
-        "links": {
-            "docs":           "/docs",
-            "redoc":          "/redoc",
-            "dashboard":      "/dashboard",
+        "status" : "✅ running",
+        "app"    : "Retail Analytics API",
+        "version": "2.0.0",
+        "links"  : {
+            "docs"          : "/docs",
+            "redoc"         : "/redoc",
+            "dashboard"     : "/dashboard",
             "download_excel": "/download/excel",
-            "summary":        "/api/summary",
-            "cohort":         "/api/cohort",
+            "summary"       : "/api/summary",
+            "cohort"        : "/api/cohort",
         },
         "endpoints": {
-            "rfm": {
-                "all_customers"  : "/api/rfm/customers",
-                "single_customer": "/api/rfm/customer/{id}",
-                "segment_summary": "/api/rfm/segments/summary",
-                "top_customers"  : "/api/rfm/top"
-            },
-            "abc": {
-                "all_products"  : "/api/abc/products",
-                "single_product": "/api/abc/product/{id}",
-                "class_summary" : "/api/abc/classes/summary",
-                "top_products"  : "/api/abc/top"
-            },
-            "clv": {
-                "all_customers"  : "/api/clv/customers",
-                "single_customer": "/api/clv/customer/{id}",
-                "segment_summary": "/api/clv/segments/summary",
-                "top_customers"  : "/api/clv/top"
-            },
-            "basket": {
-                "all_rules"      : "/api/basket/rules",
-                "recommendations": "/api/basket/recommendations/{product}",
-                "top_rules"      : "/api/basket/top"
-            },
-            "churn": {
-                "summary"        : "/api/churn/summary",
-                "single_customer": "/api/churn/customer/{id}",
-                "by_risk_tier"   : "/api/churn/risk/{tier}",
-                "top_at_risk"    : "/api/churn/top-at-risk",
-                "predict_custom" : "POST /api/churn/predict"
-            },
-            "etl": {
-                "status"            : "/etl/status",
-                "run_etl"           : "POST /etl/run",
-                "refresh_analytics" : "POST /etl/analytics/refresh",
-                "quality_check"     : "POST /etl/quality/check"
-            },
-            "forecast": {
-                "summary"         : "/api/forecast/summary",
-                "all_products"    : "/api/forecast/products",
-                "single_product"  : "/api/forecast/product/{id}",
-                "top_products"    : "/api/forecast/top",
-                "by_category"     : "/api/forecast/category/{category}",
-                "categories_list" : "/api/forecast/categories",
-                "accuracy_metrics": "/api/forecast/accuracy",
-            },
-            "elasticity": {
-                "summary"        : "/api/elasticity/summary",
-                "all_products"   : "/api/elasticity/products",
-                "single_product" : "/api/elasticity/product/{id}",
-                "by_type"        : "/api/elasticity/type/{type}",
-                "top_elastic"    : "/api/elasticity/top/elastic",
-                "top_inelastic"  : "/api/elasticity/top/inelastic",
-                "by_category"    : "/api/elasticity/categories",
-            }
+            "rfm"        : {"customers": "/api/rfm/customers", "summary": "/api/rfm/segments/summary"},
+            "abc"        : {"products": "/api/abc/products",   "summary": "/api/abc/classes/summary"},
+            "clv"        : {"customers": "/api/clv/customers", "summary": "/api/clv/segments/summary"},
+            "clv_predict": {"customers": "/api/clv-predict/customers", "summary": "/api/clv-predict/summary", "top": "/api/clv-predict/top"},
+            "churn"      : {"summary": "/api/churn/summary", "top_at_risk": "/api/churn/top-at-risk"},
+            "pricing"    : {"summary": "/api/pricing/summary", "top": "/api/pricing/top"},
+            "drift"      : {"summary": "/api/drift/summary", "alerts": "/api/drift/alerts"},
+            "forecast"   : {"summary": "/api/forecast/summary", "accuracy": "/api/forecast/accuracy"},
+            "elasticity" : {"summary": "/api/elasticity/summary", "top_elastic": "/api/elasticity/top/elastic"},
+            "inventory"  : {"summary": "/api/inventory/summary", "alerts": "/api/inventory/alerts"},
+            "geo"        : {"summary": "/api/geo/summary"},
+            "anomaly"    : {"summary": "/api/anomaly/summary"},
+            "seasonality": {"summary": "/api/seasonality/summary"},
+            "segmentation": {"summary": "/api/segmentation/summary"},
+            "stores"     : {"summary": "/api/store/summary", "top": "/api/store/top"},
+            "recommendations": {"summary": "/api/recommendations/summary", "popular": "/api/recommendations/popular"},
         }
     }
 
 
-# ── HEALTH CHECK ──────────────────────────────────────────────────────────
+# ── HEALTH CHECK ──────────────────────────────────────────────────────────────
 @app.get("/health", tags=["Health"],
-         summary="Health check — shows which data files exist")
+         summary="Health check — data file status with freshness timestamps")
 def health():
-    import os
-    # Use absolute path relative to main.py location
     base = os.path.dirname(os.path.abspath(__file__))
 
-    def exists(filename):
-        return os.path.exists(os.path.join(base, filename))
+    def file_info(filename: str) -> dict:
+        path = os.path.join(base, filename)
+        exists = os.path.exists(path)
+        if not exists:
+            return {"exists": False, "size_kb": None, "last_modified": None}
+        stat = os.stat(path)
+        return {
+            "exists"       : True,
+            "size_kb"      : round(stat.st_size / 1024, 1),
+            "last_modified": datetime.utcfromtimestamp(stat.st_mtime).isoformat() + "Z",
+        }
+
+    files = {
+        "rfm_csv"              : file_info("rfm_analysis_results.csv"),
+        "abc_csv"              : file_info("abc_analysis_results.csv"),
+        "clv_csv"              : file_info("clv_analysis_results.csv"),
+        "clv_predictions_csv"  : file_info("clv_predictions.csv"),
+        "cohort_csv"           : file_info("cohort_retention_matrix.csv"),
+        "basket_csv"           : file_info("market_basket_results.csv"),
+        "churn_csv"            : file_info("churn_predictions.csv"),
+        "churn_model"          : file_info("models/churn_model.pkl"),
+        "forecast_csv"         : file_info("demand_forecast_results.csv"),
+        "elasticity_csv"       : file_info("price_elasticity_results.csv"),
+        "pricing_csv"          : file_info("pricing_optimizer_results.csv"),
+        "drift_csv"            : file_info("drift_results.csv"),
+        "journey_csv"          : file_info("journey_transitions.csv"),
+        "inventory_csv"        : file_info("inventory_optimization_results.csv"),
+        "geographic_csv"       : file_info("geographic_results.csv"),
+        "anomaly_csv"          : file_info("anomaly_results.csv"),
+        "seasonality_csv"      : file_info("seasonality_results.csv"),
+        "segmentation_csv"     : file_info("customer_segments_km.csv"),
+        "store_csv"            : file_info("store_performance_results.csv"),
+        "recommendations_csv"  : file_info("product_recommendations.csv"),
+    }
+
+    all_exist = all(v["exists"] for v in files.values())
+    missing   = [k for k, v in files.items() if not v["exists"]]
+
+    scheduler_status = "running" if (_scheduler and _scheduler.running) else "not_started"
+    if not _HAS_SCHEDULER:
+        scheduler_status = "apscheduler_not_installed"
 
     return {
-        "status": "ok",
-        "files": {
-            "rfm_csv"         : exists("rfm_analysis_results.csv"),
-            "abc_csv"         : exists("abc_analysis_results.csv"),
-            "clv_csv"         : exists("clv_analysis_results.csv"),
-            "cohort_csv"      : exists("cohort_retention_matrix.csv"),
-            "basket_csv"      : exists("market_basket_results.csv"),
-            "churn_csv"       : exists("churn_predictions.csv"),
-            "churn_model"     : exists("models/churn_model.pkl"),
-            "forecast_csv"    : exists("demand_forecast_results.csv"),
-            "forecast_model"  : exists("models/demand_forecast_metadata.json"),
-            "elasticity_csv"  : exists("price_elasticity_results.csv"),
-            "journey_csv"     : exists("journey_transitions.csv"),
-            "inventory_csv"   : exists("inventory_optimization_results.csv"),
-            "geographic_csv"  : exists("geographic_results.csv"),
-            "anomaly_csv"     : exists("anomaly_results.csv"),
-            "seasonality_csv"    : exists("seasonality_results.csv"),
-            "segmentation_csv"   : exists("customer_segments_km.csv"),
-            "segmentation_model" : exists("models/segmentation_metadata.json"),
-            "store_csv"          : exists("store_performance_results.csv"),
-            "store_model"        : exists("models/store_performance_metadata.json"),
-            "recommendations_csv"  : exists("product_recommendations.csv"),
-            "recommendations_model": exists("models/recommendations_metadata.json"),
-        }
+        "status"          : "ok" if all_exist else "partial",
+        "all_files_ready" : all_exist,
+        "missing_files"   : missing,
+        "scheduler"       : scheduler_status,
+        "checked_at"      : datetime.utcnow().isoformat() + "Z",
+        "files"           : files,
     }
 
 
-
-# ── RUN ───────────────────────────────────────────────────────────────────
+# ── RUN ───────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
+    import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

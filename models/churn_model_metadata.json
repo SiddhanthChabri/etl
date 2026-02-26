@@ -1,6 +1,6 @@
 {
   "model_name": "Random Forest",
-  "trained_at": "2026-02-24T16:07:15.026614",
+  "trained_at": "2026-02-26T10:46:36.232351",
   "recency_threshold": 5406,
   "features": [
     "recency",

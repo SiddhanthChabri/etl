@@ -630,6 +630,33 @@
 
         /* ── NUMBER COUNT-UP TRANSITION ── */
         [data-countup] { display: inline-block; }
+
+        /* ── EXPORT BUTTON (inline in chart-card header) ── */
+        .export-btn {
+            float: right;
+            padding: 3px 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(99,102,241,0.12);
+            border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 6px;
+            color: var(--accent);
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.15s;
+        }
+        .export-btn:hover { background: rgba(99,102,241,0.25); }
+
+        /* ── DRIFT STATUS BADGES ── */
+        .badge-stable    { background: rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); }
+        .badge-slight    { background: rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3); }
+        .badge-signif    { background: rgba(239,68,68,0.18);  color:#f87171; border:1px solid rgba(239,68,68,0.35);
+                           animation: pulse-crit 2.5s ease-in-out infinite; }
+
+        /* ── PRICING ACTION BADGES ── */
+        .badge-raise  { background: rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); }
+        .badge-lower  { background: rgba(99,102,241,0.15); color:#818cf8; border:1px solid rgba(99,102,241,0.3); }
+        .badge-hold   { background: rgba(148,163,184,0.12); color:#94a3b8; border:1px solid rgba(148,163,184,0.2); }
     </style>
 </head>
 <body>
@@ -677,6 +704,9 @@
     <button onclick="showTab('segmentation', this)">🎯 Segments</button>
     <button onclick="showTab('stores',       this)">🏪 Stores</button>
     <button onclick="showTab('recommendations', this)">🔮 Recommendations</button>
+    <button onclick="showTab('pricing',      this)">💰 Pricing</button>
+    <button onclick="showTab('drift',        this)">📡 Drift</button>
+    <button onclick="showTab('clvpredict',   this)">🔭 CLV Predict</button>
 </nav>
 
 <main>
@@ -1896,6 +1926,127 @@
   </div>
 
 </div><!-- end tab-recommendations -->
+
+<!-- ══════════════════════════════════════════════
+     TAB — PRICING OPTIMIZER
+══════════════════════════════════════════════ -->
+<div id="tab-pricing" class="tab-content">
+    <div class="tab-header">
+        <div class="tab-header-left">
+            <h2>Pricing Optimizer</h2>
+            <p>Revenue-maximising price recommendations using price elasticity and Lerner-condition economics. Each product gets a data-backed action: raise, lower, or hold.</p>
+        </div>
+        <span class="tab-header-badge" id="pricing-badge">Loading…</span>
+    </div>
+    <div class="kpi-grid" id="pricing-kpis">
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+    </div>
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="section-title">Action Breakdown</div>
+            <canvas id="chart-pricing-actions"></canvas>
+        </div>
+        <div class="chart-card">
+            <div class="section-title">Confidence Distribution</div>
+            <canvas id="chart-pricing-confidence"></canvas>
+        </div>
+    </div>
+    <div class="table-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div class="section-title" style="margin-bottom:0">Top Revenue Opportunities</div>
+            <button class="btn-primary" style="padding:6px 14px;font-size:0.78rem" onclick="exportCsv('pricing-top-data','pricing_top_opportunities.csv')">⬇ CSV</button>
+        </div>
+        <table><thead><tr>
+            <th>#</th><th>Product</th><th>Category</th><th>Current Price</th>
+            <th>Recommended Price</th><th>Adjustment</th><th>Revenue Lift</th>
+            <th>Action</th><th>Confidence</th>
+        </tr></thead>
+        <tbody id="pricing-tbody"></tbody></table>
+    </div>
+</div><!-- end tab-pricing -->
+
+<!-- ══════════════════════════════════════════════
+     TAB — DRIFT MONITOR
+══════════════════════════════════════════════ -->
+<div id="tab-drift" class="tab-content">
+    <div class="tab-header">
+        <div class="tab-header-left">
+            <h2>Model Drift Monitor</h2>
+            <p>Population Stability Index (PSI) across RFM, Segmentation and Churn model inputs. Alerts when feature distributions shift from training baselines.</p>
+        </div>
+        <span class="tab-header-badge" id="drift-health-badge">Loading…</span>
+    </div>
+    <div class="kpi-grid" id="drift-kpis">
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+    </div>
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="section-title">PSI by Feature (Top 15)</div>
+            <div id="chart-drift-psi" style="height:340px"></div>
+        </div>
+        <div class="chart-card">
+            <div class="section-title">Status Distribution</div>
+            <canvas id="chart-drift-status"></canvas>
+        </div>
+    </div>
+    <div class="table-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div class="section-title" style="margin-bottom:0">All Feature Drift Scores</div>
+            <button class="btn-primary" style="padding:6px 14px;font-size:0.78rem" onclick="exportCsv('drift-table-data','drift_results.csv')">⬇ CSV</button>
+        </div>
+        <table><thead><tr>
+            <th>Module</th><th>Feature</th><th>PSI</th><th>Status</th>
+            <th>Ref Mean</th><th>Curr Mean</th><th>Ref Std</th><th>Curr Std</th>
+        </tr></thead>
+        <tbody id="drift-tbody"></tbody></table>
+    </div>
+</div><!-- end tab-drift -->
+
+<!-- ══════════════════════════════════════════════
+     TAB — CLV PREDICTION
+══════════════════════════════════════════════ -->
+<div id="tab-clvpredict" class="tab-content">
+    <div class="tab-header">
+        <div class="tab-header-left">
+            <h2>CLV Prediction</h2>
+            <p>Forward-looking Customer Lifetime Value using BG/NBD + Gamma-Gamma models. Predicts expected purchases and revenue per customer over the next 12 months.</p>
+        </div>
+        <span class="tab-header-badge" id="clvp-method-badge">Loading…</span>
+    </div>
+    <div class="kpi-grid" id="clvp-kpis">
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+        <div class="skeleton-box skeleton-kpi"></div>
+    </div>
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="section-title">Predicted CLV Segment Distribution</div>
+            <canvas id="chart-clvp-segments"></canvas>
+        </div>
+        <div class="chart-card">
+            <div class="section-title">P(Alive) Distribution</div>
+            <canvas id="chart-clvp-palive"></canvas>
+        </div>
+    </div>
+    <div class="table-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div class="section-title" style="margin-bottom:0">Top Customers by Predicted CLV</div>
+            <button class="btn-primary" style="padding:6px 14px;font-size:0.78rem" onclick="exportCsv('clvp-top-data','top_predicted_clv.csv')">⬇ CSV</button>
+        </div>
+        <table><thead><tr>
+            <th>#</th><th>Customer ID</th><th>Name</th><th>Segment</th>
+            <th>Predicted CLV</th><th>Predicted Purchases</th><th>Avg Order Value</th><th>P(Alive)</th>
+        </tr></thead>
+        <tbody id="clvp-tbody"></tbody></table>
+    </div>
+</div><!-- end tab-clvpredict -->
 
 </main>
 
@@ -4727,6 +4878,389 @@ async function lookupSimilarProducts() {
     }
 }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// EXPORT UTILITY — download fetched data as CSV
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Global store for exportable datasets keyed by id
+const _exportStore = {};
+
+function storeExport(id, rows) {
+    _exportStore[id] = rows;
+}
+
+function exportCsv(id, filename) {
+    const rows = _exportStore[id];
+    if (!rows || rows.length === 0) { alert("No data to export yet."); return; }
+    const cols = Object.keys(rows[0]);
+    const lines = [cols.join(",")];
+    for (const r of rows) {
+        lines.push(cols.map(c => {
+            const v = r[c] == null ? "" : String(r[c]);
+            return v.includes(",") || v.includes('"') || v.includes("\n")
+                ? `"${v.replace(/"/g, '""')}"` : v;
+        }).join(","));
+    }
+    const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+    const url  = URL.createObjectURL(blob);
+    const a    = Object.assign(document.createElement("a"), { href: url, download: filename });
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DRILL-DOWN — RFM segment bar chart click → filter customer table
+// ══════════════════════════════════════════════════════════════════════════════
+
+function makeBarDrilldown(id, labels, data, label, color, onClickFn) {
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    if (ctx._chart) ctx._chart.destroy();
+    const bgColor = Array.isArray(color) ? color : (color || "#6366f1");
+    ctx._chart = new Chart(ctx, {
+        type: "bar",
+        data: { labels, datasets:[{ label, data, backgroundColor: bgColor,
+                                     borderRadius: 6, borderSkipped: false }] },
+        options: {
+            plugins: { legend: { display: false } },
+            scales : {
+                y: { grid: { color: "rgba(255,255,255,0.04)" }, ticks: { color: "#475569" } },
+                x: { grid: { display: false }, ticks: { color: "#475569", maxRotation: 35 } }
+            },
+            onClick: (evt, elements) => {
+                if (elements.length > 0 && onClickFn) {
+                    onClickFn(labels[elements[0].index]);
+                }
+            },
+            onHover: (evt, els) => {
+                evt.native.target.style.cursor = els.length ? "pointer" : "default";
+            }
+        }
+    });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PRICING OPTIMIZER TAB
+// ══════════════════════════════════════════════════════════════════════════════
+
+async function loadPricing() {
+    try {
+        const [sumRes, topRes] = await Promise.all([
+            fetch(`${API}/api/pricing/summary`),
+            fetch(`${API}/api/pricing/top?n=50`),
+        ]);
+        if (!sumRes.ok) throw new Error("Pricing data not available. Run pricing_optimizer.py first.");
+        const sum = await sumRes.json();
+        const top = topRes.ok ? (await topRes.json()).data || [] : [];
+
+        document.getElementById("pricing-badge").textContent = `${sum.total_products || 0} Products`;
+
+        const ab    = sum.action_breakdown || {};
+        const raise = ab["RAISE_PRICE"] || 0;
+        const lower = ab["LOWER_PRICE"] || 0;
+        const hold  = ab["HOLD"] || 0;
+
+        document.getElementById("pricing-kpis").innerHTML = `
+            <div class="kpi-card green">
+                <div class="kpi-icon">📈</div>
+                <div class="label">Raise Price</div>
+                <div class="value">${raise}</div>
+                <div class="sub">products → more revenue</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">📉</div>
+                <div class="label">Lower Price</div>
+                <div class="value">${lower}</div>
+                <div class="sub">products → more volume</div>
+            </div>
+            <div class="kpi-card orange">
+                <div class="kpi-icon">💰</div>
+                <div class="label">Avg Revenue Lift</div>
+                <div class="value">${sum.avg_revenue_lift_pct ?? "—"}%</div>
+                <div class="sub">expected per product</div>
+            </div>
+            <div class="kpi-card cyan">
+                <div class="kpi-icon">🎯</div>
+                <div class="label">Hold Price</div>
+                <div class="value">${hold}</div>
+                <div class="sub">already near optimal</div>
+            </div>`;
+
+        // Charts
+        makeDonut("chart-pricing-actions",
+            Object.keys(ab), Object.values(ab),
+            ["#10b981","#6366f1","#94a3b8"]);
+
+        const cb = sum.confidence_breakdown || {};
+        makeDonut("chart-pricing-confidence",
+            Object.keys(cb), Object.values(cb),
+            ["#10b981","#f59e0b","#ef4444"]);
+
+        // Table
+        const actionBadge = a => {
+            if (a === "RAISE_PRICE") return `<span class="badge badge-raise">▲ Raise</span>`;
+            if (a === "LOWER_PRICE") return `<span class="badge badge-lower">▼ Lower</span>`;
+            return `<span class="badge badge-hold">— Hold</span>`;
+        };
+        const confColor = c => c === "HIGH" ? "#10b981" : c === "MEDIUM" ? "#f59e0b" : "#64748b";
+
+        storeExport("pricing-top-data", top);
+        document.getElementById("pricing-tbody").innerHTML = top.map((r, i) => `
+            <tr>
+                <td>${rankBadge(i)}</td>
+                <td style="font-size:0.78rem;max-width:160px;overflow:hidden;text-overflow:ellipsis">${r.product_name || r.product_id}</td>
+                <td style="color:#64748b;font-size:0.78rem">${r.category || "—"}</td>
+                <td>$${fmt(r.current_price)}</td>
+                <td style="color:#10b981;font-weight:600">$${fmt(r.recommended_price)}</td>
+                <td style="color:${r.price_adjustment_pct >= 0 ? '#10b981' : '#6366f1'};font-weight:700">${r.price_adjustment_pct >= 0 ? '+' : ''}${r.price_adjustment_pct?.toFixed(1)}%</td>
+                <td style="color:#10b981;font-weight:700">+${r.expected_revenue_lift_pct?.toFixed(1)}%</td>
+                <td>${actionBadge(r.action)}</td>
+                <td style="color:${confColor(r.confidence)};font-weight:600">${r.confidence}</td>
+            </tr>`).join("") || `<tr><td colspan="9" style="text-align:center;color:#64748b">No data.</td></tr>`;
+
+    } catch (e) {
+        document.getElementById("pricing-kpis").innerHTML =
+            `<div class="kpi-card red"><div class="label">Not Available</div>
+             <div class="value" style="font-size:0.85rem;margin-top:8px">${e.message}</div></div>`;
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DRIFT MONITOR TAB
+// ══════════════════════════════════════════════════════════════════════════════
+
+async function loadDrift() {
+    try {
+        const [sumRes, featRes] = await Promise.all([
+            fetch(`${API}/api/drift/summary`),
+            fetch(`${API}/api/drift/features?limit=200`),
+        ]);
+        if (!sumRes.ok) throw new Error("Drift data not available. Run monitor_drift.py first.");
+        const sum  = await sumRes.json();
+        const feat = featRes.ok ? (await featRes.json()).data || [] : [];
+
+        const health = sum.overall_health || "UNKNOWN";
+        const badge  = document.getElementById("drift-health-badge");
+        badge.textContent = health;
+        badge.style.background = health === "HEALTHY" ? "rgba(16,185,129,0.15)"
+            : health === "WARNING" ? "rgba(245,158,11,0.15)" : "rgba(239,68,68,0.15)";
+        badge.style.color = health === "HEALTHY" ? "#10b981"
+            : health === "WARNING" ? "#fbbf24" : "#f87171";
+
+        const sb = sum.status_breakdown || {};
+        document.getElementById("drift-kpis").innerHTML = `
+            <div class="kpi-card ${health === 'HEALTHY' ? 'green' : health === 'WARNING' ? 'orange' : 'red'}">
+                <div class="kpi-icon">📡</div>
+                <div class="label">Overall Health</div>
+                <div class="value" style="font-size:1.3rem">${health}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">✅</div>
+                <div class="label">Stable Features</div>
+                <div class="value">${sb["STABLE"] || 0}</div>
+            </div>
+            <div class="kpi-card orange">
+                <div class="kpi-icon">⚠️</div>
+                <div class="label">Slight Drift</div>
+                <div class="value">${sb["SLIGHT_DRIFT"] || 0}</div>
+            </div>
+            <div class="kpi-card red">
+                <div class="kpi-icon">🚨</div>
+                <div class="label">Significant Drift</div>
+                <div class="value">${sb["SIGNIFICANT_DRIFT"] || 0}</div>
+                <div class="sub">consider retraining</div>
+            </div>`;
+
+        // PSI bar chart (top 15)
+        const top15 = [...feat].sort((a,b) => b.psi - a.psi).slice(0, 15);
+        const psiColors = top15.map(r =>
+            r.status === "SIGNIFICANT_DRIFT" ? "#ef4444"
+            : r.status === "SLIGHT_DRIFT" ? "#f59e0b" : "#10b981"
+        );
+        Plotly.newPlot("chart-drift-psi", [{
+            type: "bar", orientation: "h",
+            x: top15.map(r => r.psi),
+            y: top15.map(r => `${r.module} / ${r.feature}`),
+            marker: { color: psiColors },
+            text: top15.map(r => r.psi.toFixed(3)),
+            textposition: "outside",
+        }], {
+            ...PLOTLY_LAYOUT,
+            margin: { l: 180, r: 60, t: 20, b: 40 },
+            xaxis: { title: "PSI Score", gridcolor: "rgba(255,255,255,0.05)" },
+            yaxis: { autorange: "reversed" },
+            shapes: [
+                { type:"line", x0:0.1, x1:0.1, y0:-0.5, y1:top15.length-0.5,
+                  line:{ color:"#f59e0b", dash:"dot", width:1.5 } },
+                { type:"line", x0:0.2, x1:0.2, y0:-0.5, y1:top15.length-0.5,
+                  line:{ color:"#ef4444", dash:"dot", width:1.5 } },
+            ],
+        }, { responsive: true, displayModeBar: false });
+
+        makeDonut("chart-drift-status",
+            Object.keys(sb), Object.values(sb),
+            ["#10b981","#f59e0b","#ef4444"]);
+
+        const statusBadge = s => {
+            if (s === "STABLE")            return `<span class="badge badge-stable">Stable</span>`;
+            if (s === "SLIGHT_DRIFT")      return `<span class="badge badge-slight">Slight Drift</span>`;
+            return `<span class="badge badge-signif">Significant</span>`;
+        };
+
+        storeExport("drift-table-data", feat);
+        document.getElementById("drift-tbody").innerHTML = feat.map(r => `
+            <tr>
+                <td>${r.module}</td>
+                <td style="font-family:monospace;color:#818cf8">${r.feature}</td>
+                <td style="font-weight:700;color:${r.psi > 0.2 ? '#ef4444' : r.psi > 0.1 ? '#f59e0b' : '#10b981'}">${r.psi?.toFixed(4)}</td>
+                <td>${statusBadge(r.status)}</td>
+                <td>${r.ref_mean ?? "—"}</td>
+                <td>${r.curr_mean ?? "—"}</td>
+                <td>${r.ref_std ?? "—"}</td>
+                <td>${r.curr_std ?? "—"}</td>
+            </tr>`).join("") || `<tr><td colspan="8" style="text-align:center;color:#64748b">No drift data.</td></tr>`;
+
+    } catch (e) {
+        document.getElementById("drift-kpis").innerHTML =
+            `<div class="kpi-card red"><div class="label">Not Available</div>
+             <div class="value" style="font-size:0.85rem;margin-top:8px">${e.message}</div></div>`;
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// CLV PREDICTION TAB
+// ══════════════════════════════════════════════════════════════════════════════
+
+async function loadCLVPredict() {
+    try {
+        const [sumRes, topRes, allRes] = await Promise.all([
+            fetch(`${API}/api/clv-predict/summary`),
+            fetch(`${API}/api/clv-predict/top?n=20`),
+            fetch(`${API}/api/clv-predict/customers?limit=500`),
+        ]);
+        if (!sumRes.ok) throw new Error("CLV prediction data not available. Run clv_prediction.py first.");
+        const sum = await sumRes.json();
+        const top = topRes.ok ? (await topRes.json()).data || [] : [];
+        const all = allRes.ok ? (await allRes.json()).data || [] : [];
+
+        const methodShort = (sum.method || "").includes("BG/NBD") ? "BG/NBD" : "Parametric";
+        document.getElementById("clvp-method-badge").textContent = methodShort;
+
+        document.getElementById("clvp-kpis").innerHTML = `
+            <div class="kpi-card green">
+                <div class="kpi-icon">🔭</div>
+                <div class="label">Avg Predicted CLV</div>
+                <div class="value">$${fmt(sum.avg_predicted_clv)}</div>
+                <div class="sub">${sum.clv_horizon_months}-month horizon</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">👥</div>
+                <div class="label">Customers Scored</div>
+                <div class="value">${fmtI(sum.total_customers)}</div>
+            </div>
+            <div class="kpi-card cyan">
+                <div class="kpi-icon">❤️</div>
+                <div class="label">Avg P(Alive)</div>
+                <div class="value">${((sum.avg_p_alive || 0) * 100).toFixed(1)}%</div>
+                <div class="sub">probability still active</div>
+            </div>
+            <div class="kpi-card orange">
+                <div class="kpi-icon">📅</div>
+                <div class="label">Prediction Window</div>
+                <div class="value">${sum.prediction_period_days}d</div>
+                <div class="sub">forecast horizon</div>
+            </div>`;
+
+        // Segment donut
+        const sb = sum.segment_breakdown || {};
+        makeDonut("chart-clvp-segments",
+            Object.keys(sb), Object.values(sb),
+            ["#10b981","#6366f1","#ef4444"]);
+
+        // P(Alive) histogram via Plotly
+        const palive = all.map(r => r.p_alive).filter(v => v != null);
+        Plotly.newPlot("chart-clvp-palive", [{
+            type: "histogram", x: palive, nbinsx: 20,
+            marker: { color: "#6366f1", opacity: 0.85 },
+            name: "P(Alive)",
+        }], {
+            ...PLOTLY_LAYOUT,
+            margin: { l: 60, r: 20, t: 20, b: 60 },
+            xaxis: { title: "P(Alive)", gridcolor: "rgba(255,255,255,0.05)", range:[0,1] },
+            yaxis: { title: "Customers" },
+        }, { responsive: true, displayModeBar: false });
+
+        // Top table
+        storeExport("clvp-top-data", top);
+        document.getElementById("clvp-tbody").innerHTML = top.map((r, i) => `
+            <tr>
+                <td>${rankBadge(i)}</td>
+                <td style="font-family:monospace;color:#818cf8">${r.customer_id}</td>
+                <td>${r.customer_name || "—"}</td>
+                <td>${segBadge(r.predicted_clv_segment)}</td>
+                <td style="color:#10b981;font-weight:700">$${fmt(r.predicted_clv)}</td>
+                <td>${r.predicted_purchases?.toFixed(2) ?? "—"}</td>
+                <td>$${fmt(r.predicted_avg_value)}</td>
+                <td style="color:${r.p_alive > 0.5 ? '#10b981' : '#f59e0b'};font-weight:600">${((r.p_alive || 0) * 100).toFixed(1)}%</td>
+            </tr>`).join("") || `<tr><td colspan="8" style="text-align:center;color:#64748b">No data.</td></tr>`;
+
+    } catch (e) {
+        document.getElementById("clvp-kpis").innerHTML =
+            `<div class="kpi-card red"><div class="label">Not Available</div>
+             <div class="value" style="font-size:0.85rem;margin-top:8px">${e.message}</div></div>`;
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// EXPORT BUTTONS ON EXISTING CHART CARDS
+// Adds ⬇ CSV buttons after charts load their data
+// ══════════════════════════════════════════════════════════════════════════════
+
+function addExportBtnToCard(cardSelector, exportId, filename) {
+    const card = document.querySelector(cardSelector);
+    if (!card) return;
+    // Avoid duplicate buttons
+    if (card.querySelector(".export-btn")) return;
+    const h3 = card.querySelector("h3") || card.querySelector(".section-title");
+    if (!h3) return;
+    const btn = document.createElement("button");
+    btn.className = "export-btn";
+    btn.textContent = "⬇ CSV";
+    btn.onclick = () => exportCsv(exportId, filename);
+    h3.appendChild(btn);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// RFM DRILL-DOWN — clicking a segment in the bar chart filters the table
+// ══════════════════════════════════════════════════════════════════════════════
+
+let _rfmAllData = [];
+
+function drillDownRFM(segment) {
+    const filtered = segment
+        ? _rfmAllData.filter(r => (r.segment || "").toLowerCase() === segment.toLowerCase())
+        : _rfmAllData;
+
+    const infoEl = document.getElementById("rfm-drilldown-info");
+    if (infoEl) infoEl.textContent = segment
+        ? `Showing ${filtered.length} customers in segment: ${segment}`
+        : `Showing all ${filtered.length} customers`;
+
+    const tbody = document.getElementById("rfm-table-body");
+    if (!tbody) return;
+    tbody.innerHTML = filtered.slice(0, 50).map((r, i) => `
+        <tr>
+            <td>${i + 1}</td>
+            <td>${r.customer_id ?? "—"}</td>
+            <td>${r.customer_name || "—"}</td>
+            <td>${r.state || "—"}</td>
+            <td>${r.recency ?? "—"}</td>
+            <td>${r.frequency ?? "—"}</td>
+            <td>$${fmt(r.monetary)}</td>
+            <td>${segBadge(r.segment)}</td>
+        </tr>`).join("");
+}
+
 // ── Boot — load all tabs in parallel ─────────────────────────────────────────
 (async () => {
     await Promise.allSettled([
@@ -4747,6 +5281,9 @@ async function lookupSimilarProducts() {
         loadSegmentation(),
         loadStores(),
         loadRecommendations(),
+        loadPricing(),
+        loadDrift(),
+        loadCLVPredict(),
     ]);
 })();
 </script>

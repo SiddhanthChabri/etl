@@ -137,21 +137,47 @@ def get_summary():
 # ── Health Check ──────────────────────────────────────────────────────────────
 @router.get("/health", summary="Check health of all key data files")
 def health_check():
+    from datetime import datetime
+
+    def file_info(path: str) -> dict:
+        exists = os.path.exists(path)
+        if not exists:
+            return {"exists": False, "size_kb": None, "last_modified": None}
+        stat = os.stat(path)
+        return {
+            "exists"       : True,
+            "size_kb"      : round(stat.st_size / 1024, 1),
+            "last_modified": datetime.utcfromtimestamp(stat.st_mtime).isoformat() + "Z",
+        }
+
     files = {
-        "dashboard_html":        "static/dashboard.html",
-        "rfm_results":           "rfm_analysis_results.csv",
-        "abc_results":           "abc_analysis_results.csv",
-        "clv_results":           "clv_analysis_results.csv",
-        "cohort_matrix":         "cohort_retention_matrix.csv",
-        "market_basket_results": "market_basket_results.csv",
-        "churn_predictions":     "churn_predictions.csv",
-        "churn_model":           "models/churn_model.pkl",
-        "churn_features":        "models/churn_features.json",
+        "rfm_csv"             : file_info("rfm_analysis_results.csv"),
+        "abc_csv"             : file_info("abc_analysis_results.csv"),
+        "clv_csv"             : file_info("clv_analysis_results.csv"),
+        "clv_predictions_csv" : file_info("clv_predictions.csv"),
+        "cohort_csv"          : file_info("cohort_retention_matrix.csv"),
+        "basket_csv"          : file_info("market_basket_results.csv"),
+        "churn_csv"           : file_info("churn_predictions.csv"),
+        "churn_model"         : file_info("models/churn_model.pkl"),
+        "forecast_csv"        : file_info("demand_forecast_results.csv"),
+        "elasticity_csv"      : file_info("price_elasticity_results.csv"),
+        "pricing_csv"         : file_info("pricing_optimizer_results.csv"),
+        "drift_csv"           : file_info("drift_results.csv"),
+        "journey_csv"         : file_info("journey_transitions.csv"),
+        "inventory_csv"       : file_info("inventory_optimization_results.csv"),
+        "geographic_csv"      : file_info("geographic_results.csv"),
+        "anomaly_csv"         : file_info("anomaly_results.csv"),
+        "seasonality_csv"     : file_info("seasonality_results.csv"),
+        "segmentation_csv"    : file_info("customer_segments_km.csv"),
+        "store_csv"           : file_info("store_performance_results.csv"),
+        "recommendations_csv" : file_info("product_recommendations.csv"),
     }
-    status = {k: os.path.exists(v) for k, v in files.items()}
-    all_ok = all(status.values())
+
+    missing = [k for k, v in files.items() if not v["exists"]]
     return {
-        "status": "healthy" if all_ok else "degraded",
-        "all_ok": all_ok,
-        "files":  status
+        "status"          : "healthy" if not missing else "degraded",
+        "all_ok"          : len(missing) == 0,
+        "missing_files"   : missing,
+        "checked_at"      : datetime.utcnow().isoformat() + "Z",
+        "files"           : files,
     }

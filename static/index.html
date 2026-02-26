@@ -392,11 +392,14 @@
     <div class="status-item"><div class="dot dot-yellow" id="seasonality-dot"></div><span class="status-label">Season</span><span class="status-val" id="seasonality-status">—</span></div>
     <div class="status-item"><div class="dot dot-yellow" id="segmentation-dot"></div><span class="status-label">Segments</span><span class="status-val" id="segmentation-status">—</span></div>
     <div class="status-item"><div class="dot dot-yellow" id="store-dot"></div><span class="status-label">Stores</span><span class="status-val" id="store-status">—</span></div>
+    <div class="status-item"><div class="dot dot-yellow" id="pricing-dot"></div><span class="status-label">Pricing</span><span class="status-val" id="pricing-status">—</span></div>
+    <div class="status-item"><div class="dot dot-yellow" id="drift-dot"></div><span class="status-label">Drift</span><span class="status-val" id="drift-status">—</span></div>
+    <div class="status-item"><div class="dot dot-yellow" id="clvp-dot"></div><span class="status-label">CLV Pred</span><span class="status-val" id="clvp-status">—</span></div>
     <div class="status-links">
         <a href="/health" target="_blank">Health</a>
         <a href="/docs" target="_blank">Swagger ↗</a>
         <a href="/redoc" target="_blank">ReDoc ↗</a>
-        <span style="color:var(--text-dim);font-size:0.7rem">v1.0.0</span>
+        <span style="color:var(--text-dim);font-size:0.7rem">v2.0.0</span>
     </div>
 </div>
 
@@ -1226,27 +1229,47 @@ async function checkStatus() {
         document.getElementById("api-status").textContent = "Online";
 
         const f = d.files || {};
-        const setDot = (id, ok) => {
-            const el = document.getElementById(id);
-            if (el) el.className = "dot " + (ok ? "dot-green" : "dot-red");
+        // Health endpoint now returns objects {exists, size_kb, last_modified}
+        // so extract .exists (falls back gracefully if old boolean format)
+        const ok = key => {
+            const v = f[key];
+            if (v == null) return false;
+            return typeof v === "object" ? v.exists === true : Boolean(v);
         };
-        const setText = (id, ok) => {
+        const age = key => {
+            const v = f[key];
+            if (!v || typeof v !== "object" || !v.last_modified) return "";
+            const d = new Date(v.last_modified);
+            const now = new Date();
+            const hrs = Math.round((now - d) / 36e5);
+            return hrs < 1 ? " · just now" : hrs < 24 ? ` · ${hrs}h ago` : ` · ${Math.round(hrs/24)}d ago`;
+        };
+        const setDot = (id, key) => {
             const el = document.getElementById(id);
-            if (el) el.textContent = ok ? "Ready" : "Missing";
+            if (el) el.className = "dot " + (ok(key) ? "dot-green" : "dot-red");
+        };
+        const setText = (id, key, label) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (label) { el.textContent = ok(key) ? label : "Missing"; return; }
+            el.textContent = ok(key) ? "Ready" + age(key) : "Missing";
         };
 
-        setDot("rfm-dot",         f.rfm_csv);          setText("rfm-status",          f.rfm_csv);
-        setDot("abc-dot",         f.abc_csv);           setText("abc-status",          f.abc_csv);
-        setDot("churn-dot",       f.churn_model);       setText("churn-status",        f.churn_model ? "Loaded" : "Not trained");
-        setDot("forecast-dot",    f.forecast_csv);      setText("forecast-status",     f.forecast_csv);
-        setDot("elasticity-dot",  f.elasticity_csv);    setText("elasticity-status",   f.elasticity_csv);
-        setDot("journey-dot",     f.journey_csv);       setText("journey-status",      f.journey_csv);
-        setDot("inventory-dot",   f.inventory_csv);     setText("inventory-status",    f.inventory_csv);
-        setDot("geo-dot",         f.geographic_csv);    setText("geo-status",          f.geographic_csv);
-        setDot("anomaly-dot",     f.anomaly_csv);       setText("anomaly-status",      f.anomaly_csv);
-        setDot("seasonality-dot", f.seasonality_csv);   setText("seasonality-status",  f.seasonality_csv);
-        setDot("segmentation-dot",f.segmentation_csv);  setText("segmentation-status", f.segmentation_csv);
-        setDot("store-dot",       f.store_csv);         setText("store-status",        f.store_csv);
+        setDot("rfm-dot",         "rfm_csv");          setText("rfm-status",          "rfm_csv");
+        setDot("abc-dot",         "abc_csv");           setText("abc-status",          "abc_csv");
+        setDot("churn-dot",       "churn_model");       setText("churn-status",        "churn_model", ok("churn_model") ? "Loaded" : "Not trained");
+        setDot("forecast-dot",    "forecast_csv");      setText("forecast-status",     "forecast_csv");
+        setDot("elasticity-dot",  "elasticity_csv");    setText("elasticity-status",   "elasticity_csv");
+        setDot("journey-dot",     "journey_csv");       setText("journey-status",      "journey_csv");
+        setDot("inventory-dot",   "inventory_csv");     setText("inventory-status",    "inventory_csv");
+        setDot("geo-dot",         "geographic_csv");    setText("geo-status",          "geographic_csv");
+        setDot("anomaly-dot",     "anomaly_csv");       setText("anomaly-status",      "anomaly_csv");
+        setDot("seasonality-dot", "seasonality_csv");   setText("seasonality-status",  "seasonality_csv");
+        setDot("segmentation-dot","segmentation_csv");  setText("segmentation-status", "segmentation_csv");
+        setDot("store-dot",       "store_csv");         setText("store-status",        "store_csv");
+        setDot("pricing-dot",     "pricing_csv");       setText("pricing-status",      "pricing_csv");
+        setDot("drift-dot",       "drift_csv");         setText("drift-status",        "drift_csv");
+        setDot("clvp-dot",        "clv_predictions_csv"); setText("clvp-status",       "clv_predictions_csv");
 
     } catch(e) {
         setApiDot("api-dot", false);

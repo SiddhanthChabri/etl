@@ -15,7 +15,8 @@
       "Bash(python3:*)",
       "Bash(python:*)",
       "Bash(cd \"D:\\\\Study Material\\\\8th Sem\\\\Major Project\\\\etl\" && ls *.py routers/*.py static/ models/ 2>&1)",
-      "Bash(tail:*)"
+      "Bash(tail:*)",
+      "Bash(ls:*)"
     ]
   }
 }

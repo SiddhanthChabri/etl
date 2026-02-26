@@ -527,7 +527,7 @@ customer_id,customer_name,state,city,recency,frequency,monetary,segment,churn_pr
 13395,Unknown,United Kingdom,,5345,21,307.72,Need Attention,0.0,0,Low Risk
 13396,Unknown,United Kingdom,,5248,28,973.72,Potential Loyalists,0.0,0,Low Risk
 13397,Unknown,United Kingdom,,5283,20,678.62,Recent Customers,0.0,0,Low Risk
-13402,Unknown,United Kingdom,,5434,39,621.23,Recent Customers,0.972693322117761,1,Critical Risk
+13402,Unknown,United Kingdom,,5434,39,621.23,Recent Customers,0.9726933221177612,1,Critical Risk
 13404,Unknown,United Kingdom,,5223,11,252.49,Promising,0.0,0,Low Risk
 13408,Unknown,United Kingdom,,5191,163,10221.25,Champions,0.0,0,Low Risk
 13410,Unknown,United Kingdom,,5406,2,140.4,At Risk,0.02069464918360482,0,Low Risk
@@ -781,7 +781,7 @@ customer_id,customer_name,state,city,recency,frequency,monetary,segment,churn_pr
 13880,Unknown,United Kingdom,,5375,43,837.74,Recent Customers,0.009280012384004553,0,Low Risk
 13881,Unknown,United Kingdom,,5224,97,9414.78,Champions,0.0,0,Low Risk
 13882,Unknown,United Kingdom,,5278,28,435.34,Recent Customers,0.0,0,Low Risk
-13883,Unknown,United Kingdom,,5407,48,762.37,Recent Customers,0.8542524809699831,1,Critical Risk
+13883,Unknown,United Kingdom,,5407,48,762.37,Recent Customers,0.8542524809699832,1,Critical Risk
 13884,Unknown,United Kingdom,,5219,58,786.15,Loyal Customers,0.0,0,Low Risk
 13885,Unknown,United Kingdom,,5467,5,107.65,At Risk,1.0,1,Critical Risk
 13888,Unknown,United Kingdom,,5190,39,595.67,Loyal Customers,0.0,0,Low Risk
@@ -1530,7 +1530,7 @@ customer_id,customer_name,state,city,recency,frequency,monetary,segment,churn_pr
 15330,Unknown,United Kingdom,,5249,13,714.96,Recent Customers,0.0,0,Low Risk
 15332,Unknown,Lithuania,,5673,29,1409.66,Recent Customers,0.9816533710864632,1,Critical Risk
 15334,Unknown,United Kingdom,,5374,36,126.98,Need Attention,0.00867707693104273,0,Low Risk
-15339,Unknown,United Kingdom,,5432,44,308.67,Promising,0.9892359234654111,1,Critical Risk
+15339,Unknown,United Kingdom,,5432,44,308.67,Promising,0.9892359234654112,1,Critical Risk
 15342,Unknown,United Kingdom,,5493,24,406.09,Need Attention,1.0,1,Critical Risk
 15344,Unknown,United Kingdom,,5277,9,255.25,Need Attention,0.0,0,Low Risk
 15346,Unknown,United Kingdom,,5227,17,252.42,Promising,0.0,0,Low Risk
@@ -1679,7 +1679,7 @@ customer_id,customer_name,state,city,recency,frequency,monetary,segment,churn_pr
 15656,Unknown,United Kingdom,,5468,4,63.91,At Risk,1.0,1,Critical Risk
 15658,Unknown,United Kingdom,,5471,25,583.9,Need Attention,1.0,1,Critical Risk
 15660,Unknown,United Kingdom,,5529,19,364.3,Need Attention,0.9929544361974232,1,Critical Risk
-15661,Unknown,United Kingdom,,5411,1,116.0,At Risk,0.9960632086068384,1,Critical Risk
+15661,Unknown,United Kingdom,,5411,1,116.0,At Risk,0.9960632086068383,1,Critical Risk
 15665,Unknown,United Kingdom,,5255,76,1456.42,Champions,0.0,0,Low Risk
 15668,Unknown,United Kingdom,,5376,1,76.32,At Risk,0.014221615889892791,0,Low Risk
 15671,Unknown,United Kingdom,,5224,26,1315.72,Loyal Customers,0.0,0,Low Risk
@@ -2747,7 +2747,7 @@ customer_id,customer_name,state,city,recency,frequency,monetary,segment,churn_pr
 17802,Unknown,United Kingdom,,5192,75,632.42,Loyal Customers,0.0,0,Low Risk
 17809,Unknown,United Kingdom,,5226,35,3049.91,Loyal Customers,0.0019055346709652215,0,Low Risk
 17811,Unknown,United Kingdom,,5189,322,2830.14,Champions,0.0,0,Low Risk
-17812,Unknown,United Kingdom,,5521,40,213.12,Need Attention,0.9959254987181758,1,Critical Risk
+17812,Unknown,United Kingdom,,5521,40,213.12,Need Attention,0.9959254987181759,1,Critical Risk
 17813,Unknown,United Kingdom,,5371,246,1147.8,Potential Loyalists,0.003018108651911469,0,Low Risk
 17816,Unknown,United Kingdom,,5402,16,31.46,About to Sleep,0.022369195437227887,0,Low Risk
 17817,Unknown,United Kingdom,,5348,32,378.83,Promising,0.00903408547674316,0,Low Risk

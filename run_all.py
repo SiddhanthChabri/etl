@@ -4,15 +4,15 @@ run_all.py — Master Runner
 Runs all analytics scripts in parallel, then starts the FastAPI server.
 
 Execution order:
-  Phase 1 (parallel): advanced_analytics, price_elasticity,
-                       customer_journey, demand_forecasting
-  Phase 2 (parallel): ml_churn_prediction, inventory_optimization
-                       (need outputs from Phase 1)
-  Phase 3:            uvicorn (FastAPI server)
+  Phase 1 (parallel): independent analytics scripts
+  Phase 2 (parallel): scripts that depend on Phase 1 outputs
+  Phase 3 (parallel): new analytics modules (pricing, drift, clv_prediction)
+  Phase 4:            uvicorn (FastAPI server)
 
 Usage:
   python run_all.py              # run analytics + start server
   python run_all.py --no-server  # run analytics only, skip server
+  python run_all.py --skip-phase1  # skip phase 1 (use existing CSVs)
 """
 
 import subprocess
@@ -81,9 +81,8 @@ def run_phase(phase_name: str, scripts: list) -> list:
         for future in as_completed(futures):
             r = future.result()
             symbol = f"{GREEN}DONE   {RESET}" if r["ok"] else f"{RED}FAILED {RESET}"
-            print(f"  {symbol}  {r['name']:35s}  {r['elapsed']:6.1f}s")
+            print(f"  {symbol}  {r['name']:45s}  {r['elapsed']:6.1f}s")
             if not r["ok"] and r["stderr"]:
-                # Print last 3 lines of stderr for quick diagnosis
                 lines = r["stderr"].strip().splitlines()
                 for line in lines[-3:]:
                     print(f"           {RED}{line}{RESET}")
@@ -108,46 +107,60 @@ def print_summary(all_results: list, total_elapsed: float):
 
 def main():
     parser = argparse.ArgumentParser(description="Run all analytics + FastAPI server")
-    parser.add_argument("--no-server", action="store_true",
+    parser.add_argument("--no-server",    action="store_true",
                         help="Skip starting the FastAPI server after analytics")
+    parser.add_argument("--skip-phase1",  action="store_true",
+                        help="Skip Phase 1 (assume CSVs already generated)")
     args = parser.parse_args()
 
     print(f"\n{BOLD}{'='*60}{RESET}")
-    print(f"{BOLD}  RETAIL ANALYTICS -- MASTER RUNNER{RESET}")
+    print(f"{BOLD}  RETAIL ANALYTICS -- MASTER RUNNER v2{RESET}")
     print(f"  {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"{BOLD}{'='*60}{RESET}")
 
     overall_start = time.time()
     all_results   = []
 
-    # ── Phase 1: independent scripts (run in parallel) ────────────────────────
-    phase1 = [
-        ("Advanced Analytics  (RFM/ABC/CLV/Cohort/Basket)", "advanced_analytics.py"),
-        ("Price Elasticity",                                 "price_elasticity.py"),
-        ("Customer Journey",                                 "customer_journey.py"),
-        ("Demand Forecasting",                               "demand_forecasting.py"),
-        ("Geographic Analysis",                              "geographic_analysis.py"),
-        ("Anomaly Detection",                                "anomaly_detection.py"),
-        ("Seasonality Analysis",                             "seasonality_analysis.py"),
-        ("Customer Segmentation (K-Means/PCA)",              "customer_segmentation.py"),
-        ("Store Performance Analysis",                       "store_performance.py"),
-        ("Product Recommendation Engine",                    "product_recommendations.py"),
-    ]
-    r1 = run_phase("PHASE 1 — Independent Analytics (running in parallel)", phase1)
-    all_results.extend(r1)
+    # ── Phase 1: independent core scripts ────────────────────────────────────
+    if not args.skip_phase1:
+        phase1 = [
+            ("Advanced Analytics  (RFM/ABC/CLV/Cohort/Basket)", "advanced_analytics.py"),
+            ("Price Elasticity",                                 "price_elasticity.py"),
+            ("Customer Journey",                                 "customer_journey.py"),
+            ("Demand Forecasting",                               "demand_forecasting.py"),
+            ("Geographic Analysis",                              "geographic_analysis.py"),
+            ("Anomaly Detection",                                "anomaly_detection.py"),
+            ("Seasonality Analysis",                             "seasonality_analysis.py"),
+            ("Customer Segmentation (K-Means/PCA)",              "customer_segmentation.py"),
+            ("Store Performance Analysis",                       "store_performance.py"),
+            ("Product Recommendation Engine",                    "product_recommendations.py"),
+        ]
+        r1 = run_phase("PHASE 1 — Independent Analytics (running in parallel)", phase1)
+        all_results.extend(r1)
+    else:
+        print(f"\n{YELLOW}Phase 1 skipped (--skip-phase1){RESET}")
 
     # ── Phase 2: scripts that depend on Phase 1 outputs ───────────────────────
     phase2 = [
-        ("Churn Prediction    (needs RFM/CLV CSVs)",         "ml_churn_prediction.py"),
-        ("Inventory Optimisation (needs forecast CSV)",       "inventory_optimization.py"),
+        ("Churn Prediction    (needs RFM/CLV CSVs)",    "ml_churn_prediction.py"),
+        ("Inventory Optimisation (needs forecast CSV)",  "inventory_optimization.py"),
     ]
     r2 = run_phase("PHASE 2 — Dependent Analytics (running in parallel)", phase2)
     all_results.extend(r2)
 
+    # ── Phase 3: new analytics (depend on Phase 1+2) ──────────────────────────
+    phase3 = [
+        ("Pricing Optimizer   (needs elasticity CSV)",   "pricing_optimizer.py"),
+        ("CLV Prediction      (needs CLV/RFM CSVs)",     "clv_prediction.py"),
+        ("Drift Monitor       (needs RFM/churn/seg CSVs)","monitor_drift.py"),
+    ]
+    r3 = run_phase("PHASE 3 — New Analytics Modules (running in parallel)", phase3)
+    all_results.extend(r3)
+
     total_elapsed = time.time() - overall_start
     print_summary(all_results, total_elapsed)
 
-    # ── Phase 3: start server ─────────────────────────────────────────────────
+    # ── Phase 4: start server ─────────────────────────────────────────────────
     if args.no_server:
         print("Server skipped (--no-server). Analytics complete.\n")
         sys.exit(0 if all(r["ok"] for r in all_results) else 1)
@@ -157,10 +170,11 @@ def main():
         print(f"{YELLOW}Warning: {len(failed)} script(s) failed. Starting server anyway...{RESET}\n")
 
     print(f"{BOLD}{CYAN}{'-'*60}{RESET}")
-    print(f"{BOLD}{CYAN}  PHASE 3 -- Starting FastAPI Server{RESET}")
+    print(f"{BOLD}{CYAN}  PHASE 4 -- Starting FastAPI Server{RESET}")
     print(f"{BOLD}{CYAN}{'-'*60}{RESET}")
-    print(f"  Dashboard  : http://localhost:8000/dashboard")
-    print(f"  API Docs   : http://localhost:8000/docs")
+    print(f"  Landing Page: http://localhost:8000/")
+    print(f"  Dashboard   : http://localhost:8000/dashboard")
+    print(f"  API Docs    : http://localhost:8000/docs")
     print(f"  Press Ctrl+C to stop\n")
 
     subprocess.run([PYTHON, "-m", "uvicorn", "main:app",
