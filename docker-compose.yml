@@ -20,6 +20,7 @@ services:
 
   app:
     build: .
+    image: retail_analytics:latest
     container_name: retail_analytics
     depends_on:
       db:
