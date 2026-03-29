@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   db:
     image: postgres:15-alpine
@@ -10,13 +8,15 @@ services:
       POSTGRES_DB: retail_dw
     volumes:
       - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - etl_network
 
   app:
     build: .
@@ -31,11 +31,17 @@ services:
       DB_PASSWORD: "12345"
       DB_NAME: retail_dw
     ports:
-      - "8000:8000"
+      - "8888:8000"
     volumes:
       # Mount results so they persist across restarts
       - ./models:/app/models
     command: ["python", "run_all.py"]
+    networks:
+      - etl_network
 
 volumes:
   pgdata:
+
+networks:
+  etl_network:
+    driver: bridge
