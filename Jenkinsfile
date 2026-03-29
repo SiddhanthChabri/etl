@@ -135,10 +135,10 @@ pipeline {
             echo "✓ ETL pipeline completed successfully on branch ${env.GIT_BRANCH}"
         }
         failure {
-            echo "✗ ETL pipeline failed — check logs above"
-            sh '''
-                docker compose -p etl -f docker-compose.yml logs --tail=50 || true
-            '''
+            node {
+                echo "✗ ETL pipeline failed — check logs above"
+                sh 'docker compose -p etl -f docker-compose.yml logs --tail=50 || true'
+            }
         }
         always {
             echo "Build #${env.BUILD_NUMBER} on branch ${env.GIT_BRANCH} — done."
