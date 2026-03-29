@@ -1,0 +1,26 @@
+# Git
+.git
+.gitignore
+
+# Generated analytics outputs (regenerated at runtime)
+*.csv
+*.xlsx
+*.html
+models/
+logs/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Local env / secrets
+.env
+*.env
+kaggle.json
+
+# IDE
+.vscode/
+.idea/

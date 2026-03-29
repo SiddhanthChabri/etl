@@ -4,14 +4,16 @@ run_all.py — Master Runner
 Runs all analytics scripts in parallel, then starts the FastAPI server.
 
 Execution order:
-  Phase 1 (parallel): independent analytics scripts
-  Phase 2 (parallel): scripts that depend on Phase 1 outputs
-  Phase 3 (parallel): new analytics modules (pricing, drift, clv_prediction)
-  Phase 4:            uvicorn (FastAPI server)
+  Phase 0 (sequential): schema init → store dimension → ETL data load
+  Phase 1 (parallel):   independent analytics scripts
+  Phase 2 (parallel):   scripts that depend on Phase 1 outputs
+  Phase 3 (parallel):   new analytics modules (pricing, drift, clv_prediction)
+  Phase 4:              uvicorn (FastAPI server)
 
 Usage:
-  python run_all.py              # run analytics + start server
-  python run_all.py --no-server  # run analytics only, skip server
+  python run_all.py              # run ETL + analytics + start server
+  python run_all.py --no-server  # run ETL + analytics only, skip server
+  python run_all.py --skip-etl   # skip Phase 0 (assume DB already loaded)
   python run_all.py --skip-phase1  # skip phase 1 (use existing CSVs)
 """
 
@@ -109,6 +111,8 @@ def main():
     parser = argparse.ArgumentParser(description="Run all analytics + FastAPI server")
     parser.add_argument("--no-server",    action="store_true",
                         help="Skip starting the FastAPI server after analytics")
+    parser.add_argument("--skip-etl",     action="store_true",
+                        help="Skip Phase 0 ETL (assume DB already populated)")
     parser.add_argument("--skip-phase1",  action="store_true",
                         help="Skip Phase 1 (assume CSVs already generated)")
     args = parser.parse_args()
@@ -121,10 +125,39 @@ def main():
     overall_start = time.time()
     all_results   = []
 
+    # ── Phase 0: schema init + ETL data load (sequential) ────────────────────
+    if not args.skip_etl:
+        print(f"\n{BOLD}{CYAN}{'-'*60}{RESET}")
+        print(f"{BOLD}{CYAN}  PHASE 0 — ETL: Schema Init + Data Load{RESET}")
+        print(f"{BOLD}{CYAN}{'-'*60}{RESET}")
+
+        etl_steps = [
+            ("Schema Init",         "init_schema.py"),
+            ("Store Dimension",     "load_store_dimension.py"),
+            ("ETL Data Load",       "master_incremental_multisource_etl.py"),
+        ]
+        etl_ok = True
+        for name, script in etl_steps:
+            print(f"  {YELLOW}RUNNING{RESET}  {name}")
+            r = run_script(name, script)
+            symbol = f"{GREEN}DONE   {RESET}" if r["ok"] else f"{RED}FAILED {RESET}"
+            print(f"  {symbol}  {r['name']:45s}  {r['elapsed']:6.1f}s")
+            if not r["ok"]:
+                lines = r["stderr"].strip().splitlines()
+                for line in lines[-5:]:
+                    print(f"           {RED}{line}{RESET}")
+                etl_ok = False
+                break
+
+        if not etl_ok:
+            print(f"\n{RED}Phase 0 ETL failed — analytics may be incomplete.{RESET}")
+    else:
+        print(f"\n{YELLOW}Phase 0 skipped (--skip-etl){RESET}")
+
     # ── Phase 1: independent core scripts ────────────────────────────────────
     if not args.skip_phase1:
         phase1 = [
-            ("Advanced Analytics  (RFM/ABC/CLV/Cohort/Basket)", "advanced_analytics.py"),
+            ("Advanced Analytics  (RFM/ABC/CLV/Cohort/Basket)", "test_advanced_analytics.py"),
             ("Price Elasticity",                                 "price_elasticity.py"),
             ("Customer Journey",                                 "customer_journey.py"),
             ("Demand Forecasting",                               "demand_forecasting.py"),

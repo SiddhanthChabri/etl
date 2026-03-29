@@ -34,6 +34,7 @@ services:
     ports:
       - "8888:8000"
     volumes:
+      - ~/.kaggle/kaggle.json:/root/.kaggle/kaggle.json:ro
       # Mount results so they persist across restarts
       - ./models:/app/models
     command: ["python", "run_all.py"]

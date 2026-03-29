@@ -16,6 +16,9 @@ pipeline {
         DB_NAME     = credentials('etl-postgres-db')
         DB_USER     = credentials('etl-postgres-user')
         DB_PASSWORD = credentials('etl-postgres-password')
+
+        // ── Kaggle API key (Secret File containing kaggle.json) ───────────────
+        KAGGLE_JSON = credentials('etl-kaggle-json')
     }
 
     stages {
@@ -75,6 +78,16 @@ pipeline {
         }
 
         // ─────────────────────────────────────────────────────────────────────
+        stage('Setup Kaggle Credentials') {
+            steps {
+                sh '''
+                    mkdir -p ~/.kaggle
+                    cp "${KAGGLE_JSON}" ~/.kaggle/kaggle.json
+                    chmod 600 ~/.kaggle/kaggle.json
+                '''
+            }
+        }
+
         stage('Build ETL Image') {
             steps {
                 echo "Building ETL image..."

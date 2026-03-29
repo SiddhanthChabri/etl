@@ -1300,7 +1300,7 @@ async function loadKPIs() {
         set("k-customers", fmt(d.rfm?.total_customers));
         set("k-products",  fmt(d.abc?.total_products));
         set("k-revenue",   fmtC(d.abc?.total_revenue));
-        set("k-txns",      fmt(d.rfm?.total_transactions));
+        // k-txns is set from /api/store/summary (total_txns)
         set("k-clv",       fmtC(d.clv?.avg_clv));
         if (d.abc) {
             document.getElementById("ms-abc-products").textContent = fmt(d.abc.total_products);
@@ -1338,6 +1338,7 @@ async function loadKPIs() {
         const r = await fetch(`${API}/api/store/summary`);
         const d = await r.json();
         set("k-stores", d.total_stores || "—");
+        set("k-txns",   fmt(d.total_txns));
         document.getElementById("ms-store-top").textContent   = (d.top_store_name || "—").replace(" Store","");
         document.getElementById("ms-store-share").textContent = d.top_store_share?.toFixed(1) || "—";
     } catch(e) {}
@@ -1365,7 +1366,7 @@ async function loadKPIs() {
     try {
         const r = await fetch(`${API}/api/forecast/summary`);
         const d = await r.json();
-        set("k-forecast-products", d.total_products || "—");
+        set("k-forecast-products", d.products_forecast || d.total_products || "—");
         document.getElementById("ms-fc-products").textContent = d.total_products || "—";
         document.getElementById("ms-fc-mape").textContent     = d.avg_mape != null ? d.avg_mape.toFixed(1) + "%" : "—";
     } catch(e) {}
@@ -1374,7 +1375,7 @@ async function loadKPIs() {
     try {
         const r = await fetch(`${API}/api/anomaly/summary`);
         const d = await r.json();
-        const total    = d.total_anomalies || d.total || "—";
+        const total    = d.overall_anomaly_count || d.total_anomalies || d.total || "—";
         const critical = d.critical_count  || d.by_severity?.Critical || "—";
         set("k-anomalies", total);
         document.getElementById("ms-anomaly-total").textContent    = total;
