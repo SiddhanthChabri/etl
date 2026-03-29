@@ -121,10 +121,7 @@ pipeline {
         // ─────────────────────────────────────────────────────────────────────
         stage('Cleanup') {
             steps {
-                sh '''
-                    docker compose -p etl -f ${COMPOSE_FILE} down --remove-orphans || true
-                    docker image prune -f || true
-                '''
+                sh 'docker image prune -f || true'
             }
         }
 
