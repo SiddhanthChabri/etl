@@ -96,7 +96,7 @@ pipeline {
                     # Remove any stale container from a previous run
                     docker rm -f retail_analytics 2>/dev/null || true
 
-                    docker compose -p etl -f ${COMPOSE_FILE} up --no-build --remove-orphans
+                    docker compose -p etl -f ${COMPOSE_FILE} up -d --no-build --remove-orphans
                 '''
             }
         }
