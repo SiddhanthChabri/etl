@@ -3,7 +3,6 @@ services:
     image: postgres:15-alpine
     container_name: retail_db
     restart: unless-stopped
-    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "12345"
@@ -24,7 +23,6 @@ services:
     build: .
     image: retail_analytics:latest
     container_name: retail_analytics
-    restart: unless-stopped
     restart: unless-stopped
     depends_on:
       db:
