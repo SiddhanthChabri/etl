@@ -118,12 +118,38 @@ pipeline {
         stage('Verify Output') {
             steps {
                 sh '''
-                    echo "Checking ETL container exit code..."
-                    EXIT_CODE=$(docker inspect retail_analytics --format="{{.State.ExitCode}}" 2>/dev/null || echo "1")
-                    if [ "$EXIT_CODE" = "0" ]; then
-                        echo "✓ ETL completed successfully (exit code 0)"
-                    else
-                        echo "✗ ETL failed with exit code: ${EXIT_CODE}"
+                    echo "Waiting for retail_analytics container to be running and healthy..."
+                    for i in $(seq 1 24); do
+                        STATUS=$(docker inspect retail_analytics --format="{{.State.Status}}" 2>/dev/null || echo "missing")
+                        if [ "$STATUS" = "running" ]; then
+                            echo "✓ Container is running (attempt ${i})"
+                            break
+                        fi
+                        echo "Attempt ${i}/24 — status: ${STATUS}, waiting 5s..."
+                        sleep 5
+                    done
+
+                    STATUS=$(docker inspect retail_analytics --format="{{.State.Status}}" 2>/dev/null || echo "missing")
+                    if [ "$STATUS" != "running" ]; then
+                        echo "✗ Container failed to reach running state"
+                        docker logs retail_analytics --tail=50
+                        exit 1
+                    fi
+
+                    echo "Checking /health endpoint..."
+                    for i in $(seq 1 12); do
+                        HTTP=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8888/health || echo "000")
+                        if [ "$HTTP" = "200" ]; then
+                            echo "✓ /health returned 200"
+                            break
+                        fi
+                        echo "Attempt ${i}/12 — HTTP ${HTTP}, waiting 5s..."
+                        sleep 5
+                    done
+
+                    HTTP=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8888/health || echo "000")
+                    if [ "$HTTP" != "200" ]; then
+                        echo "✗ /health did not return 200 (got ${HTTP})"
                         docker logs retail_analytics --tail=50
                         exit 1
                     fi
