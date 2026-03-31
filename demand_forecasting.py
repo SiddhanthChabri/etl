@@ -214,13 +214,18 @@ class DemandForecaster:
         })
 
     def _forecast_product(self, series: pd.Series) -> pd.DataFrame:
-        """Dispatch to the appropriate forecasting method."""
+        """Dispatch to the appropriate forecasting method with runtime fallback."""
         if self.method == "prophet":
-            return self._forecast_prophet(series, self.horizon)
-        elif self.method == "ets":
-            return self._forecast_ets(series, self.horizon)
-        else:
-            return self._forecast_moving_avg(series, self.horizon)
+            try:
+                return self._forecast_prophet(series, self.horizon)
+            except Exception as exc:
+                logger.warning(f"    Prophet failed ({exc}); falling back to ETS")
+        if self.method in ("prophet", "ets"):
+            try:
+                return self._forecast_ets(series, self.horizon)
+            except Exception as exc:
+                logger.warning(f"    ETS failed ({exc}); falling back to moving average")
+        return self._forecast_moving_avg(series, self.horizon)
 
     # ── 4. Accuracy Metrics ───────────────────────────────────────────────────
 
@@ -348,7 +353,13 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     forecaster = DemandForecaster(horizon=args.horizon, top_n=args.top_n)
-    df = forecaster.run()
+    try:
+        df = forecaster.run()
+    except Exception as exc:
+        import traceback
+        logger.error(f"❌ Demand forecasting pipeline crashed: {exc}")
+        logger.error(traceback.format_exc())
+        raise
 
     if not df.empty:
         future = df[df["is_forecast"] == True]

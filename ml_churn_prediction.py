@@ -367,4 +367,10 @@ def run_churn_prediction():
 
 
 if __name__ == "__main__":
-    run_churn_prediction()
+    try:
+        run_churn_prediction()
+    except Exception as exc:
+        import traceback
+        logger.error(f"❌ Churn prediction pipeline crashed: {exc}")
+        logger.error(traceback.format_exc())
+        raise
