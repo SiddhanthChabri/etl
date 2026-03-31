@@ -3,6 +3,7 @@ main.py — FastAPI Entry Point
 Retail Analytics API
 """
 
+import json
 import os
 from contextlib import asynccontextmanager
 from datetime import datetime
@@ -175,8 +176,9 @@ def api_info():
             "redoc"         : "/redoc",
             "dashboard"     : "/dashboard",
             "download_excel": "/download/excel",
-            "summary"       : "/api/summary",
-            "cohort"        : "/api/cohort",
+            "summary"         : "/api/summary",
+            "cohort"          : "/api/cohort",
+            "pipeline_status" : "/api/pipeline/status",
         },
         "endpoints": {
             "rfm"        : {"customers": "/api/rfm/customers", "summary": "/api/rfm/segments/summary"},
@@ -255,6 +257,21 @@ def health():
         "checked_at"      : datetime.utcnow().isoformat() + "Z",
         "files"           : files,
     }
+
+
+# ── PIPELINE STATUS ───────────────────────────────────────────────────────────
+_PIPELINE_STATUS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pipeline_status.json")
+
+
+@app.get("/api/pipeline/status", tags=["Health"], summary="ETL + analytics pipeline run status")
+def pipeline_status():
+    if not os.path.exists(_PIPELINE_STATUS_FILE):
+        return {"status": "unknown", "detail": "No pipeline run recorded yet"}
+    try:
+        with open(_PIPELINE_STATUS_FILE) as f:
+            return json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        return {"status": "error", "detail": str(exc)}
 
 
 # ── RUN ───────────────────────────────────────────────────────────────────────
