@@ -138,7 +138,7 @@ pipeline {
 
                     echo "Checking /health endpoint..."
                     for i in $(seq 1 12); do
-                        HTTP=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8888/health || echo "000")
+                        HTTP=$(docker exec retail_analytics curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/health)
                         if [ "$HTTP" = "200" ]; then
                             echo "✓ /health returned 200"
                             break
@@ -147,7 +147,7 @@ pipeline {
                         sleep 5
                     done
 
-                    HTTP=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8888/health || echo "000")
+                    HTTP=$(docker exec retail_analytics curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/health)
                     if [ "$HTTP" != "200" ]; then
                         echo "✗ /health did not return 200 (got ${HTTP})"
                         docker logs retail_analytics --tail=50
