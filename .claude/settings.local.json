@@ -19,7 +19,11 @@
       "Bash(ls:*)",
       "Bash(wc:*)",
       "Bash(sed:*)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(find /Users/phpxcoder/GitHub/etl -type f -name \"*.py\" -exec grep -l \"^engine\\\\|def engine\\\\|create_engine\" {})",
+      "Bash(docker exec:*)",
+      "Bash(grep:*)",
+      "Bash(find /Users/phpxcoder/GitHub/etl -name \"*.py\" -exec grep -l \"try:.*except.*pass\" {})"
     ]
   }
 }
